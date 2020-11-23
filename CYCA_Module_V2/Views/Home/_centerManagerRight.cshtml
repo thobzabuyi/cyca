@@ -1,0 +1,306 @@
+﻿@using CYCA_Module_V2.Common_Objects;
+@using Common_Objects.ViewModels;
+@using Common_Objects.Models;
+@model CYCA_Module_V2.Common_Objects.CYCA_CenterManagerRightViewModel
+<div class="portlet light bordered">
+    <div class="portlet-body">
+        <div id="rootwizard">
+            <ul id="TopTab">
+                <li onclick="saveAll()"><a href="#tab1" data-toggle="tab">Save Assignments</a></li>
+            </ul>
+            <hr />
+            <p class=" hidden" id="loggedinuser"> @Html.Label(((User)Session["CurrentUser"]).User_Id.ToString())</p>
+            <div class="tab-content">
+                <div class="tab-pane" id="tab1">
+                    <div  style="display: flex;flex-wrap: wrap;" class="row d-block">
+            
+                            @foreach (TeamLeader t in Model.TeamLeaders)
+                            {
+                                <div class="col-md-4 team-view">
+                                    <div class="portlet light profile-sidebar-portlet bordered" style=" overflow-y: visible; height:auto">
+                                        <div class="profile-userpic">
+                                            @if(@t.img.Length > 0)
+                                            {
+                                            <img src="data:image/*;base64,@t.img" class="img-responsive" alt="">
+                                            }
+                                            @if (@t.img.Length < 1)
+                                            {
+                                                <img src="~/images/unknown.png" class="img-responsive" style="height: 25%" alt="">
+                                            }
+                                            @*@switch (t.Name)
+        {
+            case "Thoko Msibi":<img src="~/images/staff/2.jfif" class="img-responsive" alt="">; break;
+            case "Marco Janecke": <img src="~/images/staff/1.jfif" class="img-responsive" alt="">; break;
+            case "Social Worker 2": <img src="~/images/staff/4.jfif" class="img-responsive" alt="">; break;
+            case "Social Worker 1": <img src="~/images/staff/2.jfif" class="img-responsive" alt="">; break;
+            case "Ipeleng Pali": <img src="~/images/staff/2.jfif" class="img-responsive" alt="">; break;
+            case "Robin Mashilangoako": <img src="~/images/staff/3.jfif" class="img-responsive" alt="">; break;
+            case "Precious Masuku": <img src="~/images/staff/4.jfif" class="img-responsive" alt="">; break;
+            case "Lerato Matso": <img src="~/images/staff/3.jfif" class="img-responsive" alt="">; break;
+            case "Happy Baloyi": <img src="~/images/staff/1.jfif" class="img-responsive" alt="">; break;
+            default: <img src="~/images/unknown.png" class="img-responsive" alt="">; break;
+        }*@
+                                        </div>
+                                        <div class="profile-usertitle">
+                                            <div class="profile-usertitle-name">
+                                                @t.Name
+                                            </div>
+                                            <div class="profile-usertitle-job">@t.Summary </div>
+                                        </div>
+                                        <div class="profile-userbuttons">
+                                            @t.Desciption
+                                        </div>
+                                        <div style="  overflow-y: visible; padding: 0 0px 0 0px">
+                                            <div class="profile-usermenu">
+                                                <table class="table table-striped table-hover childgrid" id="table-draggable1">
+                                                    <thead>
+                                                    </thead>
+
+                                                <tbody id="drop" class="connectedSortable assignContainer" data-TeamLeadId="@t.UserId">
+                                                    <tr id="child"><td></td><td></td><td></td></tr>
+
+                                                    @foreach (CYCAChildAllocationViewModel child in t.children)
+                                                    {
+                                                        <tr id="@child.Child_Allocation_Id" data-childId="@child.Person_Id" class="draggable">
+                                                            <td><img class="chat-img pull-left img-circle" src="@child.ImgUrl" height="50" width="50" /></td>
+                                                            <td>
+                                                                @child.Child_First_Name @child.Child_Last_First_Name<br />
+                                                                @if (child.GangMembership == "Other")
+                                                                {
+                                                                    @child.OtherGangDescription
+                                                                }
+                                                                else
+                                                                {
+                                                                    @child.GangMembership
+                                                                }
+                                                            </td>
+                                                            <td>@Html.ActionLink("view", "Index", "Client", new { id = child.Person_Id }, new { @class = "btn btn-success viewChild" })</td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="orgchart">
+
+        </div>
+        <div id="bedSpace">
+
+        </div>
+        <div id="report">
+
+        </div>
+    </div>
+</div>
+<script>
+
+    var currentTab=1;
+    $(document).ready(function () {
+        $('#rootwizard').bootstrapWizard({
+            'tabClass': 'nav nav-pills',
+        });
+        if (leftLoaded) {
+            console.log('right');
+            SetupDragAndDropCenterManager();
+        }
+        rightLoaded = true;
+    });
+    function ToJavaScriptDatett(value) {
+        if (value == null || value == '') {
+            return 0;
+        }
+        else {
+            var pattern = /Date\(([^)]+)\)/;
+            var results = pattern.exec(value);
+            var dt = new Date(parseFloat(results[1]));
+            return dt.getFullYear() + "/" + (dt.getMonth() + 1) + "/" + dt.getDate();
+        }
+    }
+    $("#Save").click(function () {
+        var children = new Array();
+        $("#drop TR").each(function () {
+            var row = $(this);
+            var child = {};
+            if (row.attr('id') != 'child') {
+                child.Person_Id = row.attr('id');
+                child.Venue_Id = $("#Venue_Id").val();
+                children.push(child);
+            }
+        });
+        $.confirm({
+            title: 'Save',
+            content: 'Are you sure you want to move these kids?',
+            buttons: {
+                Yes: function () {
+                    $.ajax({
+                        type: "Post",
+                        url: "/Home/MoveChild",
+                        data:
+                            JSON.stringify(children),
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        success: function (r) {
+                            $.getJSON('/Home/GetUserVenueId?venueId=' + $("#Venue_Id").val(),
+                                function (json) {
+                                    var tr;
+                                    $('#setallocatedusers').empty();
+                                    for (var i = 0; i < json.length; i++) {
+                                        tr = $('<tr/>');
+                                        var path = "@Url.Content("~/Images/staff/staff1.jpg")";
+                                        tr.append("<td>" + '<img class="chat-img pull-left img-circle"  src = ' + path + ' height="50" width="50">' + "</td>");
+                                        tr.append("<td>" + json[i].CareWorker_Name + "</br>" + "Checked In: " + ToJavaScriptDatett(json[i].Checked_In_Date) + "</td>");
+                                        tr.append("<td>" + '<span class ="btn btn-circle btn-md icon-box bg-color-brown" style="line-height: 30px;" data-toggle="tooltip" title="Number of children">' + json[i].Person_Id + '</span>' + "</td>");
+                                        $('#setallocatedusers').append(tr);
+
+                                    }
+                                    //Move records back to left table
+                                    $("#table-draggable1 TBODY TR").each(function () {
+                                        if ($(this).attr('id') != "child") {
+                                            $('#setallocatedchildren').append($(this).clone());
+                                            $(this).remove();
+                                        }
+                                    });
+                                    $("#totalkids").text('0');
+                                });
+
+                        },
+                        error: function (xhr, ajaxOptions, error) {
+                            alert(xhr.status);
+                            alert('Error: ' + xhr.responseText);
+                        }
+                    });
+                },
+                No: function () {
+
+                }
+            }
+        });
+
+
+    });
+    $("#SaveTransfer").click(function () {
+        var children = new Array();
+        $("#transfer TR").each(function () {
+            var row = $(this);
+            var child = {};
+            if (row.attr('id') != 'child2') {
+                child.Person_Id = row.attr('data-childId');
+                child.TransferredTo_Id = $("#User_Id").val();
+                children.push(child);
+            }
+        });
+        $.confirm({
+            title: 'Transfers',
+            content: 'Are you sure you want to transfer these kids?',
+            buttons: {
+                Yes: function () {
+                    $.ajax({
+                        type: "Post",
+                        url: "/Home/TransferChild",
+                        data:
+                            JSON.stringify(children),
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        success: function (r) {
+                            //Refresh Pending Transfers
+                            UpdateTransferCount($('#transfer tr').length - 1);
+                            $("#transfer TR").each(function () {
+                                if ($(this).attr('id') != "child2") {
+                                    $(this).remove();
+                                }
+                            });
+                            $("#totalkids1").text('0');
+                            $.ajax({
+                                type: 'POST',
+                                url: '@Url.Content("~/Home/ShowLeftContent")',
+                                data: {
+                                    type: defaultRole
+                                },
+                                success: function (result) {
+                                    $('.profile-usermenu').html(result);
+                                    // ShowDynamicForm();
+                                }
+                            });
+                        },
+                        error: function (xhr, ajaxOptions, error) {
+                            alert(xhr.status);
+                            alert('Error: ' + xhr.responseText);
+                        }
+                    });
+                },
+                No: function () {
+
+                }
+            }
+        });
+    });
+
+    function saveAll() {
+        var children = new Array();
+        //Get All Left Children
+        $("#setallocatedchildren TR").each(function () {
+            var row = $(this);
+            var child = {};
+            if (row.attr('id') != 'ignore') {
+                child.Child_Allocation_Id = row.attr('id');
+                //child.AssignedTo_Id = $("#loggedinuser").text();    
+                child.AssignedTo_Id = 0  
+                child.Person_Id = row.attr('data-childId');
+                child.Role = 'CenterManager';
+                children.push(child);
+            }
+        });
+        $(".assignContainer TR").each(function () {
+            var row = $(this);
+            var child = {};
+            if (row.attr('id') != 'child') {
+                child.Child_Allocation_Id = row.attr('id');                
+                child.AssignedTo_Id = row.parent().attr('data-TeamLeadId');
+                child.Person_Id = row.attr('data-childId');
+                child.Role = 'CenterManager';
+                children.push(child);
+            }
+            console.log(child);
+        });
+
+        $.confirm({
+            title: 'Save',
+            content: 'Are you sure you want to assign these kids to Team Leaders?',
+            buttons: {
+                Yes: function () {
+                    $.ajax({
+                        type: "Post",
+                        url: "/Home/AssignChildren",
+                        data:
+                            JSON.stringify(children),
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        success: function () {
+                        },
+                        error: function (xhr, ajaxOptions, error) {
+                            alert(xhr.status);
+                            alert('Error: ' + xhr.responseText);
+                        }
+                    });
+                },
+                No: function () {
+
+                }
+            }
+        });
+    }
+
+
+
+</script>

@@ -1,0 +1,464 @@
+﻿@*@model CYCA_Module_V2.Common_Objects.CYCAAdmissionBodySearchViewModel*@
+@model CYCA_Module_V2.Common_Objects.CYCAAdmissionBodySearchViewModel
+@{
+    ViewBag.Title = "Body Search";
+    Layout = null;
+}
+
+<div class="row col-md-12 col-sm-12" id="AddBodilySearch">
+    <div class="col-md-12 col-sm-12">
+        <div class="panel panel-default">           
+                <div class="panel-heading text-center">
+                    <strong style="color:#158cba">Body Search</strong>
+                </div>            
+                <div class="panel-body">
+                    <form id="myForm">
+                        <div class="row">
+
+                            @Html.HiddenFor(m => m.Person_Id, new { @id = "Person_Id" })
+                            @Html.HiddenFor(m => m.Admission_Id)
+                            @Html.HiddenFor(m => m.BodySearchId)
+                            <div class="col-md-4">
+
+                                @*Reason For Bodily Search*@
+                                @Html.LabelFor(x => x.ReasonForSearch)
+                            </div>
+                            <div class="col-md-8 form-group" style="">
+
+                                @*@Html.DropDownList("Reason", (IEnumerable<SelectListItem>)ViewBag.SearchReasonList, "--Select--", new { @id = "SearchReasonId", @class = "form-control", required = "required", onchange = "ShowHideDiv()" })*@
+                                @Html.DropDownListFor(m => m.SearchReasonId, ViewBag.SearchReasonList as SelectList, "--Select--", new { @id = "SearchReasonId", @class = "form-control", required = "required", onchange = "ShowHideDiv()" })
+                            </div>
+                            <div id="dvOtherReason" style="display: none">
+                                <div class="col-md-4">
+                                    @Html.LabelFor(x => x.OtherReasonForSearch)
+                                </div>
+                                <div class="col-md-8 form-group">
+                                    @Html.TextBoxFor(m => m.OtherReasonForSearch, new { @class = "form-control", required = "required" })
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                @Html.LabelFor(x => x.ConductedBy)
+                            </div>
+                            <div class="col-md-8 form-group" style="">
+                                @*@Html.DropDownList("conduct", (IEnumerable<SelectListItem>)ViewBag.UsersList, "--Select--", new { @id = "CondactedBy", @class = "form-control", required = "required" })*@
+                                @Html.DropDownListFor(x => x.ConductedById, ViewBag.UsersList as SelectList, "--Select--", new { @id = "CondactedBy", @class = "form-control", required = "required" })
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                @Html.LabelFor(x => x.WitnessedBy)
+                            </div>
+                            <div class="col-md-8 form-group">
+
+                                @*@Html.DropDownList("witness", (IEnumerable<SelectListItem>)ViewBag.UsersList, "--Select--", new { @id = "WitnessedBy", @class = "form-control", required = "required" })*@
+                                @Html.DropDownListFor(m => m.WitnessedById, ViewBag.UsersList as SelectList, "--Select--", new { @id = "WitnessedBy", @class = "form-control", required = "required" })
+                            </div>
+
+                            <div class="col-md-4">
+                                Description Of Location
+                            </div>
+                            <div class="col-md-8 form-group" style="">
+                                @*<input type="text" class=" form-control" id="Description" required>*@
+                                @Html.TextBoxFor(m => m.Description, new { @id = "Description", @class = "form-control", required = "required" })
+                            </div>
+
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4">
+                                @Html.LabelFor(x => x.DocumentType)
+                            </div>
+                            <div class="col-md-8 form-group">
+
+                                @*@Html.DropDownList("docs", (IEnumerable<SelectListItem>)ViewBag.DocumentTypeList, "--Select--", new { @id = "Document_Type_Id", @class = "form-control", onchange = "ShowHideDiv(), chkatchtbl()" })*@
+                                @Html.DropDownListFor(m => m.Document_Type_Id, ViewBag.DocumentTypeList as SelectList, "--Select--", new { @id = "Document_Type_Id", @class = "form-control", onchange = "ShowHideDiv(), chkatchtbl()" })
+                            </div>
+                            <div id="dvOther" style="display: none">
+                                <div class="col-md-4">
+                                    Explain Document Type:
+                                </div>
+                                <div class="col-md-8 form-group">
+                                    @Html.TextBoxFor(m => m.Additional_Info, new { @class = "form-control", required = "required" })
+                                    @*<input class="form-control" type="text" id="Exp" required />*@
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4">
+                                @*@Html.LabelFor(x => x.Document_Name)*@
+                                <label>Documents</label>
+                            </div>
+                            <div class="col-md-8 form-group" style="">
+                                <input name="addFile" id="fileInput" type="file" multiple required disabled>
+                            </div>
+                            <br />            <br />
+                            <div>
+                                @if (Model.RequestType == "View" || Model.RequestType == "Update")
+                                {
+                                    if (Model.liteFiles != null)
+                                    {
+                                        if (Model.liteFiles.Count > 0)
+                                        {
+
+                                            <div class="col-md-4 ExistingFiles" style="padding-right: 100px" id="ExistingFiles">
+                                                <table class="table">
+                                                    <tr><u>Existing Files:</u></tr>
+                                                    <tr>
+                                                        <th>
+                                                            Attachment(s)
+                                                        </th>
+                                                        @if (Model.RequestType != "View")
+                                                        {
+                                                            <th>
+                                                                Action
+                                                            </th>
+                                                        }
+                                                    </tr>
+
+                                                    @foreach (Common_Objects.ViewModels.LiteFiles f in Model.liteFiles)
+                                                    {
+                                                        <tr>
+                                                            <td>
+                                                                <a class="download-file1" href="@Url.Action("DownloadSearchFile", "Admit", new { id = f.Document_Id, })" target="_blank">
+                                                                    @f.Document_Name
+                                                                </a>
+
+                                                            </td>
+                                                            @if (Model.RequestType != "View")
+                                                            {
+                                                                <td>
+                                                                    <span class='red'>
+                                                                        <i class="fa fa-trash"></i>
+                                                                    </span>
+                                                                    <input type="button" value="Remove" placeholder="@f.Document_Id" name=" @f.Document_Name" onclick="DeleteFiles(this.placeholder,this.name)" class="anchorButton" />
+                                                                    <br />
+                                                                </td>
+                                                            }
+                                                        </tr>
+
+                                                    }
+                                                </table>
+
+                                            </div>
+                                        }
+
+                                    }
+                                }
+                                <div class="col-md-4">
+
+                                    <table class="table" id="FilesList" style="visibility:hidden">
+                                        <tr><th><u>New Files:</u></th></tr>
+                                        <tr>
+                                            <th>
+                                                Attachment(s)
+                                            </th>
+                                            <th>
+                                                Action
+                                            </th>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="row pull-right">
+                            <div class="col-md-12">
+                                @if (Model.RequestType == "Update")
+                                {
+                                    <a class="btn btn-primary" id="UpdateBodySearch" style="visibility:visible">Update</a>
+                                    <a href="#" class="btn btn-default" id="cancel">Cancel</a>
+                                }
+                                @if (Model.RequestType == "Add")
+                                {
+                                    <a href="#" class="btn btn-info" style="background-color:#158cba; border-color: #158cba;" id="InsertBodySearch">Save</a>
+                                    <a href="#" class="btn btn-default" id="cancel">Cancel</a>
+                                }
+
+                                @if (Model.RequestType == "View")
+                                {
+                                    <a class="btn btn-default" id="Close">Close</a>
+                                }
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+    </div>
+</div>
+
+
+
+
+
+<script>
+        $(document).ready(function () {
+        @*var child = @ViewBag.childId;*@
+        $(".datepicker").datepicker({
+            dateFormat: "dd M yy",
+            minDate: new Date(),
+            changeYear: true,
+            onClose: function () {
+                $(this).valid();
+            }
+            });
+
+            var requestType = '@Model.RequestType';
+
+              if (('@Model.ReasonForSearch' == 'Other') || ('@Model.Document_Type_Id' == '4') )
+              {
+                  ShowHideDiv();
+              }
+  
+            chkatchtbl();
+          
+    if (requestType == "View") {
+      $("#myForm :input").prop("disabled", true);
+      //document.getElementsByClassName('file-link').prop("disabled", true);
+    }
+
+    if (open == "yes")
+    {
+      console.log("in edit mode");
+        document.getElementById("InsertBodySearch").style.visibility = "hidden";
+    };
+    });
+    //$(document).ready(function () {
+            
+    //});
+
+    function disableLink(el) {
+        el.onclick = function () {
+            return false;
+        }
+    }
+    $(function () {
+        $("#myForm").validate();
+        //$("#myForm3").validate();
+        //$("#myForm4").validate();
+
+    });
+    function ShowHideDiv() {
+        //Body Search Add
+        var Document_Type_Id = document.getElementById("Document_Type_Id");
+        var dvOther = document.getElementById("dvOther");
+        dvOther.style.display = Document_Type_Id.value == "4" ? "block" : "none";
+
+        var SearchReasonId = document.getElementById("SearchReasonId");
+        var dvOtherReason = document.getElementById("dvOtherReason");
+        dvOtherReason.style.display = SearchReasonId.value == "5" ? "block" : "none";
+    
+    }
+
+    $("#cancel").click(function () {
+        //location.reload(true);
+        AjaxShowTabs(currentPersonId, currentTab, currentFormType, currentTarget);
+    });
+  
+    $("#Close").click(function () {
+        AjaxShowTabs(currentPersonId, currentTab, currentFormType, currentTarget);
+
+    });
+
+    var formdata = new FormData(); //FormData object
+    var removeFiles = [];
+    $(document).ready(function () {
+    //Body Search
+    $("#fileInput").on("change", function () {
+        var fileInput = document.getElementById('fileInput');
+        //Iterating through each files selected in fileInput
+        for (i = 0; i < fileInput.files.length; i++) {
+            var sfilename = fileInput.files[i].name;
+            let srandomid = Math.random().toString(36).substring(7);
+            formdata.append(sfilename, fileInput.files[i]);
+
+            var markup = "<tr id='" + srandomid + "'><td>" + sfilename + "</td><td><a href='#' onclick='DeleteFile(\"" + srandomid + "\",\"" + sfilename +
+                "\")'><span class='red'>Remove file</span></a></td></tr>"; // Binding the file name
+            $("#FilesList tbody").append(markup);
+        }
+        chkatchtbl();
+        $('#fileInput').val('');
+    });
+
+        $("#InsertBodySearch").click(function () {
+        var $valid = $("#myForm").valid();
+        if (!$valid) {
+            return;
+        }
+        console.log(formdata);
+        formdata.append('uploadername', $('#txtuploader').val());
+        formdata.append("Bodily_Search_Date", $("#BodySearchDate").val());
+        formdata.append("Conducted_By", $("#CondactedBy").val());
+        formdata.append("Document_Type_Id", $("#Document_Type_Id").val());
+        formdata.append("Witnessed_By", $("#WitnessedBy").val());
+        formdata.append("Search_Reason_Id", $("#SearchReasonId").val());
+        formdata.append("Person_Id", $("#Person_Id").val());
+        formdata.append("AdmissionId", $("#AdmissionId").val());
+        formdata.append("Description", $("#Description").val());
+        formdata.append("OtherDocTypeDescription", $("#Additional_Info").val());
+            formdata.append("OtherSeacrhReasonDescription", $("#OtherReasonForSearch").val());
+            var clicked = false;
+        $.confirm({
+            title: 'Add Bodily Search',
+            content: 'Are you sure you want to save changes?',
+            buttons: {
+                Yes: function () {
+                    if (clicked == false) {
+                        clicked = true;
+                        $.ajax({
+                            url: '@Url.Action("NewBodilySearch", "Admit")',
+                            type: "POST",
+                            contentType: false, // Not to set any content header
+                            processData: false, // Not to process data
+                            data: formdata,
+                            async: false,
+                            success: function (result) {
+                                AjaxShowTabs(currentPersonId, currentTab, currentFormType, currentTarget);
+                                //alert( "the result is : " + result);
+                                //location.reload(true);
+                            @*location.href = "/Admit/BodySearchList/" + @ViewBag.childId;*@
+
+
+                            },
+                            error: function (error) {
+                                console.log(error);
+                            }
+                        })
+                    }
+                },
+                No: function () {
+                   
+                }
+            }
+        })
+        });
+
+        $("#UpdateBodySearch").click(function () {
+          var $valid = $("#myForm").valid();
+            if (!$valid) {
+                return;
+            }
+            formdata.append('uploadername', $('#txtuploader').val());
+            formdata.append("AdmissionId", $("#AdmissionId").val());
+            formdata.append("BodySearchId", $("#BodySearchId").val());
+            formdata.append("Bodily_Search_Date", $("#BodySearchDate").val());
+            formdata.append("ConductedById", $("#CondactedBy").val());
+            formdata.append("Document_Type_Id", $("#Document_Type_Id").val());
+            formdata.append("WitnessedById", $("#WitnessedBy").val());
+            formdata.append("SearchReasonId", $("#SearchReasonId").val());
+            formdata.append("Person_Id", $("#Person_Id").val());
+            formdata.append("Description", $("#Description").val());
+            formdata.append("OtherDocTypeDescription", $("#Additional_Info").val());
+            formdata.append("OtherSeacrhReasonDescription", $("#OtherReasonForSearch").val());
+            var clickedUpdate = false;
+               $.confirm({
+                        title: 'Update Body Search',
+                        content: 'Are you sure you want to save changes?',
+                        buttons: {
+                          Yes: function () {
+                              console.log(removeFiles);
+                              if (clickedUpdate == false) {
+                                  clickedUpdate = true;
+                             $.ajax({
+                                    url: '@Url.Action("DeleteDocumentFilesByIDs", "Admit")',
+                                    type: "POST",
+                                    data: JSON.stringify(removeFiles),
+                                    dataType: "json",
+                                    contentType: 'application/json; charset=utf-8',
+                                    async: false,
+                                    success: function (response) {
+                                      console.log(response + "on the deleting of the files first");
+                               },
+                               error: function (error) {
+                                 console.log(error);
+                               }
+                             });
+                          
+                                  $.ajax({
+                                      url: '@Url.Action("UpdateBodySearch", "Admit")',
+                                      type: "POST",
+                                      contentType: false, // Not to set any content header
+                                      processData: false, // Not to process data
+                                      data: formdata,
+                                      async: false,
+                                      success: function (response) {
+                                          console.log(response + "  fixing this ");
+                                          AjaxShowTabs(currentPersonId, currentTab, currentFormType, currentTarget);
+                                          //location.reload(true);
+                                          //document.getElementById("myForm").reset();
+                                          //$("#BodySearch").hide();
+                                          //$("#BodilySearchRecords").show();
+                                          //$("#IllegalItemsRecords").show();
+                                      },
+                                      error: function (error) {
+                                          console.log(error);
+                                      }
+                                  });
+                              }
+
+                            },
+                            No: function () {
+                                
+                            }
+                        }
+                    });
+
+        });
+    });
+
+    function DeleteFile(Fileid, FileName) {
+        formdata.delete(FileName)
+        $("#" + Fileid).remove();
+        chkatchtbl();
+    }
+
+    function DeleteFiles(Fileid, documentName) {
+        removeFiles.push(Fileid);
+        $('.ExistingFiles tr').each(function () {
+            var tdText = $(this).children('td:nth-child(1)').text();
+            if (tdText.includes(documentName)) {
+                $(this).remove();
+            }
+
+        });
+    }
+    function chkatchtbl() {               
+        var requestTypes = '@Model.RequestType';       
+        if (requestTypes === "Update" && document.getElementById("Document_Type_Id").value >= 1) {
+            $("#fileInput").removeAttr("disabled")
+            
+            if ($('#FilesList tr').length > 2 || $('#ExistingFiles tr').length > 0) {
+                
+                $("#fileInput").removeAttr("required")
+                $("#FilesList").css("visibility", "visible");
+            } else {
+                $("#fileInput").attr("required", "required")
+                $("#FilesList").css("visibility", "hidden");
+            }
+        }
+        else if (document.getElementById("Document_Type_Id").value >= 1) {
+
+            $("#fileInput").removeAttr("disabled")
+            if ($('#FilesList tr').length > 2) {
+                $("#fileInput").removeAttr("required")
+                $("#FilesList").css("visibility", "visible");
+            } else {
+                $("#fileInput").attr("required", "required")
+                $("#FilesList").css("visibility", "hidden");
+            }
+            
+        } else {
+            $("#fileInput").attr("disabled", "disabled")
+            $("#FilesList").css("visibility", "hidden");
+            if ($('#FilesList tr').length > 2 || $('#ExistingFiles tr').length > 2) {
+                $("#FilesList").css("visibility", "visible");
+                $("#Document_Type_Id").attr("required", "required")
+            }
+        }
+
+    }
+
+
+  
+</script>

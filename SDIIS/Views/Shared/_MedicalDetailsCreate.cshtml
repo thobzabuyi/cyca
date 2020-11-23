@@ -1,0 +1,78 @@
+﻿@model Common_Objects.Models.IntakeMedicalConditionItem
+
+@{
+    ViewBag.Title = "Create Medical Details";
+}
+
+@*@using (Html.BeginForm("Create", "MedicalDetail", FormMethod.Post, new { role = "form", id = "medicalDetailFormCreate" }))*@
+@using (Html.BeginForm("Save", "Home", FormMethod.Post, new { role = "form", id = "medicalDetailFormCreate" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="panel-body">
+
+        @Html.HiddenFor(x => x.Person_Id, new { id = "Person_Id" })
+
+        <div class="row">
+
+            <div class="col-md-6">
+                <div class="row">
+                    <div class="col-md-6 form-group">
+                        @Html.LabelFor(x => x.Medical_Condition_Type_List, new { @class = "control-label" })
+                    </div>
+                    <div class="col-md-6">
+                        @Html.DropDownListFor(n => n.Medical_Condition_Type_Id, Model.Medical_Condition_Type_List, "- Please select -", new { @id = "Medical_Condition_Type_Id", @class = "form-control" })
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="row">
+
+            <div class="col-md-6">
+                <div class="row">
+                    <div class="col-md-6 form-group">
+                        @Html.LabelFor(x => x.Medical_Condition_List, new { @class = "control-label" })
+                    </div>
+                    <div class="col-md-6">
+                        @Html.DropDownListFor(n => n.Medical_Condition_Id, Model.Medical_Condition_List, "- Please select -", new { @id = "Medical_Condition_Id", @class = "form-control" })
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+
+    <div class="panel-footer">
+        <input type="submit" id="ButtonSave" value="Save" class="btn btn-success" />
+        <input type="button" id="ButtonMedicalCancel" value="Cancel" class="btn btn-danger modal-close-btn" />
+    </div>
+}
+    <script src="~/Scripts/PersonEmployment/pemp.js"></script>
+<script type="text/javascript">
+    $(function () {
+        // Add Event Receiver for Dropdowns
+        $("#Medical_Condition_Type_Id").change(function () {
+            var selectedItem = $(this).val();
+            $.ajax({
+                url: $.url('/MedicalDetail/GetMedicalConditions/conditionTypeId'),
+                data: { "conditionTypeId": selectedItem },
+                type: "GET",
+                success: function (response, status, xhr) {
+                    var dropdownControllers = $('#Medical_Condition_Id');
+                    dropdownControllers.html('');
+                    $.each(response, function (id, option) {
+                        dropdownControllers.append($('<option></option>').val(option.id).html(option.name));
+                    });
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    alert('Error populating Medical Conditions dropdown');
+                }
+            });
+        });
+    });
+</script>

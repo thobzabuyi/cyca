@@ -1,0 +1,975 @@
+﻿@model Common_Objects.Models.IntakeDataViewModel
+
+
+
+<!----------------------------------------------------------------------INVENTORY HTML--------------------------------------------------------------->
+<div class="tablereload">
+    <div class="row col-md-12" id="InventoryGrid">
+        <div class="col-md-12">
+            <button class="btn btn-primary pull-left enabledisable" id="accordion" data-parent="#accordion" href="#actionModal" onclick="showNew()"><i class="fa fa-plus"></i> Add Belongings</button>
+            <div class="panel panel-default">
+                <br /><br />
+                <div class="panel-heading text-center">
+                    <strong style="color:#158cba">Child Belongings</strong>
+                </div>
+                <div class="panel-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered table-hover mytable" id="inventorytable">
+                            <thead>
+                                <tr>
+                                    <th>Item Color</th>
+                                    <th>Item Type</th>
+                                    <th>Quantity</th>
+                                    <th>Date Received</th>
+                                    <th>Return Status</th>
+                                    <th>Date Returned</th>
+                                    @*<th>Reason Not Returned</th>*@
+                                    <th>&nbsp;</th>
+                                    <th>&nbsp;</th>
+                                    <th>&nbsp;</th>
+                                </tr>
+                            </thead>
+                            <tbody class="mytable" id="setInventoryList">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                @*<button class="btn btn-primary" id="accordion" data-parent="#accordion" href="#actionModal" onclick="showNew()"><i class="fa fa-plus"></i> Add Belongings</button>*@
+                <br /><br />
+                <div class="panel-heading text-center">
+                    <strong style="color:#158cba">Facility Belongings</strong>
+                </div>
+                <div class="panel-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered table-hover reloadtable" id="facilityinventorytable">
+                            <thead>
+                                <tr>
+                                    <th>Item Color</th>
+                                    <th>Item Type</th>
+                                    <th>Quantity</th>
+                                    @*<th>Description</th>*@
+                                    <th>Date Received</th>
+                                    <th>Return Status</th>
+                                    <th>Date Returned</th>
+                                    @*<th>Reason Not Returned</th>*@
+                                    <th>&nbsp;</th>
+                                    <th>&nbsp;</th>
+                                    <th>&nbsp;</th>
+                                </tr>
+                            </thead>
+                            <tbody id="setFacilityList"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="row col-md-12 col-sm-12" id="AddInventory">
+    <div class="col-md-12 col-sm-12">
+        <div class="panel panel-default">
+            <div class="panel-heading text-center">
+                <strong style="color:#158cba">New Inventories</strong>
+            </div>
+            <div class="panel-body">
+                <form id="myForm">
+                    <div class="row">
+                        <div class="col-md-2">
+                            @Html.HiddenFor(m => m.Person_Id, new { @id = "id" })
+                            @Html.LabelFor(x => x.selectedInventoryType)
+                        </div>
+                        <div class="col-md-2 form-group" style="">
+                            @Html.DropDownListFor(m => m.Inventory_Type_Id, ViewBag.InventoryTypeList as SelectList, "--Select--", new { @id = "Inventory_Type_Id", @class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.Inventory_Type_Id, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="col-md-2">
+                            @Html.LabelFor(x => x.Item_Type)
+                        </div>
+                        <div class="col-md-2 form-group" style="">
+                            @Html.TextBoxFor(m => m.Item_Type, new { @id = "Item_Type", @class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.Item_Type, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="col-md-2">
+                            @Html.LabelFor(x => x.Item_Color)
+                        </div>
+                        <div class="col-md-2 form-group" style="">
+                            @Html.TextBoxFor(m => m.Item_Color, new { @id = "Item_Color", @class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.Item_Color, "", new { @class = "text-danger" })
+
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-2">
+                            @Html.LabelFor(x => x.Item_Quantity)
+                        </div>
+                        <div class="col-md-2 form-group">
+                            @Html.TextBoxFor(m => m.Item_Quantity, new { @id = "Item_Quantity", @class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.Item_Quantity, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="col-md-2">
+                            @Html.LabelFor(x => x.Date_Handed_In)
+                        </div>
+                        <div class="col-md-2 form-group">
+                            @Html.TextBoxFor(m => m.Date_Handed_Inn, new { @id = "Date_Handed_In", @class = "form-control datepicker jqueryui-marker-datepicker" })
+                            @*<label for="Date_Handed_In" class="input-group-addon btn">
+                                    <span class="glyphicon glyphicon-calendar"></span>
+                                </label>*@
+                            @Html.ValidationMessageFor(m => m.Date_Handed_Inn, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="col-md-2">
+                            @Html.LabelFor(x => x.selectedUser, new { @class = "required" })
+                        </div>
+                        <div class="col-md-2 form-group">
+                            @Html.DropDownListFor(m => m.Item_Handed_To, ViewBag.UsersList as SelectList, "--Select--", new { @id = "Item_Handed_To", @class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.Item_Handed_To, "", new { @class = "text-danger" })
+
+                        </div>
+
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-2">
+                            @Html.LabelFor(x => x.Item_Description)
+                        </div>
+                        <div class="col-md-4 form-group">
+                            @Html.TextAreaFor(m => m.Item_Description, new { @id = "Item_Description", @class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.Item_Handed_To, "", new { @class = "text-danger" })
+
+                        </div>
+
+                        <div class="col-md-4">
+
+                        </div>
+                        <div class="col-md-2 form-group">
+                            <a href="#" class="btn btn-info" style="background-color:#158cba; border-color: #158cba;" id="Insert">Save</a>
+                            <a href="#" class="btn btn-default" id="close">Cancel</a>
+                        </div>
+
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row col-md-12 col-sm-12" id="ReturnInventory">
+    <div class="col-md-12 col-sm-12">
+        <div class="panel panel-default">
+            <div class="panel-heading text-center">
+                <strong style="color:#158cba">Inventories Details</strong>
+            </div>
+            <div class="panel-body">
+                <form id="myForm3">
+                    <div class="row">
+                        <div class="col-md-1">
+                            @Html.HiddenFor(m => m.Person_Id, new { @id = "Id3" })
+                            @Html.HiddenFor(m => m.Inventory_Id, new { @id = "Inventory_Id" })
+                            @Html.LabelFor(x => x.selectedInventoryType)
+                        </div>
+                        <div class="col-md-2 form-group" style="">
+                            @Html.TextBoxFor(m => m.selectedInventoryType, new { @id = "selectedInventoryType3", @class = "form-control", @readonly = "readonly" })
+                        </div>
+                        <div class="col-md-1">
+                            @Html.LabelFor(x => x.Item_Type)
+                        </div>
+                        <div class="col-md-2 form-group" style="">
+                            @Html.TextBoxFor(m => m.Item_Type, new { @id = "Item_Type3", @class = "form-control", @readonly = "readonly" })
+                        </div>
+                        <div class="col-md-1">
+                            @Html.LabelFor(x => x.selectedReturnStatus)
+                        </div>
+                        <div class="col-md-2 form-group">
+                            @Html.DropDownListFor(m => m.Return_Status_Id, ViewBag.ReturnStatusList as SelectList, "--Select--", new { @id = "Return_Status_Id", @class = "form-control", @onchange = "enableReasonNotReturned()" })
+                            @Html.ValidationMessageFor(m => m.Return_Status_Id, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="col-md-1">
+                            @Html.LabelFor(x => x.Quantity_Returned)
+                        </div>
+                        <div class="col-md-2 form-group">
+                            @Html.TextBoxFor(m => m.Quantity_Returned, new { @id = "Quantity_Returned", @class = "form-control enableAll ", @disabled = "disabled" })
+                            @Html.ValidationMessageFor(m => m.Quantity_Returned, "", new { @class = "text-danger" })
+                        </div>
+
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-1">
+                            @Html.LabelFor(x => x.Date_Handed_In)
+                        </div>
+                        <div class="col-md-2 form-group">
+                            @Html.TextBoxFor(m => m.Date_Handed_In, new { @id = "Date_Handed_In3", @class = "form-control", @readonly = "readonly" })
+                        </div>
+
+                        <div class="col-md-1">
+                            @Html.LabelFor(x => x.Item_Description)
+                        </div>
+                        <div class="col-md-2 form-group">
+                            @Html.TextAreaFor(m => m.Item_Description, new { @id = "Item_Description3", @class = "form-control", @readonly = "readonly" })
+                        </div>
+
+                        <div class="col-md-1">
+                            @Html.LabelFor(x => x.Date_Returned)
+                        </div>
+                        <div class="col-md-2 form-group">
+                            @Html.TextBoxFor(m => m.Date_Returnedd, new { @id = "Date_Returned", @class = "form-control datepicker jqueryui-marker-datepicker" })
+                            @Html.ValidationMessageFor(m => m.Date_Returnedd, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="col-md-1">
+                            @Html.LabelFor(x => x.selectedReturnedBy)
+                        </div>
+                        <div class="col-md-2 form-group">
+                            @Html.DropDownListFor(m => m.Returned_By, ViewBag.UsersList as SelectList, "--Select--", new { @id = "Returned_By", @class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.Returned_By, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-1">
+                            @Html.LabelFor(x => x.Item_Color)
+                        </div>
+                        <div class="col-md-2 form-group" style="">
+                            @Html.TextBoxFor(m => m.Item_Color, new { @id = "Item_Color3", @class = "form-control", @readonly = "readonly" })
+                        </div>
+                        <div class="col-md-1">
+                            @Html.LabelFor(x => x.Item_Quantity)
+                        </div>
+                        <div class="col-md-2 form-group">
+                            @Html.TextBoxFor(m => m.Item_Quantity, new { @id = "Item_Quantity3", @class = "form-control", @readonly = "readonly" })
+                        </div>
+
+                        <div class="col-md-1">
+                            @Html.LabelFor(x => x.Reason_Not_Returned)
+                        </div>
+                        <div class="col-md-3 form-group">
+                            @Html.TextAreaFor(m => m.Reason_Not_Returned, new { @id = "Reason_Not_Returned", @class = "form-control" })
+                            @*@Html.ValidationMessageFor(m => m.Reason_Not_Returned, "", new { @class = "text-danger" })*@
+                        </div>
+                        <div class="col-md-2">
+
+                        </div>
+                        <div class="col-md-2 form-group">
+                            <a href="#" class="btn btn-info" style="background-color:#158cba; border-color: #158cba;" id="Return">Save</a>
+                            <a href="#" class="btn btn-default" id="closeReturn">Cancel</a>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row col-md-12 col-sm-12" id="EditInventory">
+    <div class="col-md-12 col-sm-12">
+        <div class="panel panel-default">
+            <div class="panel-heading text-center">
+                <strong style="color:#158cba">Edit Inventories</strong>
+            </div>
+            <div class="panel-body">
+                <form id="myForm1">
+                    <div class="row">
+                        <div class="col-md-2">
+                            @Html.HiddenFor(m => m.Person_Id, new { @id = "id1" })
+                            @Html.HiddenFor(m => m.Inventory_Id, new { @id = "Inventory_Id" })
+                            @Html.LabelFor(x => x.selectedInventoryType)
+                        </div>
+                        <div class="col-md-2 form-group" style="">
+                            @Html.DropDownListFor(m => m.Inventory_Type_Id, ViewBag.InventoryTypeList as SelectList, "--Select--", new { @id = "Inventory_Type_Id1", @class = "form-control", required = "required" })
+                            @*@Html.ValidationMessageFor(m => m.Inventory_Type_Id, "", new { @class = "text-danger" })*@
+                        </div>
+
+                        <div class="col-md-2">
+                            @Html.LabelFor(x => x.Item_Type)
+                        </div>
+                        <div class="col-md-2 form-group" style="">
+                            @Html.TextBoxFor(m => m.Item_Type, new { @id = "Item_Type1", @class = "form-control", required = "required" })
+                            @*@Html.ValidationMessageFor(m => m.Item_Type, "", new { @class = "text-danger" })*@
+                        </div>
+
+                        <div class="col-md-2">
+                            @Html.LabelFor(x => x.Item_Color)
+                        </div>
+                        <div class="col-md-2 form-group" style="">
+                            @Html.TextBoxFor(m => m.Item_Color, new { @id = "Item_Color1", @class = "form-control", required = "required" })
+                            @*@Html.ValidationMessageFor(m => m.Item_Color, "", new { @class = "text-danger" })*@
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-2">
+                            @Html.LabelFor(x => x.Item_Quantity)
+                        </div>
+                        <div class="col-md-2 form-group">
+                            @Html.TextBoxFor(m => m.Item_Quantity, new { @id = "Item_Quantity1", @class = "form-control", required = "required" })
+                            @*@Html.ValidationMessageFor(m => m.Item_Quantity, "", new { @class = "text-danger" })*@
+                        </div>
+
+                        <div class="col-md-2">
+                            @Html.LabelFor(x => x.Date_Handed_In)
+                        </div>
+                        <div class="col-md-2 form-group">
+                            @Html.TextBoxFor(m => m.Date_Handed_In, new { @id = "Date_Handed_In1", @class = "form-control datepicker jqueryui-marker-datepicker", required = "required" })
+                            @*@Html.ValidationMessageFor(m => m.Date_Handed_In, "", new { @class = "text-danger" })*@
+                        </div>
+
+                        <div class="col-md-2">
+                            @Html.LabelFor(x => x.selectedUser)
+                        </div>
+                        <div class="col-md-2 form-group">
+                            @Html.DropDownListFor(m => m.Item_Handed_To, ViewBag.UsersList as SelectList, "--Select--", new { @id = "Item_Handed_To1", @class = "form-control", required = "required" })
+                            @*@Html.ValidationMessageFor(m => m.Item_Handed_To, "", new { @class = "text-danger" })*@
+                        </div>
+
+                    </div>
+                    <div class="row">
+                        <div class="col-md-2">
+                            @Html.LabelFor(x => x.selectedReturnStatus)
+                        </div>
+                        <div class="col-md-2 form-group">
+                            @Html.DropDownListFor(m => m.Return_Status_Id, ViewBag.ReturnStatusList as SelectList, "--Select--", new { @id = "Return_Status_Id1", @class = "form-control", @disabled = "disabled" })
+                            @*@Html.ValidationMessageFor(m => m.Return_Status_Id, "", new { @class = "text-danger" })*@
+                        </div>
+
+                        <div class="col-md-2">
+                            @Html.LabelFor(x => x.Date_Returned)
+                        </div>
+                        <div class="col-md-2 form-group">
+                            @Html.TextBoxFor(m => m.Date_Returnedd, new { @id = "Date_Returned1", @class = "form-control datepicker jqueryui-marker-datepicker enableAll", @disabled = "disabled", required = "required" })
+                            @*@Html.ValidationMessageFor(m => m.Date_Returnedd, "", new { @class = "text-danger" })*@
+                        </div>
+
+                        <div class="col-md-2">
+                            @Html.LabelFor(x => x.selectedReturnedBy)
+                        </div>
+                        <div class="col-md-2 form-group">
+                            @Html.DropDownListFor(m => m.Returned_By, ViewBag.UsersList as SelectList, "--Select--", new { @id = "Returned_By1", @class = "form-control enableAll", @disabled = "disabled", required = "required" })
+                            @*@Html.ValidationMessageFor(m => m.Returned_By, "", new { @class = "text-danger" })*@
+                        </div>
+
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-2">
+                            @Html.LabelFor(x => x.Item_Description)
+                        </div>
+                        <div class="col-md-2 form-group">
+                            @Html.TextAreaFor(m => m.Item_Description, new { @id = "Item_Description1", @class = "form-control", required = "required" })
+                        </div>
+
+                        <div class="col-md-2">
+                            @Html.LabelFor(x => x.Reason_Not_Returned)
+                        </div>
+                        <div class="col-md-2 form-group">
+                            @Html.TextAreaFor(m => m.Reason_Not_Returned, new { @id = "Reason_Not_Returned1", @class = "form-control" })
+                        </div>
+                        <div class="col-md-2">
+                            @Html.LabelFor(x => x.Quantity_Returned)
+                        </div>
+                        <div class="col-md-2 form-group">
+                            @Html.TextBoxFor(m => m.Quantity_Returned, new { @id = "Quantity_Returned1", @class = "form-control enableAll", @disabled = "disabled", required = "required" })
+                            @Html.ValidationMessageFor(m => m.Quantity_Returned, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="col-md-2">
+
+                        </div>
+                        <div class="col-md-2 form-group">
+                            <a href="#" class="btn btn-info" style="background-color:#158cba; border-color: #158cba;" id="Edit">Save</a>
+                            <a href="#" class="btn btn-default" id="closeEdit">Cancel</a>
+                        </div>
+
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row col-md-12 col-sm-12" id="ViewInventory">
+    <div class="col-md-12 col-sm-12">
+        <div class="panel panel-default">
+            <div class="panel-heading text-center">
+                <strong style="color:#158cba">Inventories Details</strong>
+            </div>
+            <div class="panel-body">
+                <form id="myForm2">
+                    <div class="row">
+                        <div class="col-md-2">
+                            @Html.HiddenFor(m => m.Inventory_Id, new { @id = "Inventory_Id1" })
+                            @Html.LabelFor(x => x.selectedInventoryType)
+                        </div>
+                        <div class="col-md-2 form-group" style="">
+                            @*@Html.DropDownListFor(m => m.Item_Handed_To, ViewBag.InventoryTypeList as SelectList, "--Select--", new { @id = "Inventory_Type_Id2", @class = "form-control" })*@
+                            @Html.TextBoxFor(m => m.selectedInventoryType, new { @id = "selectedInventoryType", @class = "form-control", @readonly = "readonly" })
+                        </div>
+
+                        <div class="col-md-2">
+                            @Html.LabelFor(x => x.Item_Type)
+                        </div>
+                        <div class="col-md-2 form-group" style="">
+                            @Html.TextBoxFor(m => m.Item_Type, new { @id = "Item_Type2", @class = "form-control", @readonly = "readonly" })
+                        </div>
+
+                        <div class="col-md-2">
+                            @Html.LabelFor(x => x.Item_Color)
+                        </div>
+                        <div class="col-md-2 form-group" style="">
+                            @Html.TextBoxFor(m => m.Item_Color, new { @id = "Item_Color2", @class = "form-control", @readonly = "readonly" })
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-2">
+                            @Html.LabelFor(x => x.Item_Quantity)
+                        </div>
+                        <div class="col-md-2 form-group">
+                            @Html.TextBoxFor(m => m.Item_Quantity, new { @id = "Item_Quantity2", @class = "form-control", @readonly = "readonly" })
+                        </div>
+
+                        <div class="col-md-2">
+                            @Html.LabelFor(x => x.Date_Handed_In)
+                        </div>
+                        <div class="col-md-2 form-group">
+                            @Html.TextBoxFor(m => m.Date_Handed_In, new { @id = "Date_Handed_In2", @class = "form-control", @readonly = "readonly" })
+                        </div>
+
+                        <div class="col-md-2">
+                            @Html.LabelFor(x => x.selectedUser)
+                        </div>
+                        <div class="col-md-2 form-group">
+                            @*@Html.DropDownListFor(m => m.Item_Handed_To, ViewBag.UsersList as SelectList, "--Select--", new { @id = "Item_Handed_To", @class = "form-control" })*@
+                            @Html.TextBoxFor(m => m.selectedUser, new { @id = "selectedUser", @class = "form-control", @readonly = "readonly" })
+                        </div>
+
+                    </div>
+                    <div class="row">
+                        <div class="col-md-2">
+                            @Html.LabelFor(x => x.selectedReturnStatus)
+                        </div>
+                        <div class="col-md-2 form-group">
+                            @Html.TextBoxFor(m => m.selectedReturnStatus, new { @id = "selectedReturnStatus2", @class = "form-control", @readonly = "readonly" })
+                        </div>
+                      
+                        <div class="col-md-2">
+                            @Html.LabelFor(x => x.Date_Returned)
+                        </div>
+                        <div class="col-md-2 form-group">
+                            @Html.TextBoxFor(m => m.Date_Returned, new { @id = "Date_Returned2", @class = "form-control", @readonly = "readonly" })
+                        </div>
+
+                        <div class="col-md-2">
+                            @Html.LabelFor(x => x.selectedReturnedBy)
+                        </div>
+                        <div class="col-md-2 form-group">
+                            @*@Html.DropDownListFor(m => m.Item_Handed_To, ViewBag.UsersList as SelectList, "--Select--", new { @id = "Item_Handed_To", @class = "form-control" })*@
+                            @Html.TextBoxFor(m => m.selectedReturnedBy, new { @id = "selectedReturnedBy", @class = "form-control", @readonly = "readonly" })
+                        </div>
+
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-2">
+                            @Html.LabelFor(x => x.Item_Description)
+                        </div>
+                        <div class="col-md-2 form-group">
+                            @Html.TextAreaFor(m => m.Item_Description, new { @id = "Item_Description2", @class = "form-control", @readonly = "readonly" })
+                        </div>
+
+                        <div class="col-md-2">
+                            @Html.LabelFor(x => x.Reason_Not_Returned)
+                        </div>
+                        <div class="col-md-2 form-group">
+                            @Html.TextAreaFor(m => m.Reason_Not_Returned, new { @id = "Reason_Not_Returned2", @class = "form-control", @readonly = "readonly" })
+                        </div>
+                        <div class="col-md-2">
+                            @Html.LabelFor(x => x.Quantity_Returned)
+                        </div>
+                        <div class="col-md-2 form-group">
+                            @Html.TextBoxFor(m => m.Quantity_Returned, new { @id = "Quantity_Returned2", @class = "form-control", @readonly = "readonly" })
+                            
+                        </div>
+                        <div class="col-md-2">
+
+                        </div>
+                        <div class="col-md-2 form-group">
+                            <a href="#" class="btn btn-info" style="background-color:#158cba; border-color: #158cba;" id="View">Close</a>
+                        </div>
+
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+<!---------------------------------------------------------------------- END INVENTORY HTML--------------------------------------------------------------->
+
+
+
+
+<script>
+    function PopulateInventories() {
+        $.getJSON('/Client/GetPersonalInventoryList',
+            function (json) {
+                var tr;
+                var returnStatusId;
+                for (var i = 0; i < json.length; i++) {
+                    tr = $('<tr/>');
+                    returnStatusId = json[i].Return_Status_Id;
+                    reason = json[i].Reason_Not_Returned;
+                    inventoryId = json[i].Inventory_Id;
+
+                    tr.append("<td>" + json[i].Item_Color + "</td>");
+                    tr.append("<td>" + json[i].Item_Type + "</td>");
+                    tr.append("<td>" + json[i].Item_Quantity + "</td>");
+                    tr.append("<td>" + ToJavaScriptDate(json[i].Date_Handed_In) + "</td>");
+                    tr.append("<td>" + json[i].selectedReturnStatus + "</td>");
+                    if (returnStatusId == 2) {
+                        tr.append("<td>" + ToJavaScriptDate(json[i].Date_Returned) + "</td>");
+                    }
+                    else if (reason === null) {
+                        tr.append("<td>" + " " + "</td>");
+                    }
+                    else {
+                        tr.append("<td>" + ToJavaScriptDate(json[i].Date_Returned) + "</td>");
+                    }
+                    tr.append("<td>" + "<a href='#' onclick = 'ViewInventory(" + json[i].Inventory_Id + ")'  ><span></span> view</a>" + "</td>");
+                    tr.append("<td>" + "<a href='#' class='enabledisable' onclick = 'EditInventory(" + json[i].Inventory_Id + ")'><span></span> edit</a>" + "</td>");
+                    if (json[i].Item_Quantity == json[i].Quantity_Returned) {
+                        tr.append("<td>" + "<a href='#' disabled onclick = 'ReturnInventory(" + json[i].Inventory_Id + ")'><span></span> return</a>" + "</td>");
+                    }
+                    else {
+                        tr.append("<td>" + "<a href='#' class='enabledisable' onclick = 'ReturnInventory(" + json[i].Inventory_Id + ")'><span></span> return</a>" + "</td>");
+                    }
+                    $('#setInventoryList').append(tr);
+                   
+                }
+
+                $('#inventorytable').DataTable({ "order": [[3, "desc"]], "searching": false, "info": false, "paging": false });
+                EnableDisableClass();
+            });
+
+        $.getJSON('/Client/GetFacilityInventoryList',
+            function (json) {
+                var tr;
+                var returnStatusId;
+                for (var i = 0; i < json.length; i++) {
+                    tr = $('<tr/>');
+                    returnStatusId = json[i].Return_Status_Id;
+                    reason = json[i].Reason_Not_Returned;
+                    tr.append("<td>" + json[i].Item_Color + "</td>");
+                    tr.append("<td>" + json[i].Item_Type + "</td>");
+                    tr.append("<td>" + json[i].Item_Quantity + "</td>");
+                    //tr.append("<td>" + json[i].Item_Description + "</td>");                    
+                    tr.append("<td>" + ToJavaScriptDate(json[i].Date_Handed_In) + "</td>");
+                    tr.append("<td>" + json[i].selectedReturnStatus + "</td>");
+                    if (returnStatusId == 2) {
+                        tr.append("<td>" + ToJavaScriptDate(json[i].Date_Returned) + "</td>");
+                    }
+                    else if (reason === null) {
+                        tr.append("<td>" + " " + "</td>");
+                    }
+                    else {
+                        tr.append("<td>" + ToJavaScriptDate(json[i].Date_Returned) + "</td>");
+                    }
+                    tr.append("<td>" + "<a href='#' onclick = 'ViewInventory(" + json[i].Inventory_Id + ")'  ><span></span> view</a>" + "</td>");
+                    tr.append("<td>" + "<a href='#' class='enabledisable' onclick = 'EditInventory(" + json[i].Inventory_Id + ")'><span></span> edit</a>" + "</td>");
+                    if (returnStatusId == 2) {
+                        tr.append("<td>" + "<a href='#' disabled onclick = 'ReturnInventory(" + json[i].Inventory_Id + ")'><span></span> return</a>" + "</td>");
+                    }
+                    else {
+                        tr.append("<td>" + "<a href='#' class='enabledisable' onclick = 'ReturnInventory(" + json[i].Inventory_Id + ")'><span></span> return</a>" + "</td>");
+                    }
+                    $('#setFacilityList').append(tr);
+                }
+                //$('#inventorytable').DataTable({
+                //    "searching": false,
+                //    "info": false,
+
+                //});
+                $('#facilityinventorytable').DataTable({ "order": [[3, "desc"]], "searching": false, "info": false, "paging": false });
+                EnableDisableClass();
+            });
+
+    }
+
+    $(document).ready(function () {
+        $(".datepicker").datepicker({
+            dateFormat: "dd M yy",
+            minDate: new Date(),
+            changeYear: true,
+            onClose: function () {
+                $(this).valid();
+            }
+        });    
+        $("#AddInventory").hide();
+        $("#EditInventory").hide();
+        $("#ViewInventory").hide();
+        $("#ReturnInventory").hide();              
+        PopulateInventories();     
+        
+    })
+
+    function ToJavaScriptDate(value) { //To Parse Date from the Returned Parsed Date
+        var pattern = /Date\(([^)]+)\)/;
+        var results = pattern.exec(value);
+        
+        if (results !== null && results !==' ') {
+            var dt = new Date(parseFloat(results[1]));
+            return dt.getFullYear() + "/" + (dt.getMonth() + 1) + "/" + dt.getDate();
+        }
+        var dt = new Date(parseFloat(results[1]));
+        return dt.getFullYear() + "/" + (dt.getMonth() + 1) + "/" + dt.getDate() ;
+    }
+
+    function showNew() {
+        $("#InventoryGrid").hide();
+        $("#AddInventory").show();
+
+    }
+    $(function () {
+        // Initialize items marked as datepickers
+        $(".datepicker").datepicker({
+            dateFormat: "dd M yy",
+            changeYear: true,
+            maxDate: 30,
+            yearRange: "-60:+0",
+            onClose: function () {
+                $(this).valid();
+            }
+        });
+    });
+
+    
+
+    $("#Insert").click(function () {        
+        if (!$('#myForm').valid()) {
+            return false;
+        }
+        $.confirm({
+            title: 'Add Belongings',
+            content: 'Are you sure you want to save this?',
+            buttons: {
+                Yes: function () {
+                    $('#setInventoryList tr').remove();
+                    $('#setFacilityList tr').remove(); 
+                    $('#inventorytable').DataTable().clear().destroy();
+                    $('#facilityinventorytable').DataTable().clear().destroy();
+                    $.ajax({
+                        type: "Post",
+                        url: "/Client/AddNewInventory",
+                        data: {
+                            Person_Id: $("#id").val(),
+                            Inventory_Type_Id: $("#Inventory_Type_Id").val(),
+                            Item_Type: $("#Item_Type").val(),
+                            Item_Color: $("#Item_Color").val(),
+                            Item_Quantity: $("#Item_Quantity").val(),
+                            Date_Handed_Inn: $("#Date_Handed_In").val(),
+                            Item_Handed_To: $("#Item_Handed_To").val(),
+                            Item_Description: $("#Item_Description").val()
+                        },
+                        success: function (result) {
+                            $('.spinner').css('display', 'block');
+                            setTimeout(function () {
+                                $('.spinner').hide();
+                            }, 10000);
+                            PopulateInventories();                            
+                            document.getElementById("myForm").reset();
+                            $("#InventoryGrid").show();
+                            $("#AddInventory").hide();                           
+                        },
+                        error: function (xhr, ajaxOptions, error) {
+                            alert(xhr.status);
+                            alert('Error: ' + xhr.responseText);
+                        }
+                    })
+                },
+                No: function () {
+
+                }
+            }
+        })
+
+    })
+    $("#close").click(function () {
+        document.getElementById("myForm").reset();
+        $("#AddInventory").hide();
+        $("#InventoryGrid").show();
+    })
+
+
+
+    function EditInventory(Inventory_Id) {
+        $("#InventoryGrid").hide();
+        $("#AddInventory").hide();
+        $("#ViewInventory").hide();
+        $("#ReturnInventory").hide();
+        var url = "/Client/GetInventoryByInventoryId?InventoryId=" + Inventory_Id;
+        var returnStatus, reasonNotReturned;
+        $("#EditInventory").show();
+        $.ajax({
+            type: "GET",
+            url: url,
+            success: function (data) {
+                console.log(data);
+                var obj = JSON.parse(data);
+              
+                $("#Inventory_Id").val(obj.Inventory_Id);
+                $("#Inventory_Type_Id1").val(obj.Inventory_Type_Id);
+                $("#Item_Type1").val(obj.Item_Type);
+                $("#Item_Color1").val(obj.Item_Color);
+                $("#Item_Quantity1").val(obj.Item_Quantity);
+                $("#Date_Handed_In1").val(obj.Date_Handed_Inn);
+                $("#Item_Handed_To1").val(obj.Item_Handed_To);
+                $("#Item_Description1").val(obj.Item_Description);
+                $("#Return_Status_Id1").val(obj.Return_Status_Id);
+                $("#Date_Returned1").val(obj.Date_Returnedd);
+                $("#Returned_By1").val(obj.Returned_By);               
+                $("#Reason_Not_Returned1").val(obj.Reason_Not_Returned);
+                $("#Quantity_Returned1").val(obj.Quantity_Returned);
+                
+                returnStatus = document.getElementById("Return_Status_Id1").value;
+                reasonNotReturned = document.getElementById("Reason_Not_Returned1").value;               
+                if (returnStatus == 1 && reasonNotReturned == "") {
+                    $(".enableAll").prop("disabled", "disabled");
+                    $(".enable").prop("disabled", "disabled");
+                }
+                else if (returnStatus == 1 && reasonNotReturned != "") {
+                    $(".enableAll").prop("disabled", false);
+                    $(".enable").prop("disabled", false);
+                }
+                else {
+                    $(".enableAll").prop("disabled", false);
+                    $(".enable").prop("disabled", "disabled");
+                }
+               
+            }, error: function () { alert('something bad happened'); }
+
+        })
+       
+         
+    
+    }
+    $("#Edit").click(function () {          
+        if (!$('#myForm1').valid()) {
+            return false;
+        }
+        $.confirm({
+            title: 'Edit Belongings',
+            content: 'Are you sure you want to save changes?',
+            buttons: {
+                Yes: function () {
+                    $('#setInventoryList tr').remove();
+                    $('#setFacilityList tr').remove(); 
+                    $('#inventorytable').DataTable().clear().destroy();
+                    $('#facilityinventorytable').DataTable().clear().destroy();
+                    $.ajax({
+                        type: "Post",
+                        url: "/Client/EditInventory",
+                        data: {
+                            Inventory_Id: $("#Inventory_Id").val(),
+                            Inventory_Type_Id: $("#Inventory_Type_Id1").val(),
+                            Item_Type: $("#Item_Type1").val(),
+                            Item_Color: $("#Item_Color1").val(),
+                            Item_Quantity: $("#Item_Quantity1").val(),
+                            Date_Handed_In: $("#Date_Handed_In1").val(),
+                            Item_Handed_To: $("#Item_Handed_To1").val(),
+                            Item_Description: $("#Item_Description1").val(),
+                            Return_Status_Id: $("#Return_Status_Id1").val(),
+                            Date_Returnedd: $("#Date_Returned1").val(),
+                            Returned_By: $("#Returned_By1").val(),
+                            Reason_Not_Returned: $("#Reason_Not_Returned1").val(),
+                            Quantity_Returned: $("#Quantity_Returned1").val()
+                            
+                        },
+                        success: function (result) {
+                            $('.profile-usermenu').html(result);
+                            $('.spinner').css('display', 'block');
+                            setTimeout(function () {
+                                $('.spinner').hide();
+                            }, 10000);
+                            PopulateInventories(); 
+                            document.getElementById("myForm1").reset();
+                            $("#InventoryGrid").show();
+                            $("#EditInventory").hide(); 
+                        },
+                        error: function (xhr, ajaxOptions, error) {
+                            alert(xhr.status);
+                            alert('Error: ' + xhr.responseText);
+                        }
+                    })
+                },
+                No: function () {
+
+                }
+            }
+        })
+    })
+    $("#closeEdit").click(function () {
+        //$('#EditInventory').trigger("reset");
+        document.getElementById("myForm1").reset();
+        $("#EditInventory").hide();
+        $("#InventoryGrid").show();
+    })
+
+
+
+    function ViewInventory(Inventory_Id) {
+        $("#InventoryGrid").hide();
+        $("#AddInventory").hide();
+        $("#EditInventory").hide();
+        $("#ReturnInventory").hide();
+        var url = "/Client/GetInventoryByInventoryId?InventoryId=" + Inventory_Id;
+        $("#ViewInventory").show();
+        $.ajax({
+            type: "GET",
+            url: url,
+            success: function (data) {
+                console.log(data);
+                var obj = JSON.parse(data);
+                var returnstatus;
+                returnstatus = $("#selectedReturnStatus2").val(obj.selectedReturnStatus);
+                $("#Inventory_Id1").val(obj.Inventory_Id);
+                $("#selectedInventoryType").val(obj.selectedInventoryType);
+                $("#Item_Type2").val(obj.Item_Type);
+                $("#Item_Color2").val(obj.Item_Color);
+                $("#Item_Quantity2").val(obj.Item_Quantity);
+                $("#Date_Handed_In2").val(obj.Date_Handed_Inn);
+                $("#selectedUser").val(obj.selectedUser);
+                $("#selectedReturnStatus2").val(obj.selectedReturnStatus);                                               
+                $("#Date_Returned2").val(obj.Date_Returnedd); 
+                $("#selectedReturnedBy").val(obj.selectedReturnedBy);                                                                            
+                $("#Item_Description2").val(obj.Item_Description);
+                $("#Reason_Not_Returned2").val(obj.Reason_Not_Returned);  
+                $("#Quantity_Returned2").val(obj.Quantity_Returned);
+                
+            }, error: function () { alert('something bad happened'); }
+
+        })
+
+
+    }
+    $("#View").click(function () {
+        document.getElementById("myForm2").reset();
+        $("#ViewInventory").hide();
+        $("#InventoryGrid").show();
+    })
+
+
+    function ReturnInventory(Inventory_Id) {
+        $("#InventoryGrid").hide();
+        $("#AddInventory").hide();
+        $("#EditInventory").hide();
+        $("#ViewInventory").hide();
+        var url = "/Client/GetInventoryByInventoryId?InventoryId=" + Inventory_Id;
+        $("#ReturnInventory").show();
+        //$("span").remove();
+        $.ajax({
+            type: "GET",
+            url: url,
+            success: function (data) {
+                console.log(data);
+                var obj = JSON.parse(data);
+                $("#Inventory_Id").val(obj.Inventory_Id);
+                $("#selectedInventoryType3").val(obj.selectedInventoryType);
+                $("#Item_Type3").val(obj.Item_Type);
+                $("#Item_Color3").val(obj.Item_Color);
+                $("#Item_Quantity3").val(obj.Item_Quantity);
+                $("#Date_Handed_In3").val(obj.Date_Handed_Inn);
+                $("#Item_Description3").val(obj.Item_Description);
+            }, error: function () { alert('something bad happened'); }
+
+        })
+
+    }
+
+    function enableReasonNotReturned() {
+        if (document.getElementById("Return_Status_Id").value === 1 + "") {
+            $(".enable").prop("disabled", false);
+            $(".enableAll").prop("disabled", "disabled");
+        } else {
+            $(".enable").prop("disabled", "disabled");
+            $(".enableAll").prop("disabled", false);
+        }
+
+   
+    };
+
+    $("#Return").click(function () {        
+        if (!$('#myForm3').valid()) {
+            return false;
+        }
+        $.confirm({
+            title: 'Return Belongings',
+            content: 'Are you sure you want to save?',
+            buttons: {
+                Yes: function () {
+                    $('#setInventoryList tr').remove();
+                    $('#setFacilityList tr').remove();
+                    $('#inventorytable').DataTable().clear().destroy();
+                    $('#facilityinventorytable').DataTable().clear().destroy();
+                    $.ajax({
+                        type: "Post",
+                        url: "/Client/ReturnInventory",
+                        data: {
+                            Inventory_Id: $("#Inventory_Id").val(),
+                            Return_Status_Id: $("#Return_Status_Id").val(),
+                            Quantity_Returned: $("#Quantity_Returned").val(),
+                            Date_Returnedd: $("#Date_Returned").val(),
+                            Returned_By: $("#Returned_By").val(),
+                            Reason_Not_Returned: $("#Reason_Not_Returned").val(),
+                        },
+                        success: function (result) {
+                            //$('.profile-usermenu').html(result);
+                            $('.spinner').css('display', 'block');
+                            setTimeout(function () {
+                                $('.spinner').hide();
+                            }, 10000);
+                            PopulateInventories(); 
+                            document.getElementById("myForm3").reset();
+                            $("#ReturnInventory").hide();
+                            $("#InventoryGrid").show();
+                        },
+                        error: function (xhr, ajaxOptions, error) {
+                            alert(xhr.status);
+                            alert('Error: ' + xhr.responseText);
+                        }
+                    })
+                },
+                No: function () {
+
+                }
+            }
+        })
+    })
+    $("#closeReturn").click(function () {  
+        document.getElementById("myForm3").reset();
+        $("#ReturnInventory").hide();
+        $("#InventoryGrid").show();
+    })
+
+
+
+
+
+    $(function () {
+        jQuery.validator.unobtrusive.parse();
+        jQuery.validator.unobtrusive.parse("#myForm");
+        jQuery.validator.unobtrusive.parse("#myForm3");
+        jQuery.validator.unobtrusive.parse("#myForm1");
+
+    });
+
+</script>

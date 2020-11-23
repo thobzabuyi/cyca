@@ -1,0 +1,28 @@
+﻿@model IEnumerable<Common_Objects.Models.IntakeMedicalConditionItem>
+
+<div class="row">
+    <div class="col-md-12">
+        @{
+            var medicalDetailsGrid = new WebGrid(source: Model, canSort: false, rowsPerPage: 5, ajaxUpdateContainerId: "medicalDetailsGrid");
+
+            @medicalDetailsGrid.GetHtml(
+                tableStyle: "webgrid-table",
+                headerStyle: "webgrid-header",
+                footerStyle: "webgrid-footer",
+                alternatingRowStyle: "webgrid-alternating-row",
+                selectedRowStyle: "webgrid-selected-row",
+                rowStyle: "webgrid-row-style",
+                htmlAttributes: new { id = "educationGrid", width = "100%" },
+                columns: medicalDetailsGrid.Columns(
+                    medicalDetailsGrid.Column("Medical_Condition_Type_Description", "Condition Type"),
+                    medicalDetailsGrid.Column("Medical_Condition_Description", "Description"),
+                    medicalDetailsGrid.Column(header: "", style: "GridEditButton", format: (item) =>
+                    {
+                        var link = Html.ActionLink("Edit", "Edit", "MedicalDetail", new { id = item.Item_Id, personId = item.Person_Id, medicalConditionTypeId = item.Medical_Condition_Type_Id }, new { @class = "modal-link btn btn-success GridEditButton" });
+                        return link;
+                    })
+                )
+            )
+        }
+    </div>
+</div>

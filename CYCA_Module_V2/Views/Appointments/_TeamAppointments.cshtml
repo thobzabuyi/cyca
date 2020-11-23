@@ -1,0 +1,63 @@
+﻿@using Common_Objects.ViewModels;
+@model  CYCA_Module_V2.Common_Objects.CYCA_AppointmentsViewModel
+<div class="row">
+    <!-- scheduler -->
+    <div class="col-md-12">
+        <div id="calendar"></div>
+    </div>
+
+</div>
+<script>
+    var cal;
+    $(function () {
+            LoadAndRenderCalendar();
+    });
+    function LoadAndRenderCalendar() {
+        var calendarEl = document.getElementById('calendar');
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'list',
+            headerToolbar: {
+                start: 'today prev,next',  // diary inbuilt menu items
+                center: 'title',
+                end: 'list'
+            },
+            //themeSystem:'bootstrap',
+           
+            eventSources: [
+                {
+                    url: '@Url.Content("~/Appointments/GetTeamScheduledEvents")',
+                    error: function () {
+                        alert('there was an error while fetching resource data!');
+                    }
+                }]
+        });
+        calendar.render();
+        cal = calendar;
+    }
+    function ShowCalendar() {
+            $('#calendar').fullCalendar({
+                schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source', // NOTE: change to commercial license if you are using it commercially, play fair!!
+                theme: false,
+                resourceAreaWidth: 230,
+                groupByDateAndResource: false,
+                editable: true,
+                aspectRatio: 1.8,
+                scrollTime: '08:00',
+                timezone: 'local',
+                defaultView: 'timelineDay',
+                views: {
+                    timelineDay: {
+                        buttonText: 'Timeline',
+                        slotDuration: '00:15'
+                    },
+                    agendaWeek: {
+                        type: 'agendaWeek',
+                        duration: { days: 7 }
+                    }
+                }
+            });
+
+    };
+</script>
+
+

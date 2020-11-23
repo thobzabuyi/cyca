@@ -1,0 +1,96 @@
+﻿@model Common_Objects.ViewModels.IntakeSearchViewModel
+
+<div class="row">
+    <div class="col-md-3">
+        Client Ref No
+    </div>
+    <div class="col-md-3 form-group">
+        @Html.TextBoxFor(model => model.Search_Client_Ref_No, new { @class = "form-control" })
+    </div>
+    <div class="col-md-3">
+        Identification Number
+    </div>
+    <div class="col-md-3 form-group">
+        @Html.TextBoxFor(model => model.Search_Client_ID_No, new { @class = "form-control" })
+    </div>
+    <div class="col-md-3">
+        First Name
+    </div>
+    <div class="col-md-3 form-group">
+        @Html.TextBoxFor(model => model.Search_First_Name, new { @class = "form-control" })
+    </div>
+    <div class="col-md-3">
+        Last Name
+    </div>
+    <div class="col-md-3 form-group">
+        @Html.TextBoxFor(model => model.Search_Last_Name, new { @class = "form-control" })
+    </div>
+    <div class="col-md-3">
+        Date of Birth
+    </div>
+    <div class="col-md-3 form-group">
+        <div class="input-group">
+            @Html.TextBoxFor(model => model.Search_Date_Of_Birth, new { @id = "Search_Date_Of_Birth", @class = "form-control jqueryui-marker-datepicker" })
+            <label for="Search_Date_Of_Birth" class="input-group-addon btn">
+                <span class="glyphicon glyphicon-calendar"></span>
+            </label>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12 form-group">
+        <input type="button" id="ButtonFilter" value="Search" class="btn btn-success" />
+        <input type="button" id="ButtonAddNew" value="Add New" class="btn btn-success" />
+        <input type="button" id="ButtonRelationCancel" value="Cancel" class="btn btn-danger modal-close-btn" />
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12" id="resultsGrid">
+        @Html.Partial("_PersonSearchGrid")
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        
+        // Initialize items marked as datepickers
+        $(".jqueryui-marker-datepicker").datepicker({
+            beforeShow: function () {
+                setTimeout(function () {
+                    $('.ui-datepicker').css('z-index', 99999999999999);
+                }, 0);
+            },
+            dateFormat: "dd M yy",
+            changeYear: true,
+            maxDate: 0,
+            yearRange: "-60:+0"
+        });
+        
+        // Add Event Receiver for Filter Button
+        $("#ButtonFilter").click(function () {
+            var intakeSearch = {
+                Search_Client_Ref_No: $('#Search_Client_Ref_No').val().trim(),
+                Search_Client_ID_No: $('#Search_Client_ID_No').val().trim(),
+                Search_First_Name: $('#Search_First_Name').val().trim(),
+                Search_Last_Name: $('#Search_Last_Name').val().trim(),
+                Search_Date_Of_Birth: $('#Search_Date_Of_Birth').val().trim()
+            };
+            // Ajax Search
+            $.ajax({
+                url: $.url('/Intake/SearchAjax'),
+                data: intakeSearch,
+                datatype: "json",
+                type: "post",
+                contenttype: 'application/json; charset=utf-8',
+                async: true,
+                success: function (data) {
+                    $("#resultsGrid").html(data);
+                },
+                error: function (xhr) {
+                    alert('error Relation Items');
+                }
+            });
+        });
+    });
+</script>

@@ -1,0 +1,67 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .place 
+    {
+        position:center;
+        text-align:center;
+    }
+    button{        background-color:sandybrown;
+                   
+}
+    a{color:black;}
+    #PlHead{
+        color:white;
+        background-color:black;
+    }
+</style>
+<h2 style="text-align:center" id="PlHead">Place Names</h2>
+
+<div class="form-horizontal">
+    <div class="form-group">
+        <div class="row">
+            <div class="place">
+                <button type="button" class="btn">
+                    @Html.ActionLink("Province", "IndexProv", new { @class = "form-group" })
+                </button>
+            </div>
+        </div>
+        <br/>
+        <div class="row">
+            <div class="place">
+                <button type="button" class="btn">
+                    @Html.ActionLink("District", "IndexDistricts", new { @class = "form-group" })
+                </button>
+            </div>
+        </div>
+        <br />
+    <div class="row">
+        <div class="place">
+            <button type="button" class="btn">
+                @Html.ActionLink("Municipality", "IndexMunicipalities", new { @class = "form-group" })
+            </button>
+        </div>
+    </div>
+        <br />
+    <div class="row">
+        <div class="place">
+            <button type="button" class="btn">
+                @Html.ActionLink("Town", "IndexTowns", new { @class = "form-group" })
+            </button>
+        </div>
+        </div>
+        <br />
+    <div class="row">
+        <div class="place">
+            <button type="button" class="btn">
+                @Html.ActionLink("Ward", "IndexWards", new { @class = "form-group" })
+            </button>
+        </div>
+    </div>
+
+    </div>
+</div>
+

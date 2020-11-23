@@ -1,0 +1,126 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace Common_Objects.Models
+{
+    public class LocalMunicipalityModel
+    {
+        public Local_Municipality GetSpecificLocalMunicipality(int localMunicipalityId)
+        {
+            Local_Municipality localMunicipality;
+
+            var dbContext = new SDIIS_DatabaseEntities();
+            try
+            {
+                var localMunicipalityList = (from r in dbContext.Local_Municipalities
+                                             where r.Local_Municipality_Id.Equals(localMunicipalityId)
+                                             select r).ToList();
+
+                localMunicipality = (from r in localMunicipalityList
+                                     select r).FirstOrDefault();
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+
+            return localMunicipality;
+        }
+
+        public Local_Municipality GetSpecificLocalMunicipalityByName(string localMunicipalityName)
+        {
+            Local_Municipality localMunicipality;
+
+            var dbContext = new SDIIS_DatabaseEntities();
+            try
+            {
+                var localMunicipalityList = (from r in dbContext.Local_Municipalities
+                                             where r.Description.Equals(localMunicipalityName)
+                                             select r).ToList();
+
+                localMunicipality = (from r in localMunicipalityList
+                                     select r).FirstOrDefault();
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+
+            return localMunicipality;
+        }
+
+        public List<Local_Municipality> GetListOfLocalMunicipalities()
+        {
+            List<Local_Municipality> localMunicipalities;
+
+            using (var dbContext = new SDIIS_DatabaseEntities())
+            {
+                try
+                {
+                    var localMunicipalityList = (from r in dbContext.Local_Municipalities
+                                                 select r).ToList();
+
+                    localMunicipalities = (from r in localMunicipalityList
+                                           select r).ToList();
+                }
+                catch (Exception)
+                {
+                    return null;
+                }
+            }
+
+            return localMunicipalities;
+        }
+
+        public List<Local_Municipality> GetListOfLocalMunicipalities(int municipalityId)
+        {
+            List<Local_Municipality> localMunicipalities;
+
+            using (var dbContext = new SDIIS_DatabaseEntities())
+            {
+                try
+                {
+                    var localMunicipalityList = (from r in dbContext.Local_Municipalities
+                                                 where r.District_Municipality_Id.Equals(municipalityId)
+                                                 select r).ToList();
+
+                    localMunicipalities = (from r in localMunicipalityList
+                                           select r).ToList();
+                }
+                catch (Exception ex)
+                {
+                    return null;
+                }
+            }
+
+            return localMunicipalities;
+        }
+
+        public List<Town> GetListOfLocalMunicipalities_1(int municipalityId)
+        {
+            List<Town> localMunicipalities;
+
+            using (var dbContext = new SDIIS_DatabaseEntities())
+            {
+                try
+                {
+                    var localMunicipalityList = (from r in dbContext.Local_Municipalities
+                                                 join s in dbContext.Towns on r.Local_Municipality_Id equals s.Local_Municipality_Id
+                                                 where r.District_Municipality_Id.Equals(municipalityId)
+                                                 select s).ToList();
+
+                    localMunicipalities = (from r in localMunicipalityList
+                                           select r).ToList();
+                }
+                catch (Exception ex)
+                {
+                    return null;
+                }
+            }
+
+            return localMunicipalities;
+        }
+
+    }
+}

@@ -1,0 +1,294 @@
+﻿@model Common_Objects.ViewModels.GangAndTatoosViewModel
+@using Common_Objects.Models
+
+<div id="maindDisplay">
+    <div class="row" id="GangAndTattoosGrid">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <button class="btn btn-primary enabledisable" id="accordion" data-parent="#accordion" href="#actionModal" onclick="AddNewGang()"><i class="fa fa-plus"></i> New Gang</button>
+                <div class="panel-heading text-center">
+                    <strong style="color:#158cba">Gang</strong>
+                </div>
+                <div class="panel-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Date Created</th>
+                                    <th>Created By</th>
+                                    <th>Membership Type</th>
+                                    <th>Membership Rank</th>
+                                    <th>Attachments</th>
+                                    <th>&nbsp;</th>
+                                    <th>&nbsp;</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (Common_Objects.ViewModels.GangViewModel data in Model.gangs.OrderByDescending(data => data.Date_Created))
+
+                                {
+                                    <tr>
+                                        <td>@data.Date_Created</td>
+                                        <td>@data.Created_By</td>
+                                        <td>@data.Membership_Type</td>
+                                        <td>@data.Membership_Rank</td>
+                                        <td>
+
+                                            @foreach (Common_Objects.Models.CYCA_GangAndTatooDocument f in @data.documents)
+                                            {
+                                                <i class="fa fa-paperclip" style="color: black"></i> <a class="download-file1" href="@Url.Action("DownloadGangFile", "Admit", new { id = f.Document_Id,  })" target="_blank">
+                                                    @f.Document_Name
+                                                </a>
+                                                <br/>
+                                            }
+
+                                        </td>
+                                        <td><a class="dynamicButton enabledisable" onclick="ShowGangEdit(@data.Gang_Membership_Id,@Model.clientID)">Edit</a></td>
+                                        <td><a class="dynamicButton" onclick="ShowGangView(@data.Gang_Membership_Id,@Model.clientID)">View</a></td>
+                                    </tr>
+                                }
+
+                            </tbody>
+
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div class="row" id="TattoosGrid">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <button class="btn btn-primary enabledisable" id="accordion" data-parent="#accordion" href="#actionModal" onclick="AddNewTatoo()"><i class="fa fa-plus"></i> New Tattoo</button>
+                <div class="panel-heading text-center">
+                    <strong style="color:#158cba">Tattoo</strong>
+                </div>
+                <div class="panel-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Date Created</th>
+                                    <th>Created By</th>
+                                    @*<th>Visible</th>*@
+                                    <th>Position</th>
+                                    <th>Attachments</th>
+                                    <th>&nbsp;</th>
+                                    <th>&nbsp;</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (Common_Objects.ViewModels.TatooVewModel data in Model.tatoos.OrderByDescending(data => data.Date_Created))
+
+                                {
+                                    <tr>
+                                        <td>@data.Date_Created</td>
+                                        <td>@data.Created_By</td>
+                                        @*<td>@data.Tatoo_Visible</td>*@
+                                        <td>@data.Tatoo_Position</td>
+                                        <td>
+
+                                            @foreach (Common_Objects.Models.CYCA_GangAndTatooDocument f in @data.documents)
+                                            {
+                                                <i class="fa fa-paperclip" style="color: black"></i> <a class="download-file1" href="@Url.Action("DownloadGangFile", "Admit", new { id = f.Document_Id,  })" target="_blank">
+                                                    @f.Document_Name
+                                                </a> 
+                                                <br/>
+                                            }
+
+                                        </td>
+                                        <td><a class="dynamicButton enabledisable" onclick="ShowTatooEdit(@data.Tatoo_Id,@Model.clientID)">Edit</a></td>
+                                        <td><a class="dynamicButton" onclick="ShowTatooView(@data.Tatoo_Id,@Model.clientID)">View</a></td>
+                                    </tr>
+                                }
+
+                            </tbody>
+
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div class="row" id="GangAndTattoos" style="display:none">
+        <a href="#" class="btn btn-default pull-left" style="margin-left:auto" id="close" value="Back" onclick="goBack()">Cancel</a>
+    </div>
+</div>
+<div id="EditAll"></div>
+
+
+
+<script>
+    function base64toBlob(base64Data, contentType) {
+
+        var byteString = atob(base64Data.split(',')[1]);
+        var ab = new ArrayBuffer(byteString.length);
+        var ia = new Uint8Array(ab);
+
+        for (var i = 0; i < byteString.length; i++) {
+            ia[i] = byteString.charCodeAt(i);
+        }
+
+        return new Blob([ab], { type: contentType });
+    }
+    function downloadFile(file, type) {
+        var blob = base64toBlob(file, type);
+        window.open(window.URL.createObjectURL(blob));
+    }
+    function showEdit(id) {
+        ShowDynamicFormEditOnly(5, "GangAndTattoos", id);
+        $("#TattoosGrid").hide();
+        $("#GangAndTattoosGrid").hide();
+    }
+
+
+        function ShowGangView(id, clientId){
+       $.ajax({
+            type: 'POST',
+            url: '@Url.Content("~/Client/EditGang")',
+            data: {
+              id: id,
+              clientId: clientId,
+              display: "View"
+            },
+         success: function (result) {
+           console.log("returnedURL");
+             $('#maindDisplay').hide();
+             $('#EditAll').append(result);
+                // ShowDynamicForm();
+            }
+        });
+    }
+            function ShowTatooView(id, clientId){
+       $.ajax({
+            type: 'POST',
+            url: '@Url.Content("~/Client/EditTatoo")',
+            data: {
+              id: id,
+              clientId: clientId,
+              display: "View"
+            },
+         success: function (result) {
+           console.log("returnedURL");
+             $('#maindDisplay').hide();
+             $('#EditAll').append(result);
+                // ShowDynamicForm();
+            }
+        });
+    }
+            function AddNewGang(){
+       $.ajax({
+            type: 'POST',
+            url: '@Url.Content("~/Client/AddNewGang")',
+            data: {
+          
+              display: "New",
+                admissionId: '@Model.admissionID',
+                clientId: '@Model.clientID'
+            },
+         success: function (result) {
+           console.log("returnedURL");
+             $('#maindDisplay').hide();
+             $('#EditAll').append(result);
+                // ShowDynamicForm();
+            }
+        });
+    }
+                function AddNewTatoo(){
+       $.ajax({
+            type: 'POST',
+            url: '@Url.Content("~/Client/AddNewTatoo")',
+            data: {
+                display: "New",
+                admissionId: '@Model.admissionID',
+                clientID: '@Model.clientID'
+
+            },
+         success: function (result) {
+           console.log("returnedURL");
+             $('#maindDisplay').hide();
+             $('#EditAll').append(result);
+                // ShowDynamicForm();
+            }
+        });
+  }
+  function CloseEdit(view) {
+      $('#EditAll').empty();
+
+      $('#maindDisplay').show();
+      $('#maindDisplay').replaceWith(view);
+
+    console.log(view + "In history updated");
+  };
+  function CloseView(view) {
+      $('#maindDisplay').show();
+      $('#EditAll').empty();
+    console.log(view + "In history");
+    };
+      function ShowTatooEdit(id, clientId){
+       $.ajax({
+            type: 'POST',
+            url: '@Url.Content("~/Client/EditTatoo")',
+            data: {
+              id: id,
+              clientId: clientId,
+              display: "Update"
+            },
+         success: function (result) {
+           console.log("returnedURL");
+             $('#maindDisplay').hide();
+             $('#EditAll').append(result);
+                // ShowDynamicForm();
+            }
+        });
+  }
+  function ShowGangEdit(id, clientId){
+       $.ajax({
+            type: 'POST',
+            url: '@Url.Content("~/Client/EditGang")',
+            data: {
+              id: id,
+              clientId: clientId,
+              display: "Update"
+            },
+         success: function (result) {
+           console.log("returnedURL");
+             $('#maindDisplay').hide();
+             $('#EditAll').append(result);
+                // ShowDynamicForm();
+            }
+        });
+  }
+    function showRead(id) {
+        ShowDynamicFormReadOnly(5, "GangAndTattoos", id);
+        $("#TattoosGrid").hide();
+        $("#GangAndTattoosGrid").hide();
+    }
+    function showNew() {
+        ShowDynamicForm(5, "GangAndTattoos");
+
+        $("#TattoosGrid").hide();
+        $("#GangAndTattoosGrid").hide();
+
+    }
+
+    function goBack() {
+        if (window.history.go != null) {
+            $("#GangAndTattoosGrid").show();
+            $("#TattoosGrid").show();
+            $("#GangAndTattoos").hide();
+            $("#Tattoos").hide();
+
+        } else {
+            $("#TattoosGrid").hide();
+            $("#GangAndTattoosGrid").hide();
+        }
+
+    }
+    $(function () {
+        EnableDisableClass();
+    });
+
+</script>

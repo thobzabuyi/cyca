@@ -1,0 +1,257 @@
+﻿@model Common_Objects.ViewModels.CYCAReportsViewModel
+
+<div class="row" id="DischargeList">
+    <div class="text-center">
+        <h4> <strong style="color:#158cba"> Discharged Children</strong></h4>
+        <div style=" display: flex;justify-content: center;">
+            <table style=" align-self: center;">
+                <thead style="color:#158cba">
+                    <tr>
+                        <th class="col-md-2" style="text-align: center;">Quarter</th>
+                        <th class="col-md-2" style="text-align: center;">Year</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="col-md-2" style="text-align:left;width:auto"> @Html.DropDownList("Quarter", ViewBag.Months as SelectList, new { id = "QuartersDis", @class = "form-control" })</td>
+                        <td class="col-md-2" style="text-align:left">
+                            @Html.DropDownListFor(model => model.Year,
+                               Enumerable.Range(DateTime.Now.Year - 10, DateTime.Now.Year - 2009).OrderByDescending(i => i).
+                               Select(i => new SelectListItem { Value = i.ToString(), Text = i.ToString() }),
+                                new { id = "YearsDis", @class = "form-control" })
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="col-md-12">
+        <div class="panel panel-default">
+            <div class="panel-heading text-center">
+                <strong style="color:#158cba"> Summary View</strong>
+            </div>
+            <div class="panel-body">
+                <div class="table-responsive">
+                    <table class="table table-striped table-bordered table-hover" id="DischargeOverview">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th colspan="2">@ViewBag.MonthTitles[0]</th>
+                                <th colspan="2">@ViewBag.MonthTitles[1]</th>
+                                <th colspan="3">@ViewBag.MonthTitles[2]</th>
+
+                            </tr>
+                            <tr>
+                                <th>Centres</th>
+                                <th>Male</th>
+                                <th>Female</th>
+                                <th>Male</th>
+                                <th>Female</th>
+                                <th>Male</th>
+                                <th>Female</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.TotalFacilityAdmissionss != null)
+                            {
+                                foreach (Common_Objects.ViewModels.TotalFacilityAdmissions facility in Model.TotalFacilityAdmissionss)
+                                {
+                                    <tr>
+                                        <th>@facility.FacilityName</th>
+                                        <td> @facility.MonthOne.TotalMales</td>
+                                        <td> @facility.MonthOne.TotalFemales</td>
+                                        <td> @facility.MonthTwo.TotalMales</td>
+                                        <td> @facility.MonthTwo.TotalFemales</td>
+                                        <td> @facility.MonthThree.TotalMales</td>
+                                        <td> @facility.MonthThree.TotalFemales</td>
+                                        <td> </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-12">
+        <div class="col-md-8">
+            <img src="@Url.Action("DischargedChartDisplay","ReportChart")" alt="Alternate Text" />
+        </div>
+        <br />
+        <div class="col-md-4">
+            <img src="@Url.Action("DischargedPieChartDisplay","ReportChart")" alt="Alternate Text" />
+        </div>
+    </div>
+
+    <div class="col-md-12">
+
+        <div class="panel panel-default">
+            <div class="panel-heading text-center">
+                <strong style="color:#158cba"> Detailed View</strong>
+            </div>
+            <div class="panel-body">
+                <div class="table-responsive">
+                    <table class="table table-striped table-bordered table-hover" id="DischargeDetail">
+                        <thead>
+                            <tr>
+                                <th>Province</th>
+                                <th>Region</th>
+                                <th>Center</th>
+                                <th>Discharge Date</th>
+                                <th>Child Gender</th>
+                                <th>Age</th>
+                                <th>Child Name</th>
+                                <th>Admission Reason</th>
+                                @*<th>Illegal Items</th>*@
+
+
+                            </tr>
+                        </thead>
+                        <tbody id="SetAdmissiontList">
+                            @if (Model.DischargedChildrenReportViewModels != null)
+                            {
+                                foreach (Common_Objects.ViewModels.DischargedChildrenReportViewModel data in Model.DischargedChildrenReportViewModels)
+                                {
+                                    <tr>
+                                        <td>@data.ProvinceName</td>
+                                        <td>@data.RegionName</td>
+                                        <td>@data.CenterName</td>
+                                        <td>@data.DischargeDate</td>
+                                        <td>@data.Gender</td>
+                                        <td>@data.Age</td>
+                                        <td>@data.FullName</td>
+                                        <td>@data.AdmissionReason</td>
+                                        @*<td>@data.IllegalItems</td>*@
+
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                    <div style="text-align: right">
+
+                        @if (ViewBag.Page > 0)
+                        {
+                            <a id="prevPD" class="btn btn-default">
+
+                                &laquo; Prev
+                            </a>
+                        }
+                        @if (ViewBag.Page < ViewBag.MaxPage)
+                        {
+                            <a id="nextPD" class="btn btn-default">
+                                Next &raquo;
+                            </a>
+                        }
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+<script>
+
+    var tabDischarge = {
+        dischargedchildren: 5
+    }
+             $(document).ready(function () {
+                 $("#QuartersDis").change(function () {
+            console.log("clicked quarter" + '@Model.Year');
+                     console.log($("#QuartersDis").val());
+
+            var selectedValue = $(this).find('option:selected').val();
+            console.log(selectedValue + " this value");
+
+                  console.log("next");
+                 $.ajax({
+                type: 'POST',
+                url: '@Url.Content("~/ReportChart/ShowTab")',
+                     data: {
+                         type: tabDischarge.dischargedchildren,
+                         page: @ViewBag.Page,
+                         quarter: selectedValue,
+                         year: $("#YearsDis").val()
+                },
+                     success: function (result) {
+
+                         $('#DischargeList').empty();
+                         $('#DischargeList').append(result);
+                }
+            });
+
+
+        });
+                 $("#YearsDis").change(function () {
+            console.log("clicked quarter");
+            var selectedValue = $(this).find('option:selected').val();
+            console.log($("#QuartersDis").val());
+            console.log(selectedValue + " this value");
+
+                        $.ajax({
+                type: 'POST',
+                url: '@Url.Content("~/ReportChart/ShowTab")',
+                     data: {
+                         type: tabDischarge.dischargedchildren,
+                         page: @ViewBag.Page,
+                         quarter: $("#QuartersDis").val(),
+                         year: selectedValue
+                },
+                     success: function (result) {
+
+                         $('#DischargeList').empty();
+                         $('#DischargeList').append(result);
+                }
+            });
+
+
+        });
+    });
+    $('#nextPD').on('click', function (e) {
+
+
+        console.log("next");
+                 $.ajax({
+                type: 'POST',
+                url: '@Url.Content("~/ReportChart/ShowTab")',
+                     data: {
+                         type: tabDischarge.dischargedchildren,
+                         page: @ViewBag.Page + 1,
+                         quarter: $("#QuartersDis").val(),
+                         year: $("#YearsDis").val()
+                },
+                     success: function (result) {
+
+                         $('#DischargeList').empty();
+                         $('#DischargeList').append(result);
+                }
+            });
+    });
+    $('#prevPD').on('click', function (e) {
+
+
+        console.log("next");
+                 $.ajax({
+                type: 'POST',
+                url: '@Url.Content("~/ReportChart/ShowTab")',
+                     data: {
+                         type: tabDischarge.dischargedchildren,
+                         page: @ViewBag.Page - 1,
+                         quarter: $("#QuartersDis").val(),
+                         year: $("#YearsDis").val()
+                },
+                     success: function (result) {
+
+                         $('#DischargeList').empty();
+                         $('#DischargeList').append(result);
+                }
+            });
+    });
+
+
+</script>

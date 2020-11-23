@@ -1,0 +1,57 @@
+﻿@model Common_Objects.Models.NISIS_Ward
+@{ Layout = null; }
+
+
+                @using (Html.BeginForm("EditWard", "PlaceName", FormMethod.Post))
+                {
+                    @Html.AntiForgeryToken()
+
+                    <div class="form-horizontal">
+                        @Html.HiddenFor(model => model.NISIS_Ward_Id, new { htmlAttributes = new { @class = "form-control" } })
+
+                        @Html.HiddenFor(model => model.Local_Municipality_Id, new { htmlAttributes = new { @class = "form-control" } })
+
+
+                        @Html.HiddenFor(model => model.Local_Municipality.Municipality.Area.District_Id, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.HiddenFor(model => model.Local_Municipality.Municipality.Area.District_Id, new { htmlAttributes = new { @class = "form-control" } })
+
+                        <div class="form-group">
+                            @Html.Label("Province", htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @Html.DropDownListFor(model=>model.Local_Municipality.Municipality.Area.District.Province_Id, (IEnumerable<SelectListItem>)ViewBag.ProvinceList, "Select", htmlAttributes: new { @class = "form-control", @id = "ResultOfChoice" })
+                                @Html.ValidationMessageFor(model => model.Local_Municipality.Municipality.Area.District.Province.Description, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.Label("District", htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @Html.DropDownListFor(model=>model.Local_Municipality.Municipality.Area.District.District_Id, (IEnumerable<SelectListItem>)ViewBag.DistrictList, "Select", htmlAttributes: new { @class = "form-control", @id = "ResultOfChoice" })
+                                @Html.ValidationMessageFor(model => model.Local_Municipality.Municipality.Area.District.Description, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.Label("Local Municipality", htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @Html.DropDownListFor(model => model.Local_Municipality.Local_Municipality_Id, (IEnumerable<SelectListItem>)ViewBag.Local_MunicipalityList, "Select", htmlAttributes: new { @class = "form-control", @id = "ResultOfChoice" })
+                                @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.Label("Ward", htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-md-offset-2 col-md-10">
+                                <input type="submit" value="Save" class="btn btn-default" />
+                            </div>
+                        </div>
+                    </div>
+                }
+
+                <div>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                </div>

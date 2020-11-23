@@ -1,0 +1,82 @@
+﻿@model Common_Objects.Models.LookupDataItem
+
+@{
+    ViewBag.Title = "Create Lookup Table Item";
+}
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="panel panel-primary">
+        <div class="panel-heading" style="text-align: center">
+            Create an Lookup Table Item
+        </div>
+        <div class="panel-body">
+
+            <div class="row">
+
+                <div class="col-md-6">
+                    <div class="row">
+                        <div class="col-md-6 form-group">
+                            @Html.LabelFor(x => x.LookupTableList, new { @class = "control-label" })
+                        </div>
+                        <div class="col-md-6">
+                            @Html.DropDownListFor(n => n.LookupTableTypeId, Model.LookupTableList, "- Please select -", new { @id = "DropdownModule", @class = "form-control" })
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="row">
+
+                <div class="col-md-6">
+                    <div class="row">
+                        <div class="col-md-6 form-group">
+                            @Html.LabelFor(x => x.Description, new { @class = "control-label" })
+                        </div>
+                        <div class="col-md-6">
+                            @Html.TextBoxFor(model => model.Description, new { @class = "form-control" })
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="row">
+
+                <div class="col-md-6">
+                    <div class="row">
+                        <div class="col-md-6 form-group">
+                            @Html.LabelFor(x => x.Source, new { @class = "control-label" })
+                        </div>
+                        <div class="col-md-6">
+                            @Html.TextBoxFor(model => model.Source, new { @class = "form-control" })
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="row">
+
+                <div class="col-md-6">
+                    <div class="row">
+                        <div class="col-md-6 form-group">
+                            @Html.LabelFor(x => x.Definition, new { @class = "control-label" })
+                        </div>
+                        <div class="col-md-6">
+                            @Html.TextBoxFor(model => model.Definition, new { @class = "form-control" })
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+        @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+
+        <div class="panel-footer">
+            <input type="submit" id="ButtonSave" value="Save" class="btn btn-success" />
+            @Html.ActionLink("Cancel", "Index", null, new { @class = "btn btn-danger" })
+        </div>
+    </div>
+}

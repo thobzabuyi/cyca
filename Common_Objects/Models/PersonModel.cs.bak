@@ -1,0 +1,700 @@
+﻿using Common_Objects.ViewModels;
+using System;
+using System.Collections.Generic;
+using System.Data.Entity.Validation;
+using System.IO;
+using System.Linq;
+using System.Web;
+
+namespace Common_Objects.Models
+{
+    public class PersonModel
+    {
+        public Person GetSpecificPerson(int personId)
+        {
+            Person person;
+
+            var dbContext = new SDIIS_DatabaseEntities();
+            try
+            {
+                var persons = (from p in dbContext.Persons
+                               where p.Person_Id.Equals(personId)
+                               select p).ToList();
+
+                //agent = PopulateAdditionalItems(agents, dbContext).FirstOrDefault();
+
+                person = (from p in persons
+                          select p).FirstOrDefault();
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+
+            return person;
+        }
+
+        public List<Person> GetListOfPersons(bool showInActive, bool showDeleted)
+        {
+            List<Person> listOfPersons;
+
+            var dbContext = new SDIIS_DatabaseEntities();
+            try
+            {
+                var persons = (from p in dbContext.Persons
+                               where p.Is_Active || p.Is_Active.Equals(!showInActive)
+                               where !p.Is_Deleted || p.Is_Deleted.Equals(showDeleted)
+                               select p).ToList();
+
+                //listOfAgents = PopulateAdditionalItems(agents, dbContext);
+
+                listOfPersons = (from p in persons
+                                 select p).ToList();
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+
+            return listOfPersons;
+        }
+
+        public List<Person> GetListOfPersonsForVEPInbox(bool showInActive, bool showDeleted, int userId)
+        {
+            List<Person> listOfPersons;
+
+            var dbContext = new SDIIS_DatabaseEntities();
+            try
+            {
+                var persons = (from p in dbContext.Persons
+                               where p.Is_Active || p.Is_Active.Equals(!showInActive)
+                               where !p.Is_Deleted || p.Is_Deleted.Equals(showDeleted)
+                               join t in dbContext.Clients on p.Person_Id equals t.Person_Id
+                               join q in dbContext.Intake_Assessments on t.Client_Id equals q.Client_Id
+                               where q.Case_Manager_Id == userId && q.Treatment_Date != null  && q.Problem_Sub_Category_Id == 21
+                               select p).ToList();
+
+                //listOfAgents = PopulateAdditionalItems(agents, dbContext);
+
+                listOfPersons = (from p in persons
+                                 select p).ToList();
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+
+            return listOfPersons;
+        }
+
+        public Person CreatePerson(string firstName, string lastName, string knownAs, int? identificationTypeId, string identificationNumber, bool isPivaValidated, string pivaTransactionId, DateTime? dateOfBirth, int? age, bool isEstimagedAge, int? Sexual_Orientation_Id,
+            int? languageId, int? genderId, int? maritalStatusId, int? religionId, int? preferredContactTypeId, string phoneNumber, string mobilePhoneNumber, string emailAddress, int? populationGroupId, int? nationalityId,
+            int? disabilityId, int? Citizenship_Id, DateTime dateCreated, string createdBy, bool isActive, bool isDeleted)
+        {
+            Person newPerson;
+
+            using (var dbContext = new SDIIS_DatabaseEntities())
+            {
+                var person = new Person()
+                {
+                    First_Name = firstName,
+                    Last_Name = lastName,
+                    Known_As = knownAs,
+                    Identification_Type_Id = identificationTypeId,
+                    Identification_Number = identificationNumber,
+                    Is_Piva_Validated = isPivaValidated,
+                    Piva_Transaction_Id = pivaTransactionId,
+                    Date_Of_Birth = dateOfBirth,
+                    Age = age,
+                    Is_Estimated_Age = isEstimagedAge,
+                    Sexual_Orientation_Id = Sexual_Orientation_Id,
+                    Language_Id = languageId,
+                    Gender_Id = genderId,
+                    Marital_Status_Id = maritalStatusId,
+                    Religion_Id = religionId,
+                    Preferred_Contact_Type_Id = preferredContactTypeId,
+                    Phone_Number = phoneNumber,
+                    Mobile_Phone_Number = mobilePhoneNumber,
+                    Email_Address = emailAddress,
+                    Population_Group_Id = populationGroupId,
+                    Nationality_Id = nationalityId,
+                    Disability_Type_Id = disabilityId,
+                    Citizenship_Id = Citizenship_Id,
+                    Date_Created = dateCreated,
+                    Created_By = createdBy,
+                    Is_Active = isActive,
+                    Is_Deleted = isDeleted
+                };
+
+                //try
+                //{
+                    newPerson = dbContext.Persons.Add(person);
+                    dbContext.SaveChanges();
+                //}
+                //catch (Exception)
+                //{
+                //    return null;
+                //}
+            }
+
+            return newPerson;
+        }
+
+        public int_Disability_Selection CreatePersonDisability(int Person_Id, List<int> SelectedDisabilityId, string userName)
+        {
+            var dbContext = new SDIIS_DatabaseEntities();
+            var intDisabilitySelection = new int_Disability_Selection();
+            if (SelectedDisabilityId != null)
+            {
+                var intSelectedDisabiility = new int_Disability_Selection();
+                UserModel userModel = new UserModel();
+                foreach (var item in SelectedDisabilityId)
+                {
+                    var ObjCheckS = (from a in dbContext.int_Disability_Selection
+                                     where a.Disability_Id == item &&
+                                     a.Person_Id == Person_Id
+                                     select a).FirstOrDefault();
+                    if (ObjCheckS != null)
+                    {
+                        intSelectedDisabiility = dbContext.int_Disability_Selection.Find(ObjCheckS.Disability_Selection_Id);
+                        intSelectedDisabiility.Person_Id = Person_Id;
+                        intSelectedDisabiility.Disability_Id = item;
+                        intSelectedDisabiility.Modified_By = (from z in dbContext.Users
+                                                              where z.User_Name == userName
+                                                              select z.User_Id).FirstOrDefault();
+                        intSelectedDisabiility.Modified_Date = DateTime.Now;
+                        intSelectedDisabiility.Is_Active = true;
+                        intSelectedDisabiility.Is_Deleted = false;
+                        dbContext.SaveChanges();
+                    }
+                    if (ObjCheckS == null)
+                    {
+                        intSelectedDisabiility = new int_Disability_Selection();
+                        intSelectedDisabiility.Person_Id = Person_Id;
+                        intSelectedDisabiility.Disability_Id = item;
+                        intSelectedDisabiility.Created_By = (from z in dbContext.Users
+                                                             where z.User_Name == userName
+                                                             select z.User_Id).FirstOrDefault();
+                        intSelectedDisabiility.CreatedTimeStamp = DateTime.Now;
+                        intSelectedDisabiility.Is_Active = true;
+                        intSelectedDisabiility.Is_Deleted = false;
+                        dbContext.int_Disability_Selection.Add(intSelectedDisabiility);
+                        dbContext.SaveChanges();
+                    }
+
+                }
+
+
+            }
+            return intDisabilitySelection;
+
+        }
+
+        public void Delete_Disability(int Id, int User_Id)
+        {
+            using (SDIIS_DatabaseEntities dbContext = new SDIIS_DatabaseEntities())
+            {
+                var DelDisability = (from a in dbContext.int_Disability_Selection
+                               where a.Disability_Id == Id && a.Person_Id == User_Id
+                               select a).FirstOrDefault();
+                dbContext.int_Disability_Selection.Remove(DelDisability);
+                dbContext.SaveChanges();
+            }
+        }
+
+
+        public Person EditPerson(int personId, string firstName, string lastName, string knownAs, int? identificationTypeId, string identificationNumber, DateTime? dateOfBirth, int? age, bool isEstimatedAge, int? Sexual_Orientation_Id,
+            int? languageId, int? genderId, int? maritalStatusid, int? religionId, int? preferredContactTypeId, string phoneNumber, string mobilePhoneNumber, string emailAddress, int? populationGroupId, int? nationalityId,
+            int? disabilityId, int? Citizenship_Id, DateTime? dateLastModified, string modifiedBy, bool isActive, bool isDeleted)
+        {
+            Person editPerson;
+
+            using (var dbContext = new SDIIS_DatabaseEntities())
+            {
+                try
+                {
+                    editPerson = (from p in dbContext.Persons
+                                  where p.Person_Id.Equals(personId)
+                                  select p).FirstOrDefault();
+
+                    if (editPerson == null) return null;
+                    if (firstName != null)
+                    { 
+                        editPerson.First_Name = firstName;
+                    }
+                    if (lastName != null)
+                    {
+                        editPerson.Last_Name = lastName;
+                    }
+                    if (knownAs != null)
+                    {
+                        editPerson.Known_As = knownAs;
+                    }
+                    if (identificationTypeId != null)
+                    {
+                        editPerson.Identification_Type_Id = identificationTypeId;
+                    }
+                    if (identificationNumber != null)
+                    {
+                        editPerson.Identification_Number = identificationNumber;
+                    }
+                    if (dateOfBirth != null)
+                    {
+                        editPerson.Date_Of_Birth = dateOfBirth;
+                    }
+                    if (age != null)
+                    {
+                        editPerson.Age = age;
+                    }
+                    if (isEstimatedAge != false)
+                    {
+                        editPerson.Is_Estimated_Age = isEstimatedAge;
+                    }
+                    if (Sexual_Orientation_Id != null)
+                    {
+                        editPerson.Sexual_Orientation_Id = Sexual_Orientation_Id;
+                    }
+                    if (languageId != null)
+                    {
+                        editPerson.Language_Id = languageId;
+                    }
+                    if (genderId != null)
+                    {
+                        editPerson.Gender_Id = genderId;
+                    }
+                    if (maritalStatusid != null)
+                    {
+                        editPerson.Marital_Status_Id = maritalStatusid;
+                    }
+                    if (religionId != null)
+                    {
+                        editPerson.Religion_Id = religionId;
+                    }
+                    if (preferredContactTypeId != null)
+                    {
+                        editPerson.Preferred_Contact_Type_Id = preferredContactTypeId;
+                    }
+                    if (phoneNumber != null)
+                    {
+                        editPerson.Phone_Number = phoneNumber;
+                    }
+                    if (mobilePhoneNumber != null)
+                    {
+                        editPerson.Mobile_Phone_Number = mobilePhoneNumber;
+                    }
+                    if (emailAddress != null)
+                    {
+                        editPerson.Email_Address = emailAddress;
+                    }
+                    if (populationGroupId != null)
+                    {
+                        editPerson.Population_Group_Id = populationGroupId;
+                    }
+                    if (nationalityId != null)
+                    {
+                        editPerson.Nationality_Id = nationalityId;
+                    }
+                    if (disabilityId != null)
+                    {
+                        editPerson.Disability_Type_Id = disabilityId;
+                    }
+                    if (Citizenship_Id != null)
+                    {
+                        editPerson.Citizenship_Id = Citizenship_Id;
+                    }
+                    // Kholo Update
+                    if (dateLastModified != null)
+                    {
+                        editPerson.Date_Last_Modified = Convert.ToDateTime(dateLastModified);
+                    }
+                    if (modifiedBy != null)
+                    {
+                        editPerson.Modified_By = modifiedBy;
+                    }
+                    if (isActive != false)
+                    {
+                        editPerson.Is_Active = isActive;
+                    }
+                    if (isDeleted != false)
+                    {
+                        editPerson.Is_Deleted = isDeleted;
+                    }
+                    dbContext.SaveChanges();
+                    
+                }
+
+                catch (Exception ex)
+                {
+                    return null;
+                }
+
+            }
+
+            return editPerson;
+        }
+
+        public Person SetPersonIsDeleted(int personId, bool isDeleted)
+        {
+            Person editPerson;
+
+            using (var dbContext = new SDIIS_DatabaseEntities())
+            {
+                try
+                {
+                    editPerson = (from x in dbContext.Persons
+                                  where x.Person_Id.Equals(personId)
+                                  select x).FirstOrDefault();
+
+                    if (editPerson == null) return null;
+
+                    editPerson.Is_Deleted = isDeleted;
+
+                    dbContext.SaveChanges();
+                }
+                catch (Exception)
+                {
+                    return null;
+                }
+            }
+
+            return editPerson;
+        }
+
+        public Person UpdateNISISData(int personId, string firstName, string lastName, string idNumber, int? maritalStatusId)
+        {
+            Person editPerson;
+
+            using (var dbContext = new SDIIS_DatabaseEntities())
+            {
+                try
+                {
+                    editPerson = (from p in dbContext.Persons
+                                  where p.Person_Id.Equals(personId)
+                                  select p).FirstOrDefault();
+
+                    if (editPerson == null) return null;
+
+                    editPerson.First_Name = firstName;
+                    editPerson.Last_Name = lastName;
+                    editPerson.Identification_Number = idNumber;
+                    editPerson.Marital_Status_Id = maritalStatusId;
+
+                    dbContext.SaveChanges();
+                }
+                catch (Exception ex)
+                {
+                    return null;
+                }
+            }
+
+            return editPerson;
+        }
+
+        public Person AddAddress(int personId, int addressTypeId, string addressLine1, string addressLine2, int? townId, string postalCode)
+        {
+            Person editPerson;
+
+            using (var dbContext = new SDIIS_DatabaseEntities())
+            {
+                try
+                {
+                    editPerson = (from p in dbContext.Persons
+                                  where p.Person_Id.Equals(personId)
+                                  select p).FirstOrDefault();
+
+                    if (editPerson == null) return null;
+
+                    editPerson.Addresses.Add(new Address() { Address_Type_Id = addressTypeId, Address_Line_1 = addressLine1, Address_Line_2 = addressLine2, Town_Id = townId, Postal_Code = postalCode });
+
+                    dbContext.SaveChanges();
+                }
+                catch (System.Data.Entity.Validation.DbEntityValidationException dbEx)
+                {
+
+                    Exception raise = dbEx;
+                    foreach (var validationErrors in dbEx.EntityValidationErrors)
+                    {
+                        foreach (var validationError in validationErrors.ValidationErrors)
+                        {
+                            string message = string.Format("{0}:{1}",
+                                validationErrors.Entry.Entity.ToString(),
+                                validationError.ErrorMessage);
+                            // raise a new exception nesting
+                            // the current instance as InnerException
+                            raise = new InvalidOperationException(message, raise);
+                        }
+                    }
+                    throw raise;
+                }
+            }
+
+            return editPerson;
+        }
+ 
+        public Person AddAllergy(int personId, int allergyId)
+        {
+            Person editPerson;
+
+            using (var dbContext = new SDIIS_DatabaseEntities())
+            {
+                try
+                {
+                    editPerson = (from p in dbContext.Persons
+                                  where p.Person_Id.Equals(personId)
+                                  select p).FirstOrDefault();
+
+                    if (editPerson == null) return null;
+
+                    var addAllergy = (from a in dbContext.Allergies
+                                      where a.Allergy_Id.Equals(allergyId)
+                                      select a).FirstOrDefault();
+
+                    if (addAllergy == null) return null;
+
+                    editPerson.Allergies.Add(addAllergy);
+
+                    dbContext.SaveChanges();
+                }
+                catch (Exception)
+                {
+                    return null;
+                }
+            }
+
+            return editPerson;
+        }
+
+        public Person AddChronicIllness(int personId, int chronicIllnessId)
+        {
+            Person editPerson;
+
+            using (var dbContext = new SDIIS_DatabaseEntities())
+            {
+                try
+                {
+                    editPerson = (from p in dbContext.Persons
+                                  where p.Person_Id.Equals(personId)
+                                  select p).FirstOrDefault();
+
+                    if (editPerson == null) return null;
+
+                    var addChronicIllness = (from c in dbContext.Chronic_Illnesses
+                                             where c.Chronic_Illness_Id.Equals(chronicIllnessId)
+                                             select c).FirstOrDefault();
+
+                    if (addChronicIllness == null) return null;
+
+                    editPerson.Chronic_Illnesses.Add(addChronicIllness);
+
+                    dbContext.SaveChanges();
+                }
+                catch (Exception)
+                {
+                    return null;
+                }
+            }
+
+            return editPerson;
+        }
+
+        public Person AddDeceases(int personId, int deceaseId)
+        {
+            Person editPerson;
+
+            using (var dbContext = new SDIIS_DatabaseEntities())
+            {
+                try
+                {
+                    editPerson = (from p in dbContext.Persons
+                                  where p.Person_Id.Equals(personId)
+                                  select p).FirstOrDefault();
+
+                    if (editPerson == null) return null;
+
+                    var addDecease = (from c in dbContext.apl_Decease
+                                             where c.Decease_Id.Equals(deceaseId)
+                                             select c).FirstOrDefault();
+
+                    if (addDecease == null) return null;
+
+                    editPerson.apl_Decease.Add(addDecease);
+
+                    dbContext.SaveChanges();
+                }
+                catch (Exception)
+                {
+                    return null;
+                }
+            }
+
+            return editPerson;
+        }
+
+
+        public Person RemoveAllergy(int personId, int allergyId)
+        {
+            Person editPerson;
+
+            using (var dbContext = new SDIIS_DatabaseEntities())
+            {
+                try
+                {
+                    editPerson = (from p in dbContext.Persons
+                                  where p.Person_Id.Equals(personId)
+                                  select p).FirstOrDefault();
+
+                    if (editPerson == null) return null;
+
+                    var removeAllergy = (from a in dbContext.Allergies
+                                         where a.Allergy_Id.Equals(allergyId)
+                                         select a).FirstOrDefault();
+
+                    if (removeAllergy == null) return null;
+
+                    editPerson.Allergies.Remove(removeAllergy);
+
+                    dbContext.SaveChanges();
+                }
+                catch (Exception)
+                {
+                    return null;
+                }
+            }
+
+            return editPerson;
+        }
+
+        public Person RemoveChronicIllness(int personId, int chronicIllnessId)
+        {
+            Person editPerson;
+
+            using (var dbContext = new SDIIS_DatabaseEntities())
+            {
+                try
+                {
+                    editPerson = (from p in dbContext.Persons
+                                  where p.Person_Id.Equals(personId)
+                                  select p).FirstOrDefault();
+
+                    if (editPerson == null) return null;
+
+                    var removeChronicIllness = (from c in dbContext.Chronic_Illnesses
+                                                where c.Chronic_Illness_Id.Equals(chronicIllnessId)
+                                                select c).FirstOrDefault();
+
+                    if (removeChronicIllness == null) return null;
+
+                    editPerson.Chronic_Illnesses.Remove(removeChronicIllness);
+
+                    dbContext.SaveChanges();
+                }
+                catch (Exception)
+                {
+                    return null;
+                }
+            }
+
+            return editPerson;
+        }
+
+        public Person RemoveDecease(int personId, int deceaseId)
+        {
+            Person editPerson;
+
+            using (var dbContext = new SDIIS_DatabaseEntities())
+            {
+                try
+                {
+                    editPerson = (from p in dbContext.Persons
+                                  where p.Person_Id.Equals(personId)
+                                  select p).FirstOrDefault();
+
+                    if (editPerson == null) return null;
+
+                    var removeDecease = (from c in dbContext.apl_Decease
+                                                where c.Decease_Id.Equals(deceaseId)
+                                                select c).FirstOrDefault();
+
+                    if (removeDecease == null) return null;
+
+                    editPerson.apl_Decease.Remove(removeDecease);
+
+                    dbContext.SaveChanges();
+                }
+                catch (Exception)
+                {
+                    return null;
+                }
+            }
+
+            return editPerson;
+        }
+
+
+        public Person AddImage(int personId, HttpPostedFileBase uploadedFile, ImageTypeEnum imageType)
+        {
+            Person editPerson;
+
+            var dateCreated = DateTime.Now;
+            const string createdBy = "jhendrikse";
+
+            using (var dbContext = new SDIIS_DatabaseEntities())
+            {
+                try
+                {
+                    editPerson = (from p in dbContext.Persons
+                                  where p.Person_Id.Equals(personId)
+                                  select p).FirstOrDefault();
+
+                    if (editPerson == null) return null;
+
+                    var profilePhoto = new Person_Image()
+                    {
+                        Person_Id = editPerson.Person_Id,
+                        Image_Filename = Path.GetFileName(uploadedFile.FileName),
+                        Image_Content_Type = uploadedFile.ContentType,
+                        Image_Type_Id = (int)imageType,
+                        Date_Created = dateCreated,
+                        Created_By = createdBy
+                    };
+
+                    using (var reader = new BinaryReader(uploadedFile.InputStream))
+                    {
+                        profilePhoto.Image_Content = reader.ReadBytes(uploadedFile.ContentLength);
+                    }
+
+                    editPerson.Images.Add(profilePhoto);
+
+                    dbContext.SaveChanges();
+                }
+                catch (Exception)
+                {
+                    return null;
+                }
+            }
+
+            return editPerson;
+        }
+
+        public List<IntPersonDisabilitiesVM> GetListOfDisabilities(int Id)
+        {
+            using (SDIIS_DatabaseEntities dbcontext = new SDIIS_DatabaseEntities())
+            {
+                var disabilities = (from a in dbcontext.int_Disability_Selection
+                                     where a.Person_Id == Id
+                                     select a).ToList();
+                List<IntPersonDisabilitiesVM> NewModelList = new List<IntPersonDisabilitiesVM>();
+                foreach (var item in disabilities)
+                {
+                    IntPersonDisabilitiesVM NewModel = new IntPersonDisabilitiesVM();
+                    NewModel.Person_Id = Id;
+                    NewModel.DisabilityId = item.Disability_Id;
+                    NewModel.DisabilityDescription = dbcontext.Disabilities.Find(item.Disability_Id).Description;
+                    NewModelList.Add(NewModel);
+                }
+                return NewModelList.ToList();
+            }
+        }
+
+    }
+}

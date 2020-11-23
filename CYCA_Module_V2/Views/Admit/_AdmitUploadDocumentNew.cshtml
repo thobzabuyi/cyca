@@ -1,0 +1,164 @@
+﻿@model Common_Objects.ViewModels.CYCAAdmissionViewModel
+@{
+    ViewBag.Title = "Illegal Item";
+    Layout = null;
+}
+
+<div class="row">
+    <div class="col-md-12 col-sm-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                @*<a href="#">
+                    <span class="glyphicon glyphicon-step-backward pull-right" value="Back" style="margin-left:20px" onclick="goBack(-1);return false"></span>
+                </a>*@
+                <h3>Upload admission document(s) for @Model.childFullNames</h3>
+            </div>
+            <div class="panel-body">
+
+                <style>
+                    .red {
+                        color: dodgerblue;
+                    }
+                </style>
+                <form id="myForm" name="myForm">
+
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            @Html.HiddenFor(m => m.Admission_Id)
+                            @Html.LabelFor(x => x.selectedDocType)
+                        </div>
+                        <div class="col-md-8 form-group">
+                            @Html.DropDownListFor(m => m.Document_Type_Id, ViewBag.DocumentTypeList as SelectList, "--Select--", new { @id = "Document_Type_Id", @class = "form-control", required = "required", onchange = "ShowHideDiv()" })
+                        </div>
+                        <div id="dvOther" style="display: none">
+                            <div class="col-md-4">
+                                Explain Document Type:
+                            </div>
+                            <div class="col-md-8 form-group">
+                                @Html.TextBoxFor(m => m.Additional_Info, new { @class = "form-control", required = "required" })
+                                @*<input class="form-control" type="text" id="Exp" required />*@
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            @Html.LabelFor(x => x.Document_Name)
+                        </div>
+                        <div class="col-md-8 form-group" style="">
+                            @*@Html.TextBoxFor(m => m.Document_Name, new { type = "file", @id = "Document_Name", @class = "form-control" })*@
+                            <input id="fileInput" type="file" multiple>
+                        </div>
+                        <br />            <br />
+                        <div class="col-md-3">
+                            <table class="table" id="FilesList" style="visibility:hidden">
+                                <tr>
+                                    <th>
+                                        Attachment(s)
+                                    </th>
+                                    <th>
+                                        Action
+                                    </th>
+                                </tr>
+                            </table>
+                        </div>
+
+                    </div>
+
+
+                    <div class="row pull-right">
+                        <div class="col-md-12">
+                            <a href="#" class="btn btn-default" id="Cancel">Skip Upload Documents</a>
+                            <a href="#" class="btn btn-primary" id="Send">Next</a>
+                        </div>
+                    </div>
+                </form>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(function () {
+        $("#myForm").validate();
+    });
+
+
+    function ShowHideDiv() {
+
+        var Document_Type_Id = document.getElementById("Document_Type_Id");
+        var dvOther = document.getElementById("dvOther");
+        dvOther.style.display = Document_Type_Id.value == "4" ? "block" : "none";
+    }
+
+    var formdata = new FormData(); //FormData object
+    $(document).ready(function () {
+
+        $("#fileInput").on("change", function () {
+            var fileInput = document.getElementById('fileInput');
+            //Iterating through each files selected in fileInput
+            for (i = 0; i < fileInput.files.length; i++) {
+
+                var sfilename = fileInput.files[i].name;
+                let srandomid = Math.random().toString(36).substring(7);
+
+                formdata.append(sfilename, fileInput.files[i]);
+                formdata.append("Admission_Id", $("#Admission_Id").val());
+                formdata.append("Document_Type_Id", $("#Document_Type_Id").val());
+                var markup = "<tr id='" + srandomid + "'><td>" + sfilename + "</td><td><a href='#' onclick='DeleteFile(\"" + srandomid + "\",\"" + sfilename +
+                    "\")'><span class='red'>Remove file</span></a></td></tr>"; // Binding the file name
+                $("#FilesList tbody").append(markup);
+
+            }
+            chkatchtbl();
+            $('#fileInput').val('');
+        });
+
+        $("#Send").click(function () {
+            var $valid = $("#myForm").valid();
+            if (!$valid) {
+                return;
+            }
+            formdata.append('uploadername', $('#txtuploader').val());
+            $.ajax({
+               url: '@Url.Action("AddUploadDocument","Admit")',
+                type: "POST",
+                contentType: false, // Not to set any content header
+                processData: false, // Not to process data
+                data: formdata,
+                async: false,
+                success: function (response) {
+                    $.confirm({
+                        title: 'Document Uploaded',
+                        content: 'Would you like to add another file?',
+                        buttons: {
+                            Yes: function () {
+                                $("#myForm").trigger("reset");
+                            },
+                            No: function () {
+                                location.reload(true);
+                            }
+                        }
+                    });
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            });
+        });
+    });
+    function DeleteFile(Fileid, FileName) {
+        formdata.delete(FileName)
+        $("#" + Fileid).remove();
+        chkatchtbl();
+    }
+    function chkatchtbl() {
+        if ($('#FilesList tr').length > 1) {
+            $("#FilesList").css("visibility", "visible");
+        } else {
+            $("#FilesList").css("visibility", "hidden");
+        }
+    }
+    $('#Cancel').click(function () {
+        location.reload(true);
+    });
+</script>

@@ -1,0 +1,246 @@
+﻿@model Common_Objects.Models.IntakeRelationItem
+
+@{
+    ViewBag.Title = "Edit Relation";
+}
+
+@using (Html.BeginForm("Edit", "Relation", FormMethod.Post, new { role = "form", id = "relationFormEdit" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="panel-body">
+
+        @Html.HiddenFor(x => x.Item_Id, new { id = "Relation_Item_Id" })
+        @Html.HiddenFor(x => x.Relation_Type_Id, new { id = "Edited_Relation_Type_Id" })
+        @Html.HiddenFor(x => x.Person_Id, new { id = "Person_Id" })
+
+        <div id="existingPersonSearchArea" style="display:none">
+            <b>Search for person or create new person:</b>
+            <br /><br />
+            @Html.Partial("_PersonSearch", Model.SearchPerson)
+        </div>
+
+        <div id="personDetailArea">
+            <div id="personDetailWizard">
+                <ul>
+                    <li><a href="#PDtab1" data-toggle="tab">Personal Details</a></li>
+                    <li><a href="#PDtab2" data-toggle="tab">Contact Details</a></li>
+                    <li><a href="#PDtab3" data-toggle="tab">Additional Details</a></li>
+                </ul>
+                <hr />
+                <div class="tab-content">
+                    <div class="tab-pane" id="PDtab1">
+                        @Html.Partial("_PersonalDetailsEdit", Model.CreatePerson)
+                    </div>
+                    <div class="tab-pane" id="PDtab2">
+                        @Html.Partial("_ContactDetailsEdit", Model.CreatePerson)
+                    </div>
+                    <div class="tab-pane" id="PDtab3">
+                        <div id="adoptiveParentsDetail" style="display:@(Model.IsAdoptiveParentDetailVisible ? "inline" : "none")">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <b>Additional Information regarding Adoptive Parent</b>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="biologicalParentsDetail" style="display:@(Model.IsBiologicalParentDetailVisible ? "inline" : "none")">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <b>Additional Information regarding Biological Parent</b>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="fosterParentsDetail" style="display:@(Model.IsFosterParentDetailVisible ? "inline" : "none")">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <b>Additional Information regarding Foster Parent</b>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="familyMemberDetail" style="display:@(Model.IsFamilyMemberDetailVisible ? "inline" : "none")">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <b>Additional Information regarding Family Member</b>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="caregiverDetail" style="display:@(Model.IsCaregiverDetailVisible ? "inline" : "none")">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <b>Additional Information regarding Care Giver</b>
+                                </div>
+                            </div>
+                        </div>
+                        <br />
+                        <div class="row" style="display:@(Model.IsAdoptiveParentDetailVisible || Model.IsBiologicalParentDetailVisible || Model.IsFosterParentDetailVisible ? "inline" : "none")">
+
+                            <div class="col-md-6">
+                                <div class="row">
+                                    <div class="col-md-6 form-group">
+                                        @Html.LabelFor(x => x.IsDeceased, new { @class = "control-label" })
+                                    </div>
+                                    <div class="col-md-6">
+                                        @Html.CheckBoxFor(model => model.IsDeceased, new { id = "Is_Deceased" })
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="row">
+                                    <div class="col-md-6 form-group">
+                                        @Html.LabelFor(x => x.DateDeceased, new { @class = "control-label" })
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="input-group">
+                                            @Html.TextBoxFor(x => x.DateDeceased, new { @id = "Date_Deceased", @class = "form-control jqueryui-marker-datepicker" })
+                                            <label for="Date_Deceased" class="input-group-addon btn">
+                                                <span class="glyphicon glyphicon-calendar"></span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="row" style="display:@(Model.IsCaregiverDetailVisible || Model.IsFamilyMemberDetailVisible ? "inline" : "none")">
+
+                            <div class="col-md-6">
+                                <div class="row">
+                                    <div class="col-md-6 form-group">
+                                        @Html.LabelFor(x => x.Person_Relationship_Type_Id, new { @class = "control-label" })
+                                    </div>
+                                    <div class="col-md-6">
+                                        @Html.DropDownListFor(n => n.Person_Relationship_Type_Id, Model.Person_Relationship_Type_List, "- Please select -", new { @id = "Person_Relationship_Type_Id", @class = "form-control" })
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="panel-footer">
+                    <input type="submit" id="ButtonSave" value="Save" class="btn btn-success" />
+                    <input type="button" id="ButtonRelationCancel" value="Cancel" class="btn btn-danger modal-close-btn" />
+                </div>
+            </div>
+        </div>
+
+    </div>
+}
+
+<script type="text/javascript">
+    $(function () {
+        // Initialize Wizard Control
+        $('#personDetailWizard').bootstrapWizard();
+
+        // Create click event for Add New button
+        $("#ButtonAddNew").click(function () {
+            AddPersonClicked();
+        });
+        
+        // Add custom rule for validating ID Number
+        jQuery.validator.addMethod("idNumberValidation", function (value, element) {
+            var idType = $("#DropdownIdentificationType_Popup").val();
+
+            // Only do validation for RSA ID Numbers, if not then just return true to allow validation to pass
+            if (idType == '1') {
+                var idDetails = extractFromID(value);
+                return idDetails.valid || value === '';
+            } else
+                return true;
+        }, "The ID Number does not appear to be valid");
+
+        // Initialize jQuery validation
+        $("#relationFormCreate").validate();
+
+        $("#Identification_Number_Popup").rules("add", {
+            idNumberValidation: true
+        });
+
+        // Initialize items marked as datepickers
+        $(".jqueryui-marker-datepicker").datepicker({
+            beforeShow: function () {
+                setTimeout(function () {
+                    $('.ui-datepicker').css('z-index', 99999999999999);
+                }, 0);
+            },
+            dateFormat: "dd M yy",
+            changeYear: true
+        });
+
+        // Helper function to calculate age from date of birth field
+        $('.jqueryui-marker-datepicker').change(function () {
+            var dob = new Date($(this).val());
+            if ((this.id == 'Date_of_Birth_Popup') && (!isNaN(dob))) {
+                var today = new Date();
+                $(this).datepicker("setDate", new Date(dob));
+                var age = today.getFullYear() - dob.getFullYear();
+                var m = today.getMonth() - dob.getMonth();
+                if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) {
+                    age--;
+                }
+
+                $("#TextboxAge_Popup").val(age);
+            }
+        });
+
+        // Temporary Workaround: Reset date values so that they display properly in the DatePicker fields
+        $('.jqueryui-marker-datepicker').each(function (i, obj) {
+            if ($(this).val() != '') {
+                var dateValue = new Date($(this).val());
+                $(this).datepicker("setDate", new Date(dateValue));
+            }
+        });
+
+    });
+
+    // Function Call to Add New Person
+    function AddPersonClicked() {
+        $("#existingPersonSearchArea").hide();
+        $("#personDetailArea").show();
+    }
+
+    // Function Call to bubble click event from Grid
+    function GridRowClicked(personId) {
+        // Populate Personal Details
+        $.ajax({
+            url: "@Url.Content("/Person/EditPersonalDetails/personId")",
+            data: { "personId": personId },
+            type: "post",
+            datatype: "json",
+            contenttype: 'application/json; charset=utf-8',
+            async: true,
+            success: function (response, status, xhr) {
+                $("#PDtab1").html(response);
+            },
+            error: function (htmlHttpRequest, textStatus, errorThrown) {
+                alert('Error Edit Person Personal Details: ' + XMLHttpRequest);
+            }
+        });
+
+        // Populate Contact Details
+        $.ajax({
+            url: "@Url.Content("/Person/EditContactDetails/personId")",
+            data: { "personId": personId },
+            type: "post",
+            datatype: "json",
+            contenttype: 'application/json; charset=utf-8',
+            async: true,
+            success: function (response, status, xhr) {
+                $("#PDtab2").html(response);
+            },
+            error: function (htmlHttpRequest, textStatus, errorThrown) {
+                alert('Error Edit Person Contact Details: ' + XMLHttpRequest);
+            }
+        });
+
+        $("#existingPersonSearchArea").hide();
+        $("#personDetailArea").show();
+    }
+</script>

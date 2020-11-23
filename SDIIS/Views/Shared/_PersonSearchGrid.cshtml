@@ -1,0 +1,34 @@
+﻿@model Common_Objects.ViewModels.IntakeSearchViewModel
+
+@Html.HiddenFor(x => x.Selected_Person_Id, new { id = "Selected_Person_Id" })
+
+@{
+    var clientsGrid = new WebGrid(source: Model.Person_List, canSort: false, canPage: false, ajaxUpdateContainerId: "relationsGrid");
+
+    @clientsGrid.GetHtml(
+        tableStyle: "webgrid-table",
+        headerStyle: "webgrid-header",
+        footerStyle: "webgrid-footer",
+        alternatingRowStyle: "webgrid-alternating-row",
+        selectedRowStyle: "webgrid-selected-row",
+        rowStyle: "webgrid-row-style",
+        htmlAttributes: new { id = "nisisSitesGrid", width = "100%" },
+        columns: clientsGrid.Columns(
+            clientsGrid.Column("First_Name", "First Name"),
+            clientsGrid.Column("Last_Name", "Last Name"),
+            clientsGrid.Column("Identification_Number", "ID Number"),
+            clientsGrid.Column("Is_Active", "Is Active?"),
+            clientsGrid.Column(header: "", style: "GridEditButton", format: (item) =>
+            {
+                return new HtmlString("<input type='button' onclick='setValue(" + item.Person_Id + ")' value='Select' class='btn btn-success' value='View'/>");
+            })
+        )
+    )
+}
+
+<script type="text/javascript">
+    function setValue(personId) {
+        // The function call below is on the main page... this is bubbling the event to there and passing the PersonId to it.
+        GridRowClicked(personId);
+    }
+</script>

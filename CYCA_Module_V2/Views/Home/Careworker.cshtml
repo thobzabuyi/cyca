@@ -1,0 +1,490 @@
+﻿
+@model Common_Objects.ViewModels.CYCAChildAllocationViewModel
+@using Common_Objects.Models
+
+
+@{
+    ViewBag.Title = "Child Allocation";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+
+
+<div class="wrapper">
+    <nav class="navbar-default navbar-side" role="navigation">
+        <div class="sidebar-collapse">
+            <div style="max-height: 800px;  overflow-y: hidden; background-color:#F3F3F3 ;">
+                <div style="background-image: url(/Images/bg_1.jpg); background-repeat: no-repeat; background-position: center; background-size: cover; height: 30%; width: 100%">
+                    <div class="user-logo" style='margin-left: 20px; margin-top: 20px; color: #fff;'>
+                        <br />
+                        <span class="chat-img center-block"><img src="~/Images/staff/staff1.jpg" alt="User" height="100" width="100" class="img-circle" /></span>
+                        @if (Session["CurrentUser"] != null)
+                        {
+
+                            <h4 style="color: #F3ECD5"> @Html.Label(((User)Session["CurrentUser"]).First_Name + " " + ((User)Session["CurrentUser"]).Last_Name)</h4>
+                        }
+                        <br />
+                    </div>
+                </div>
+
+                @*Move and Transfer all kids buttons*@
+                <br />
+                <div class="table-responsive" style="background-color: #F3F3F3;overflow:hidden">
+                    <table class="table table-hover">
+                        <tbody>
+                            <tr style="width:100%">
+                                <td class="col-md-6"><button class="btn btn-warning " id="btnMoveAll">Move Group</button></td>
+                                <td class="col-md-6"><button class="btn btn-warning " id="btnTransferAll">Trasfer Group</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <input type="text" class="form-control" id="searchChild" placeholder="Search child" />
+                @*Table for kids assigned to logged in user*@
+                <div class="table-responsive">
+                    <table class="table table-striped  table-hover" id="dataTableChildren">
+                        <tbody id="setallocatedchildren" class="connectedSortable"></tbody>
+                    </table>
+                </div>
+
+                @*Transfer Table*@
+                <div class="inner-addon ">
+                    <div class="text-center" style="color: #428bca;">
+                        Incoming & Outgoing Transfers
+                    </div>
+                    <div class="table-responsive" style="background-color: #F3F3F3">
+                        <table class="table table-hover">
+                            <tbody>
+                                <tr>
+                                    <td><button class="btn btn-warning btn-sm " data-toggle="collapse" data-target="#collapseTwo"><i class="fa fa-plus"></i> outgoing</button></td>
+                                    <td><button class="btn btn-warning btn-sm" data-toggle="collapse" data-target="#collapseOne"><i class="fa fa-plus"></i> Incoming</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                @*Table for kids transferred by logged in user*@
+                <div id="collapseTwo" class="collapse">
+                    <div class="table-responsive">
+                        <table class="table table-striped  table-hover">
+                            <tbody id="settransferredchild"></tbody>
+                        </table>
+                    </div>
+                </div>
+                @*Table for kids transferred to logged in user*@
+                <div class="collapse" id="collapseOne">
+                    <div class="table-responsive">
+                        <table class="table table-striped  table-hover">
+                            <tbody id="setincomingtransfer"></tbody>
+                        </table>
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div id="page-wrapper">
+        <div style="text-align: center; font-size: small; font-weight: bold; background-color:#F3ECD5; width:100%">
+            <marquee behavior="alternate"><span class="marquee">Building a caring society. Together!</span></marquee>
+        </div>
+        <div id="page-inner">
+            <div class="row">
+                <div class="col-md-12 col-sm-12">
+                    <div class="panel-body">
+                        <ul class="nav nav-tabs">
+                            <li class="active">
+                                <a href="#movements" data-toggle="tab">Movements</a>
+                            </li>
+                            <li class="">
+                                <a href="#transfers" data-toggle="tab">Transfer</a>
+                            </li>
+                        </ul>
+                        <div class="tab-content">
+                            <div class="tab-pane fade active in" id="movements">
+                                @Html.Partial("_Movements")
+
+                            </div>
+
+                            <div class="tab-pane fade" id="transfers">
+                                @Html.Partial("_Transafers")
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="transferModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-color-brown">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">Accept/Decline Transfer</h4>
+            </div>
+            <div class="modal-body">
+
+                <div class="row">
+                    <div class="col-md-4">
+                        @Html.HiddenFor(m => m.Transfer_Id, new { @id = "id" })
+                        @Html.LabelFor(x => x.Child_First_Name)
+                    </div>
+                    <div class="col-md-8 form-group" style="">
+                        @Html.TextBoxFor(m => m.Child_First_Name, new { @id = "Child_First_Name", @class = "form-control" })
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        @Html.LabelFor(x => x.transferredbyName)
+                    </div>
+                    <div class="col-md-8 form-group" style="">
+                        @Html.TextBoxFor(m => m.transferredbyName, new { @id = "transferredbyName", @class = "form-control" })
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        @Html.LabelFor(x => x.selectedTransferStatus)
+                    </div>
+                    <div class="col-md-8 form-group">
+                        @Html.DropDownListFor(m => m.Transfer_Status_Id, ViewBag.StatusList as SelectList, new { @id = "Transfer_Status_Id", @class = "form-control", @onchange = "enableSend()" })
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+
+                <a href="#" class="btn btn-default" data-dismiss="modal" id="r">Cancel</a>
+                <a href="#" class="btn btn-warning" disabled id="SendButton">Save</a>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<script>
+//List All Children Table
+    $(document).ready(function () {
+        $.getJSON('../../Home/SearchChild',
+            function (json) {
+                var tr;
+                for (var i = 0; i < json.length; i++) {
+                    tr = $('<tr draggable="true" ondragstart="drag(event)" id="' + json[i].Person_Id + '"/>');
+                    var path = "@Url.Content("~/Images/child/child1.jpg")";
+                    tr.append("<td>" + '<img class="chat-img pull-left img-circle"  src = ' + path + ' height="50" width="50">' + "</td>");
+                    tr.append("<td>" + json[i].Child_First_Name + "</td>");
+                    tr.append("<td>" + "<a onclick='viewChild("+json[i].Person_Id+")' class='btn btn-success viewChild'>view</a>" + "</td>");
+                    $('#setallocatedchildren').append(tr);
+                }
+            });
+        $(document).ready(function () {
+            $('.spinner').css('display', 'block');
+            setTimeout(function () {
+                $('.spinner').hide();
+            }, 5000);
+        });
+    });
+    //End...
+
+    //Search Child.....
+    $(document).ready(function () {
+        $("#searchChild").on("keyup", function () {
+            var value = $(this).val().toLowerCase();
+            $("#dataTableChildren tr").filter(function () {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+            });
+        });
+    });
+    function viewChild(id) {
+        location = "@Url.Content("~/Client/Index")/" + id;
+        console.log(id);
+    }
+//Move whole children group
+    $("#btnMoveAll").click(function () {
+        console.log($('#Venue_Id').val());
+        console.log($('#Person_Id').val());
+
+        if ($('#Venue_Id').val() != 0) {
+            var children = new Array();
+            // var child = {};
+            $("#dataTableChildren TBODY TR").each(function () {
+                var row = $(this);
+                var child = {};
+                console.log(row.attr('id'));
+                child.Person_Id = row.attr('id');
+                child.Venue_Id = $("#Venue_Id").val();
+
+                children.push(child);
+
+            });
+            console.log(children);
+            if (confirm('Are you sure you want to move all kids?')) {
+                $.ajax({
+                    type: "Post",
+                    url: "/Home/MoveAllChild",
+                    data:
+                        JSON.stringify(children),
+
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (r) {
+                        alert("Success!..");
+                        $('.spinner').css('display', 'block');
+                        setTimeout(function () {
+                            $('.spinner').hide();
+                        }, 10000);
+
+                        location.reload(true);
+
+                        $("#myModal2Off").modal("hide");
+                    },
+                    error: function (xhr, ajaxOptions, error) {
+                        alert(xhr.status);
+                        alert('Error: ' + xhr.responseText);
+                    }
+                })
+            }
+            else {
+                $('.spinner').css('display', 'block');
+                setTimeout(function () {
+                    $('.spinner').hide();
+                }, 10000);
+
+                location.reload(true);
+
+                $("#myModal2Off").modal("hide");
+            }
+
+
+        }
+
+        else {
+            alert("Please select venue");
+            setTimeout(function () {
+                $('.spinner').hide();
+            }, 10000);
+
+            location.reload(true);
+        }
+
+    })
+
+ //Transfer whole children grou
+    $("#btnTransferAll").click(function () {
+        console.log($('#User_Id').val());
+        //console.log($('#Person_Id').val());
+        if ($('#User_Id').val() != 0) {
+            var children = new Array();
+            // var child = {};
+            $("#dataTableChildren TBODY TR").each(function () {
+                var row = $(this);
+                var child = {};
+                console.log(row.attr('id'));
+                if (row.attr('id') != null) {
+                    child.Person_Id = row.attr('id');
+                    child.Transferred_To = $("#User_Id").val();
+                }
+                children.push(child);
+            });
+            console.log(children);
+            if (confirm('Are you sure you want to transfer all kids?')) {
+                $.ajax({
+                    type: "Post",
+                    url: "/Home/TransferAllChild",
+                    data:
+                        JSON.stringify(children),
+
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (r) {
+                        alert("Children transferred successfully!");
+                        $('.spinner').css('display', 'block');
+                        setTimeout(function () {
+                            $('.spinner').hide();
+                        }, 10000);
+
+                        location.reload(true);
+
+                        $("#myModal2Off").modal("hide");
+                    },
+                    error: function (xhr, ajaxOptions, error) {
+                        alert(xhr.status);
+                        alert('Error: ' + xhr.responseText);
+                    }
+                })
+            }
+            else {
+                $('.spinner').css('display', 'block');
+                setTimeout(function () {
+                    $('.spinner').hide();
+                }, 10000);
+
+                location.reload(true);
+
+                $("#myModal2Off").modal("hide");
+            }
+        }
+        else {
+            alert("Please select User you want to transfer child to");
+            setTimeout(function () {
+                $('.spinner').hide();
+            }, 10000);
+
+            location.reload(true);
+        }
+    })
+
+//Collapse Incoming and Outgoing Transfers
+    $(document).ready(
+        $('.collapse').on('show.bs.collapse hide.bs.collapse', function (e) {
+            e.preventDefault();
+        }),
+        $('[data-toggle="collapse"]').on('click', function (e) {
+            e.preventDefault();
+            $($(this).data('target')).toggleClass('in');
+        })
+    );
+
+
+//List of Outgoing Transfers
+       $(document).ready(function () {
+           $.getJSON('../../Home/ChildTransferredByUser',
+            function (json) {
+                var tr;
+                for (var i = 0; i < json.length; i++) {
+                    tr = $('<tr id="' + json[i].Child_Allocation_Id + '"/>');
+                    var path = "@Url.Content("~/Images/child/child2.jpg")";
+                    tr.append("<td>" + '<img class="chat-img pull-left img-circle"  src = ' + path + ' height="50" width="50">' + "</td>");
+                    tr.append("<td>" + json[i].Child_First_Name + "</td>");
+                    tr.append("<td>" + json[i].selectedTransferStatus + "</td>");
+                    $('#settransferredchild').append(tr);
+                }
+            });
+        $(document).ready(function () {
+            $('.spinner').css('display', 'block');
+            setTimeout(function () {
+                $('.spinner').hide();
+            }, 5000);
+
+        });
+    });
+
+
+//List of Incoming Transfers
+        $(document).ready(function () {
+            $.getJSON('../../Home/ChildTransferredToUser',
+            function (json) {
+                var tr;
+                for (var i = 0; i < json.length; i++) {
+                    tr = $('<tr/>');
+                    var path = "@Url.Content("~/Images/child/child3.jpg")";
+                    tr.append("<td>" + '<img class="chat-img pull-left img-circle"  src = ' + path + ' height="50" width="50">' + "</td>");
+                    tr.append("<td>" + json[i].Child_First_Name + "</td>");
+                    tr.append("<td>" + "<a href='#' class='btn btn-success fa fa-plus' onclick= 'AcceptTransfer(" + json[i].Transfer_Id + ")'></a>" + "</td>");
+                    $('#setincomingtransfer').append(tr);
+                }
+            });
+        $(document).ready(function () {
+            $('.spinner').css('display', 'block');
+            setTimeout(function () {
+                $('.spinner').hide();
+            }, 5000);
+
+        });
+    });
+
+ //Respond to Incoming Transfers
+    function enableSend() {
+
+        if (document.getElementById("Transfer_Status_Id").value !== 1 + "") {
+
+            $("#SendButton").removeAttr("disabled")
+        } else {
+            $("#SendButton").attr("disabled", "disabled")
+        }
+    }
+
+    function AcceptTransfer(TransferId) {
+        var url = "/Home/GetTransferById?TransferId=" + TransferId;
+        //alert(RequestId);
+        $("#myModalLabel").html("Reply to Request");
+        $("#transferModal").modal();
+        $.ajax({
+            type: "GET",
+            url: url,
+            success: function (data) {
+                console.log(data);
+                var obj = JSON.parse(data);
+                $("#id").val(obj.Transfer_Id);
+                $("#Child_First_Name").val(obj.Child_First_Name);
+                $("#transferredbyName").val(obj.transferredbyName);
+            }, error: function () { alert('something bad happened'); }
+        })
+    }
+    $("#SendButton").click(function () {
+
+        $.ajax({
+            type: "Post",
+            url: "/Home/UpdateTransferandAllocationInDatabase",
+            data: {
+                Transfer_Id: $("#id").val(),
+                Child_First_Name: $("#Child_First_Name").val(),
+                transferredbyName: $("#transferredbyName").val(),
+                Transfer_Status_Id: $("#Transfer_Status_Id").val(),
+            },
+            success: function (result) {
+                if (result == true) {
+                    alert("Trasfer Accepted...");
+                }
+                $('.spinner').css('display', 'block');
+                setTimeout(function () {
+                    $('.spinner').hide();
+                }, 10000);
+
+                location.reload(true);
+
+                $("#myModal2Off").modal("hide");
+
+            },
+            error: function (xhr, ajaxOptions, error) {
+                alert(xhr.status);
+                alert('Error: ' + xhr.responseText);
+            }
+        })
+    })
+
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+    //Initializing WOW aninations
+    //new WOW().init();
+    //Small carosel code set here
+    jQuery('.carousel[data-type="multi"] .item').each(function () {
+        var next = jQuery(this).next();
+        if (!next.length) {
+            next = jQuery(this).siblings(':first');
+        }
+        next.children(':first-child').clone().appendTo(jQuery(this));
+
+        for (var i = 0; i < 2; i++) {
+            next = next.next();
+            if (!next.length) {
+                next = jQuery(this).siblings(':first');
+            }
+            next.children(':first-child').clone().appendTo($(this));
+        }
+    });
+   //Ending of small carosel
+
+</script>
+

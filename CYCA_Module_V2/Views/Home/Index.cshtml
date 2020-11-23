@@ -1,0 +1,274 @@
+﻿@using Common_Objects.Models
+@using System.Configuration
+@model Common_Objects.Models.IntakeDataViewModel
+@{
+    ViewBag.Title = "View Child Details";
+}
+@section styles
+{
+    <link href="~/Content/jquery-ui.css" rel="stylesheet" />
+    <link href="~/Content/OrgChart/jquery.orgchart.css" rel="stylesheet" />
+    <link href="~/Content/OrgChart/orgchart.css" rel="stylesheet" />
+}
+<br>
+<div class="col-md-12 main-div">
+    <div class="col-md-3 leftPanel" id="LeftPanelDiv">
+        <div class="portlet light profile-sidebar-portlet bordered">
+            @*<h4 class="text-center" style="font-weight: bold;">@ViewBag.FacilityName</h4>*@
+
+            <div class="text-center">
+                <strong class="text-center" style="color:#158cba; font-size: 16px">@ViewBag.FacilityName</strong>
+            </div>
+            <div class="profile-userpic">
+                @if (@ViewBag.CurrentUserImage.Length > 0)
+                {
+                    <img src="data:image/*;base64,@ViewBag.CurrentUserImage" class="img-responsive" alt="">
+                }
+                @if (@ViewBag.CurrentUserImage.Length < 1)
+                {
+                    <img src="~/images/unknown.png" class="img-responsive" style="height: 25%" alt="">
+                }
+                @*@switch (((User)Session["CurrentUser"]).Last_Name)
+        {
+            case "Worker 1":<img src="~/images/staff/2.jfif" class="img-responsive" style="height:25%" alt="">; break;
+            case "Worker 2":<img src="~/images/staff/4.jfif" class="img-responsive" style="height:25%" alt="">; break;
+            case "Msibi": <img src="~/images/staff/2.jfif" class="img-responsive" style="height: 25%" alt="">; break;
+            case "Janecke": <img src="~/images/staff/2.jfif" class="img-responsive" style="height: 25%" alt="">; break;
+            case "Pali": <img src="~/images/staff/2.jfif" class="img-responsive" style="height: 25%" alt="">; break;
+            case "Mashilangoako": <img src="~/images/staff/3.jfif" class="img-responsive" style="height: 25%" alt="">; break;
+            case "Masuku": <img src="~/images/staff/4.jfif" class="img-responsive" style="height: 25%" alt="">; break;
+            case "Matso": <img src="~/images/staff/3.jfif" class="img-responsive" style="height: 25%" alt="">; break;
+            case "Baloyi": <img src="~/images/staff/1.jfif" class="img-responsive" style="height: 25%" alt="">; break;
+            default: <img src="~/images/unknown.png" class="img-responsive" style="height: 25%" alt="">; break;
+
+        }*@
+            </div>
+            <div class="profile-usertitle">
+                <div class="profile-usertitle-name">
+                    @if (Session["CurrentUser"] != null)
+                    {
+
+                        @Html.Label(((User)Session["CurrentUser"]).First_Name + " " + ((User)Session["CurrentUser"]).Last_Name)
+
+                    }
+                </div>
+                @*<div class="profile-usertitle-job">  </div>*@
+            </div>
+            <div class="profile-userbuttons">
+                @*@if (Context.User.IsInRole(ConfigurationManager.AppSettings["CenterManagerRole"]))
+                    {
+                        <button type="button" onclick="RoleChange('FacilityManager')" class="btn btn-info  btn-sm center-manager">Center Manager</button>
+                    }
+                    @if (Context.User.IsInRole(ConfigurationManager.AppSettings["TeamLeaderRole"]))
+                    {
+                        <button type="button" onclick="RoleChange('TeamLeader')" class="btn btn-info  btn-sm team-leader">Team Leader</button>
+                    }
+                    @if (Context.User.IsInRole(ConfigurationManager.AppSettings["CareWorkerRole"]))
+                    {
+                        <button type="button" onclick="RoleChange('CareWorker')" class="btn btn-info  btn-sm care-worker">Care Worker</button>
+                    }*@
+                <h4>Working as a</h4>
+                @Html.DropDownList("Role_Id", ViewBag.Roles as SelectList, null, new { @id = "Role_Id", @class = "form-control", @onChange = "selectedRoleChange(this)" })
+
+            </div>
+            <div id="pm" class="profile-usermenu">
+
+            </div>
+        </div>
+    </div>
+    <div class="col-md-9 rightPanel" style="overflow: hidden; position:unset" id="RoleRightContent">
+
+    </div>
+</div>
+
+@section scriptslower
+{
+    <script src="~/Scripts/jquery-ui.min.js"></script>
+    <script src="~/Scripts/OrgChart/jquery.orgchart.js"></script>
+    <link href="~/Content/fullcalendar-2.6.0/main.css" rel="stylesheet" />
+    <script src="~/Content/fullcalendar-2.6.0/main.js"></script>
+    @*<link href="~/Content/fullcalendar-scheduler-1.2.0/scheduler.css" rel="stylesheet" />
+    <script src="~/Content/fullcalendar-scheduler-1.2.0/scheduler.js"></script>
+    <link href="~/Content/Jquery-Cron/jquery-cron.css" rel="stylesheet" />
+    <script src="~/Content/Jquery-Cron/jquery-cron.js"></script>*@
+    <script>
+        const roleTypes = {
+            FacilityManager: 0,
+            TeamLeader: 1,
+            CareWorker: 2,
+            Other: 3,
+            ProvincialCoordinator:4
+        };
+        var defaultRole = "";
+        var leftLoaded = false;
+        var rightLoaded = false;
+        $(document).ready(function () {
+            console.log( '@ViewBag.CurrentUserId' + 'current user');
+            switch ('@ViewBag.DefaultRole') {
+                case "FacilityManager":
+                    defaultRole = roleTypes.FacilityManager;
+                    break;
+                case "TeamLeader":
+                    defaultRole = roleTypes.TeamLeader;
+                    break;
+                case "CareWorker":
+                    defaultRole = roleTypes.CareWorker;
+                    break;
+                case "ProvincialCoordinator":
+                    defaultRole = roleTypes.ProvincialCoordinator;
+                    break;
+
+                case "Other":
+                    defaultRole = roleTypes.Other;
+                    break;
+            };
+            RefreshLeftPanel(defaultRole, '#pm');
+            RefreshRightPanel(defaultRole, '#RoleRightContent');
+        });
+        function SetupDragAndDropCenterManager() {
+        var l = document.getElementById("RoleRightContent");
+        var startTable = "setallocatedchildren";
+        var $tabs = $("#" + startTable);
+        $("tbody.connectedSortable")
+            .sortable({
+                connectWith: ".connectedSortable",
+                items: "> tr:not(:first)",
+                appendTo: $tabs,
+                helper: "clone",
+                cursor: "move",
+                zIndex: 999990,
+                start: function (event, ui) {
+                  //alert("start2");
+
+                    var start_pos = ui.item.index();
+                  ui.item.data('start_pos', start_pos);
+
+                    //alert(start_pos);
+                },
+                update: function (event, ui) {
+                  console.log(this);
+
+                    var totalRows = $('#drop tr').length - 1;
+                    $("#totalkids").text(totalRows);
+                    var totalTransferRows = $('#transfer tr').length - 1;
+                    $("#totalkids1").text(totalTransferRows);
+                    if (this.id == 'table2' && this === ui.item.parent()[0]) {
+                        //alert("update2");
+                    } else if (this.id == 'setallocatedchildren' && this === ui.item.parent()[0]) {
+                        // alert("update1");
+                    }
+                }
+            });
+
+
+        }
+        function SetupDragAndDrop() {
+            var startTable = "setallocatedchildren";
+          var $tabs = $("#" + startTable);
+            $("tbody.connectedSortable")
+                .sortable({
+                    connectWith: ".connectedSortable",
+                    items: "> tr:not(:first)",
+                    appendTo: $tabs,
+                    helper: "clone",
+                    cursor: "move",
+                    zIndex: 999990,
+                    start: function (event, ui) {
+                        //alert("start2");
+                        var start_pos = ui.item.index();
+                        ui.item.data('start_pos', start_pos);
+                        //alert(start_pos);
+                    },
+                    update: function (event, ui) {
+                        console.log(this);
+                        var totalRows = $('#drop tr').length - 1;
+                        $("#totalkids").text(totalRows);
+                        if ($("#totalkids").text(totalRows) > "0") {
+                            $("#Save").removeAttr("disabled")
+                        } else {
+                            $("#Save").attr("disabled", "disabled")
+                        }
+                        var totalTransferRows = $('#transfer tr').length - 1;
+                        $("#totalkids1").text(totalTransferRows);
+                        if ($("#totalkids1").text(totalTransferRows) > "0") {
+                            $("#SaveTransfer").removeAttr("disabled")
+                        } else {
+                            $("#SaveTransfer").attr("disabled", "disabled")
+                        }
+                        if (this.id == 'table2' && this === ui.item.parent()[0]) {
+                            //alert("update2");
+                        } else if (this.id == 'setallocatedchildren' && this === ui.item.parent()[0]) {
+                            // alert("update1");
+                        }
+                    }
+                });
+        }
+        function RefreshLeftPanel(role, target) {
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Content("~/Home/ShowLeftContent")',
+                data: {
+                    type: role
+                },
+              success: function (result) {
+                    $(target).html(result);
+                    // ShowDynamicForm();
+                }
+            });
+        }
+      function RefreshRightPanel(role, target) {
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Content("~/Home/ShowRightContent")',
+                data: {
+                    type: role
+                },
+              success: function (result) {
+
+                    $(target).html(result);
+                }
+            });
+        }
+        function RoleChange(role) {
+            switch (role) {
+                case "FacilityManager":
+                    defaultRole = roleTypes.FacilityManager;
+                    break;
+                case "TeamLeader":
+                    defaultRole = roleTypes.TeamLeader;
+                    break;
+                case "CareWorker":
+                    defaultRole = roleTypes.CareWorker;
+                    break;
+                case "ProvincialCoordinator":
+                    defaultRole = roleTypes.ProvincialCoordinator;
+                    break;
+                case "Other":
+                    defaultRole = roleTypes.Other;
+                    break;
+            };
+            RefreshLeftPanel(defaultRole, '#pm');
+            RefreshRightPanel(defaultRole, '#RoleRightContent');
+        }
+
+        function selectedRoleChange(ddlitem) {
+            switch (ddlitem.options[ddlitem.selectedIndex].text) {
+                case "Center Manager":
+                    RoleChange('FacilityManager');
+                    break;
+                case "Team Leader":
+                    RoleChange('TeamLeader');
+                    break;
+                case "Care Worker":
+                    RoleChange('CareWorker');
+                    break;
+                case "Provincial Coordinator":
+                    RoleChange('ProvincialCoordinator');
+                    break;
+                default:
+                    RoleChange('Other');
+                    break;
+            }
+        }
+    </script>
+}

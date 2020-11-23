@@ -1,0 +1,28 @@
+﻿@model IEnumerable<Common_Objects.Models.Person_Employment>
+
+<div class="row">
+    <div class="col-md-12">
+        @{
+            var employmentGrid = new WebGrid(source: Model, canSort: false, rowsPerPage: 5, ajaxUpdateContainerId: "employmentItemsGrid");
+
+            @employmentGrid.GetHtml(
+                tableStyle: "webgrid-table",
+                headerStyle: "webgrid-header",
+                footerStyle: "webgrid-footer",
+                alternatingRowStyle: "webgrid-alternating-row",
+                selectedRowStyle: "webgrid-selected-row",
+                rowStyle: "webgrid-row-style",
+                htmlAttributes: new { id = "educationGrid", width = "100%" },
+                columns: employmentGrid.Columns(
+                    employmentGrid.Column("apl_Employer.Employer_Name", "Employer Name"),
+                    employmentGrid.Column("Occupation", "Occupation"),
+                    employmentGrid.Column(header: "", style: "GridEditButton", format: (item) =>
+                    {
+                        var link = Html.ActionLink("Edit", "Edit", "Employment", new { id = item.Person_Employment_Id }, new { @class = "modal-link btn btn-success GridEditButton" });
+                        return link;
+                    })
+                )
+            )
+        }
+    </div>
+</div>

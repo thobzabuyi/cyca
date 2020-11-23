@@ -1,0 +1,69 @@
+﻿using Common_Objects.ViewModels;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web.Mvc;
+
+namespace Common_Objects.Models
+{
+   public class AdoptionWorkListModel
+    {
+
+        SDIIS_DatabaseEntities db = new SDIIS_DatabaseEntities();
+
+        //public List<AdoptionWorkListVM> GetUserWorkList(int useridlogged)
+        //{
+        //    List<AdoptionWorkListVM> avm = new List<AdoptionWorkListVM>();
+        //    SDIIS_DatabaseEntities db = new SDIIS_DatabaseEntities();
+        //    var workList =
+        //        (from list in db.ADOPT_Case_WorkList
+        //         join status in db.apl_Adoption_Record_Status on list.Adopt_Record_Status_Id equals
+        //         status.Adopt_Record_Status_Id
+        //         join Assessment in db.Intake_Assessments on list.Intake_Assessment_Id equals Assessment.Intake_Assessment_Id
+        //         join client in db.Clients on Assessment.Client_Id equals client.Client_Id
+        //         join person in db.Persons on client.Person_Id equals person.Person_Id
+        //         where (list.Allocate_To == useridlogged)
+        //         select new
+        //         {
+        //             list.Intake_Assessment_Id,
+        //             list.Adopt_CaseWoklist_Id,
+        //             list.Allocated_By,
+        //             list.Allocate_To,
+        //             list.Date_Allocated,
+        //             list.Reference_Number,
+        //             list.Adopt_Record_Status_Id,
+        //             list.Date_Acknowledged,
+        //             person.First_Name,
+        //             person.Last_Name,
+        //             person.Identification_Number
+
+        //         }).ToList();
+        //    ;
+        //    foreach (var item in workList)
+        //    {
+        //        AdoptionWorkListVM obj = new AdoptionWorkListVM();
+                
+        //        obj.Intake_Assessment_Id = item.Intake_Assessment_Id;
+        //        obj.Adopt_CaseWoklist_Id = item.Adopt_CaseWoklist_Id;
+        //        obj.Allocated_By = item.Allocated_By;
+        //        obj.Allocate_To = item.Allocate_To;
+        //        obj.Allocated_By = item.Allocated_By;
+        //        obj.Date_Allocated = item.Date_Allocated;
+        //        obj.Reference_Number = item.Reference_Number;
+        //        obj.Date_Allocated = item.Date_Allocated;
+        //        obj.RecordStatusDescription = db.apl_Adoption_Record_Status.Find(item.Adopt_Record_Status_Id).Description;
+        //        obj.FirstName = item.First_Name;
+        //        obj.LastName = item.Last_Name;
+        //        obj.IDNumber = item.Identification_Number;
+
+        //        avm.Add(obj);
+        //    }
+
+        //    return avm;
+        //}
+        
+
+
+
+    }
+}

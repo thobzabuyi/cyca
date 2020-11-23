@@ -1,0 +1,246 @@
+﻿
+@using Common_Objects.ViewModels;
+@model  CYCAAdmissionPartialViewModel
+
+
+<div class="row" id="AdmissionList">
+    <div class="col-md-12">
+        <div class="panel panel-default">         
+            <div class="panel-heading text-center">
+                <strong style="color:#158cba"> Admission Details</strong>
+            </div>
+            <div class="panel-body">
+                <div class="table-responsive">
+                    <table class="table table-striped table-bordered table-hover" id="admissionList">
+                        <thead>
+                            <tr>
+                                <th>Facility</th>
+                                <th>Admission Type</th>
+                                <th>Admission Date</th>
+                                @*<th>Gang Membership</th>*@
+                                <th>Status</th>
+                                <th>Attachments</th>
+                                <th>&nbsp;</th>
+                                <th>&nbsp;</th>
+                                <th>&nbsp;</th>
+                            </tr>
+                        </thead>
+                        <tbody id="SetAdmissiontList">
+
+                            @foreach (Common_Objects.ViewModels.CYCAAdmissionViewModel m in Model.CYCAAdmissionViewModels.OrderByDescending(m => m.Admission_Id))
+                            {
+                            <tr>
+                                <td>@m.FacilityName</td>
+                                <td>@m.selectedAdmissionType</td>
+                                <td>@m.AdmissionDate</td>
+                                @*<td>@m.SelectedGangMemberType</td>*@
+
+                                @if (m.Is_Active)
+                                {
+                                    <td>Current Admission</td>
+                                }
+                                else
+                                {
+                                    <td>Discharged</td>
+                                }
+
+                                <td>
+                                    @for (int i = 0; i < m.liteFiles.Count; i++)
+                                    {
+                                        <div class="input-group">
+                                            <i class="fa fa-1x fa-paperclip text-navy"></i>
+                                            <a class="download-file1" href="@Url.Action("DownloadFile", "Admit", new { id = m.liteFiles[i].Document_Id,  })" target="_blank">
+                                                @m.liteFiles[i].Document_Name
+                                            </a>
+                                        </div>
+                                    }
+                                </td>
+                                <td><a href="#" onclick="showAdmissionView(@m.Admission_Id, @Model.PersonId)">View</a></td>
+                                <td><a href="#" onclick="showAdmissionEdit(@m.Admission_Id, @Model.PersonId)" class="enabledisable">Edit</a></td>
+                                @if (m.Is_Active)
+                                {
+                                    <td>&nbsp;</td>
+                                }
+                                else if (m.LatestAdmission == m.Admission_Id&&Model.LoggedInUserFacility.ToLower() == m.FacilityName.ToLower())
+                                {
+
+                                    <p id="admitId" hidden>@m.Admission_Id</p>
+                                    <td><a href="#" onclick="ShowReAdmissions(@m.Person_Id)" class="enabledisableReadmit">Re-Admit</a></td>
+                                }
+                                else
+                                {
+                                    <td>&nbsp;</td>
+                                }
+
+                            </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row" id="ReAdmissionList">
+    <div class="col-md-12">
+        <div class="panel panel-default">
+            <div class="panel-heading text-center">
+                <strong style="color:#158cba"> Re-Admission Details</strong>
+            </div>
+            <div class="panel-body">
+                <div class="table-responsive">
+                    <table class="table table-striped table-bordered table-hover" id="admissionList">
+                        <thead>
+                            <tr>
+                                <th>Facility</th>
+                                <th>Admission Type</th>
+                                <th>Admission Date</th>
+                                @*<th>Gang Membership</th>*@
+                                @*<th>Status</th>*@
+                                <th>Attachments</th>
+                                <th>&nbsp;</th>
+                                <th>&nbsp;</th>
+
+                            </tr>
+                        </thead>
+                        <tbody id="SetAdmissiontList">
+                            @foreach (Common_Objects.ViewModels.CYCAAdmissionViewModel re in ((List<CYCAAdmissionViewModel>)ViewBag.ListP2).OrderByDescending(re => re.Re_Admission_Id))
+                            {
+                            <tr>
+                                <td>@re.FacilityName</td>
+                                <td>@re.selectedAdmissionType</td>
+                                <td>@re.AdmissionDate</td>
+                                @*<td>@re.SelectedGangMemberType</td>*@
+                                <td>
+                                    @for (int i = 0; i < re.liteFiles.Count; i++)
+                                    {
+                                        <div class="input-group">
+                                            <i class="fa fa-1x fa-paperclip text-navy"></i>
+                                            <a class="download-file1" href="@Url.Action("DownloadFile", "Admit", new { id = re.liteFiles[i].Document_Id })" target="_blank">
+                                                @re.liteFiles[i].Document_Name
+                                            </a>
+                                        </div>
+                                    }
+                                </td>
+                                <td><a href="#" onclick="showReAdmissionView(@re.Re_Admission_Id, @Model.PersonId)">View</a></td>
+                                <td><a href="#" onclick="showReAdmissionEdit(@re.Re_Admission_Id, @Model.PersonId)" class="enabledisable">Edit</a></td>
+                            </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="ReAdmissionEditView"></div>
+<div id="AdmissionEditView"></div>
+
+<script>
+    function ShowReAdmissions(id) {
+            $('#rootwizard').hide();
+            $('#otherContent').show();
+            $(".admissions").addClass("active");
+            $(".personal").removeClass("active");
+            $(".appointments").removeClass("active");
+            $(".personal").addClass("disablePersonal"); 
+            $(".admissions").addClass("disablePersonal");   
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Content("~/Admit/ReAdmitPerson")',
+                data: {
+                    id: id,
+                    display: "ReAdmit"
+                },
+                success: function (result) {
+                    $('#otherContent').html(result);
+                }
+            });
+    }
+
+    function showReAdmissionView(id, PersonId){
+       $.ajax({
+            type: 'POST',
+            url: '@Url.Content("~/Admit/EditViewReadmission")',
+            data: {
+              id: id,
+              PersonId: PersonId,
+              display: "View"
+            },
+         success: function (result) {
+           console.log("returnedURL");
+             $('#AdmissionList').hide();
+             $('#ReAdmissionList').hide();
+             $('#ReAdmissionEditView').append(result);
+                // ShowDynamicForm();
+
+            }
+        });
+    }
+
+    function showReAdmissionEdit(id, PersonId){
+       $.ajax({
+            type: 'POST',
+            url: '@Url.Content("~/Admit/EditViewReadmission")',
+            data: {
+              id: id,
+              PersonId: PersonId,
+              display: "Update"
+            },
+         success: function (result) {
+           console.log("returnedURL");
+             $('#AdmissionList').hide();
+             $('#ReAdmissionList').hide();
+             $('#ReAdmissionEditView').append(result);
+             EnableDisableClass();
+                // ShowDynamicForm();
+            }
+       });
+    }
+
+    function showAdmissionView(id, PersonId){
+       $.ajax({
+            type: 'POST',
+            url: '@Url.Content("~/Admit/EditViewAdmission")',
+            data: {
+              id: id,
+              PersonId: PersonId,
+              display: "View"
+            },
+         success: function (result) {
+           console.log("returnedURL");
+             $('#AdmissionList').hide();
+             $('#ReAdmissionList').hide();
+             $('#AdmissionEditView').append(result);
+                // ShowDynamicForm();
+            }
+       });
+    }
+
+    function showAdmissionEdit(id, PersonId){
+       $.ajax({
+            type: 'POST',
+            url: '@Url.Content("~/Admit/EditViewAdmission")',
+            data: {
+              id: id,
+              PersonId: PersonId,
+              display: "Update"
+            },
+         success: function (result) {
+           console.log("returnedURL");
+             $('#AdmissionList').hide();
+             $('#ReAdmissionList').hide();
+             $('#AdmissionEditView').append(result);
+                // ShowDynamicForm();
+            }
+       });
+    }
+    $(function () {
+        EnableDisableClass();
+    });
+</script>
+
+
+

@@ -1,0 +1,287 @@
+﻿@model IEnumerable<Common_Objects.Models.District>
+
+@{
+    ViewBag.Title = "IndexDistricts";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .btn-delete {
+        background-color: rosybrown;
+    }
+
+    .table {
+        text-align: center;
+    }
+
+    .row {
+        text-align: right;
+    }
+           #BckBtn{
+           color: #555555;
+    text-decoration: none;
+    border:none;
+        line-height: 1.42857143;
+    border-radius: 4px;
+       }
+</style>
+<h3 style="text-align:center">Districts</h3>
+@using (Html.BeginForm("IndexDistricts", "PlaceName", FormMethod.Get))
+{
+<div class="panel-body" overflow:hidden">
+    <div class="panel panel-primary form-horizontal" style="width:100% !important">
+
+        <div class="panel-heading" style="text-align: center; vertical-align: middle !important;">
+            <div class="row">
+                <div class="col-md-7 vcenter">
+                    @Html.Label("Search Districts")
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-1">
+        </div><div class="col-lg-1">
+</div>
+        <div class="col-lg-1">
+            @Html.Label("Province:")
+        </div>
+        <div class="col-md-3">
+            @Html.DropDownList("SearchProvince", (IEnumerable<SelectListItem>)ViewBag.ProvinceList, "Select", htmlAttributes: new { @id = "EnquiredProvinceDId", @class = "form-control"})
+        </div>
+        <div class="col-lg-1">
+            @Html.Label("District:")
+        </div>
+        <div class="col-md-3">
+            @Html.DropDownList("SearchDistrict", (IEnumerable<SelectListItem>)ViewBag.DistrictList, "Select", htmlAttributes: new { @id = "EnquiredMagistratesDId", @class = "form-control"})
+        </div>
+        <div class="col-lg-1">
+            <input type="submit" id="ButtonSave" value="Search" class="btn btn-success" />
+        </div>
+        <div class="col-lg-1">
+            <br/>
+        </div>
+        <div class="col-lg-1">
+            <br />
+        </div>
+    </div>
+
+</div>
+}
+
+
+<div id='myModal1' class='modal'>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div id='myModalContent1'></div>
+        </div>
+
+    </div>
+
+</div>
+
+<div id='myModal' class='modal'>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div id='myModalContent'></div>
+        </div>
+    </div>
+
+</div> 
+
+<table class="table">
+    <tr>
+        <th  colspan="4">
+
+        </th>
+        <th align="right">
+            <button type="button" href="javascript:void(0);" class="btn anchorDetail1">
+                Create
+            </button>
+            <button onclick="goBack()" id="BckBtn">Go Back</button>
+        </th>
+    </tr>
+    <tr style="text-align:center">
+        <th style="text-align:center; width:200px">
+
+        </th>
+        <th style="text-align:center; width:200px">
+            Province
+        </th>
+        <th style="text-align:center; width:200px">
+            Description
+        </th>
+        <th style="text-align:center; width:200px">
+
+        </th>
+        <th style="text-align:center; width:200px">
+
+        </th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+
+            @Html.HiddenFor(modelItem => item.District_Id)
+            <td style="width:200px"></td>
+            <td style="width:200px">
+                @Html.DisplayFor(modelItem => item.Province.Description)
+            </td>
+            <td style="width:200px">
+                @Html.DisplayFor(modelItem => item.Description)
+            </td>
+            <td style="width:200px">
+                <button type="button"  href="javascript:void(0);" class="btn anchorDetail" data-id="@item.District_Id">Edit</button>
+                @if (User.Identity.Name == "12345678")
+                {
+                    <button type="button" class="btn btn-delete">
+                        @Html.ActionLink("Delete", "DeleteDistrict", new { id = item.District_Id }, new { @class = "btn" })
+                    </button>
+                }
+            </td>
+            <td style="width:200px"></td>
+        </tr>
+    }
+
+
+
+</table>
+ 
+@section scripts
+{
+<script>
+    function goBack() {
+        window.history.back();
+    }
+
+    var TeamDetailPostBackURL = '/PlaceName/EditDistrict';
+    $(function () {
+        $(".anchorDetail").click(function () {
+         
+            var $buttonClicked = $(this);
+            var id = $buttonClicked.attr('data-id');
+            var options = { "backdrop": "static", keyboard: true };
+            $.ajax({
+                type: "GET",
+                url: TeamDetailPostBackURL,
+                contentType: "application/json; charset=utf-8",
+                data: { "Id": id },
+                datatype: "json",
+                success: function (data) {
+               
+                    $('#myModalContent').html(data);
+                    $('#myModal').modal(options);
+                    $('#myModal').modal('show');
+
+                },
+                error: function () {
+                    alert("Dynamic content load failed.");
+                }
+            });
+        });
+        //$("#closebtn").on('click',function(){
+        //    $('#myModal').modal('hide');
+
+        $("#closbtn").click(function () {
+            $('#myModal').modal('hide');
+        });
+    });
+
+
+    var TeamDetailPostBackURL1 = '/PlaceName/CreateDistrict';
+    $(function () {
+        $(".anchorDetail1").click(function () {
+           
+            var $buttonClicked = $(this);
+            var id = $buttonClicked.attr('data-id');
+            var options = { "backdrop": "static", keyboard: true };
+            $.ajax({
+                type: "GET",
+                url: TeamDetailPostBackURL1,
+                contentType: "application/json; charset=utf-8",
+                data: { "Id": id },
+                datatype: "json",
+                success: function (data) {
+                  
+                    $('#myModalContent1').html(data);
+                    $('#myModal1').modal(options);
+                    $('#myModal1').modal('show');
+
+                },
+                error: function () {
+                    alert("Dynamic content load failed.");
+                }
+            });
+        });
+        //$("#closebtn").on('click',function(){
+        //    $('#myModal').modal('hide');
+
+        $("#closbtn").click(function () {
+            $('#myModal1').modal('hide');
+        });
+    });
+
+</script>
+
+<script type="text/javascript">
+        $(function () {
+            //Provincial List
+            $("#EnquiredProvinceDId").change(function () {
+                var dropdownPhysicalMunicipality = $('#EnquiredMagistratesDId');
+                dropdownPhysicalMunicipality.html('');
+                dropdownPhysicalMunicipality.append($('<option></option>').val("").html("- Please Select -"));
+
+                var dropdownPhysdicalLocalMunicipality = $('#EnquiredLocalMuniDId');
+                dropdownPhysdicalLocalMunicipality.html('');
+                dropdownPhysdicalLocalMunicipality.append($('<option></option>').val("").html("- Please Select -"));
+
+                var dropdownPhysicalTown = $('#EnquiredTownDId');
+                dropdownPhysicalTown.html('');
+                dropdownPhysicalTown.append($('<option></option>').val("").html("- Please Select -"));
+
+                var selectedItem = $(this).val();
+                $.ajax({
+                    url: $.url('/PlaceName/FilterFromProvinceAjax'),
+                    data: { "provinceId": selectedItem },
+                    type: "GET",
+                    success: function (response, status, xhr) {
+                        $.each(response, function (id, option) {
+                            dropdownPhysicalMunicipality.append($('<option></option>').val(option.id).html(option.name));
+                        });
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        alert('Error populating physical address municipality dropdown');
+                    }
+                });
+            });
+            $("#EnquiredMagistratesDId").change(function () {
+                var dropdownPhysdicalLocalMunicipality = $('#EnquiredLocalMuniId');
+                dropdownPhysdicalLocalMunicipality.html('');
+                dropdownPhysdicalLocalMunicipality.append($('<option></option>').val("").html("- Please Select -"));
+
+                var dropdownPhysicalTown = $('#EnquiredTownId');
+                dropdownPhysicalTown.html('');
+                dropdownPhysicalTown.append($('<option></option>').val("").html("- Please Select -"));
+
+                var selectedItem = $(this).val();
+                $.ajax({
+                    url: $.url('/Intake/FilterFromMunicipalityAjax'),
+                    data: { "municipalityId": selectedItem },
+                    type: "GET",
+                    success: function (response, status, xhr) {
+                        $.each(response, function (id, option) {
+                            dropdownPhysdicalLocalMunicipality.append($('<option></option>').val(option.id).html(option.name));
+                        });
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        alert('Error populating physical address local municipality dropdown');
+                    }
+                });
+            });
+        });
+</script>
+
+}
+

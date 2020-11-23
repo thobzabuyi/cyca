@@ -1,0 +1,61 @@
+﻿@model Common_Objects.Models.Organization
+
+@{
+    ViewBag.Title = "Edit Organization";
+}
+
+<h3>@ViewBag.Message</h3>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="panel panel-primary">
+        <div class="panel-heading" style="text-align: center">
+            Edit Group
+        </div>
+        <div class="panel-body">
+            @Html.HiddenFor(x => x.Organization_Id)
+
+            <div class="row">
+                <div class="col-md-3 form-group">
+                    @Html.LabelFor(x => x.Description, new { @class = "control-label" })
+                </div>
+                <div class="col-md-3">
+                    @Html.TextBoxFor(model => model.Description, new { @class = "form-control" })
+                </div>
+                <div class="col-md-3 form-group">
+                    @Html.LabelFor(x => x.Telephone_Number, new { @class = "control-label" })
+                </div>
+                <div class="col-md-3">
+                    @Html.TextBoxFor(model => model.Telephone_Number, new { @class = "form-control" })
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-3 form-group">
+                    @Html.LabelFor(x => x.Fax_Number, new { @class = "control-label" })
+                </div>
+                <div class="col-md-3">
+                    @Html.TextBoxFor(model => model.Fax_Number, new { @class = "form-control" })
+                </div>
+                <div class="col-md-3 form-group">
+                    @Html.LabelFor(x => x.Email_Address, new { @class = "control-label" })
+                </div>
+                <div class="col-md-3">
+                    @Html.TextBoxFor(model => model.Email_Address, new { @class = "form-control" })
+                </div>
+            </div>
+
+        </div>
+
+        @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+
+        <div class="panel-footer">
+
+            <input type="submit" id="ButtonSave" value="Save" class="btn btn-success" />
+            @Html.ActionLink("Cancel", "Index", null, new { @class = "btn btn-danger" })
+
+        </div>
+
+    </div>
+}

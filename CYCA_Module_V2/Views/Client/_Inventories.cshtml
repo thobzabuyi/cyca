@@ -1,0 +1,42 @@
+﻿@using Common_Objects.ViewModels;
+@model  CYCAInventoriesPartialViewModel
+
+
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-default">
+            @*<button class="btn btn-primary" id="accordion" data-parent="#accordion" href="#actionModal" onclick="showNew(@Model.PersonId)"><i class="fa fa-plus"></i> New Admission</button>*@
+            <div class="panel-heading">
+                Admission History
+            </div>
+            <div class="panel-body">
+                <div class="table-responsive">
+                    <table class="table table-striped table-bordered table-hover" id="admissionList">
+                        <thead>
+                            <tr>
+                                <th>Inventory Id</th>
+                                <th>Inventory Type</th>
+                                <th>Item Color</th>
+                                <th>Item Type</th>
+                                
+                            </tr>
+                        </thead>
+                        <tbody id="SetPersonalInventorytList">
+                            @foreach (Common_Objects.ViewModels.CYCAInventoriesViewModel m in Model.CYCAInventoriesViewModels)
+                            {
+                                <tr>
+                                    <td>@m.Inventory_Id</td>
+                                    <td>@m.selectedInventoryType</td>
+                                    <td>@m.Item_Color</td>
+                                    <td>@m.Item_Type</td>
+                                </tr>
+                            }
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

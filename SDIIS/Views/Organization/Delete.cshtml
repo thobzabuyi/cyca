@@ -1,0 +1,59 @@
+﻿@model Common_Objects.Models.Organization
+
+@{
+    ViewBag.Title = "Delete Organization?";
+}
+
+<h3>@ViewBag.Error</h3>
+
+@using (Html.BeginForm())
+{
+    <div class="panel panel-warning">
+        <div class="panel-heading" style="text-align: center">
+            Are you sure you want to delete this Organization?
+        </div>
+        <div class="panel-body">
+            @Html.HiddenFor(x => x.Organization_Id)
+
+            <div class="row">
+                <div class="col-md-3 form-group">
+                    @Html.LabelFor(x => x.Description, new { @class = "control-label" })
+                </div>
+                <div class="col-md-9">
+                    @Html.DisplayTextFor(model => model.Description)
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-3 form-group">
+                    @Html.LabelFor(x => x.Telephone_Number, new { @class = "control-label" })
+                </div>
+                <div class="col-md-9">
+                    @Html.DisplayTextFor(model => model.Telephone_Number)
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-3 form-group">
+                    @Html.LabelFor(x => x.Fax_Number, new { @class = "control-label" })
+                </div>
+                <div class="col-md-9">
+                    @Html.DisplayTextFor(model => model.Fax_Number)
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-3 form-group">
+                    @Html.LabelFor(x => x.Email_Address, new { @class = "control-label" })
+                </div>
+                <div class="col-md-9">
+                    @Html.DisplayTextFor(model => model.Email_Address)
+                </div>
+            </div>
+
+        </div>
+
+        <div class="panel-footer">
+            <input type="submit" id="ButtonSave" value="Yes" class="btn btn-success" />
+            @Html.ActionLink("No", "Index", null, new { @class = "btn btn-danger" })
+        </div>
+
+    </div>
+}

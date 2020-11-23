@@ -1,0 +1,86 @@
+﻿@model IEnumerable<Common_Objects.Models.Employee>
+@using GridMvc.Html
+
+@{
+    ViewBag.Title = "Employees Page";
+}
+
+@using (Html.BeginForm("Index", "Employee", FormMethod.Get))
+{
+<h3>@ViewBag.Message</h3>
+
+<div class="panel-body"  overflow:hidden">
+    <div class="panel panel-primary form-horizontal" style=" width:100% !important">
+
+        <div class="panel-heading" style="text-align: center; vertical-align: middle !important;">
+            <div class="row">
+                <div class="col-md-11 vcenter">
+                    @Html.Label("Search Employees")
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-3">
+            @Html.Label("Persal Number:")
+        </div>
+        <div class="col-md-3" form-group" >
+           @Html.Editor("SearchPersalNumber", new { @class= "form-control" })
+        </div>
+        <div class="col-md-3">
+            @Html.Label("Email:")
+        </div>
+        <div class="col-md-3">
+            @Html.Editor("SearchEmail", new { @class = "form-control" })
+        </div>
+    </div>
+    <br/>
+    <div class="row">
+        <div class="col-md-3">
+            @Html.Label("First Name:")
+        </div>
+        <div class="col-md-3 form-group">
+            @Html.Editor("SearchFirstName", new { @class = "form-control" })
+        </div>
+        <div class="col-md-3">
+            @Html.Label("Last Name:")
+        </div>
+        <div class="col-md-3 form-group">
+            @Html.Editor("SearchLastName", new { @class = "form-control" })
+        </div>
+        <div class="form-group" align="right">
+            <input type="submit" id="ButtonSave" value="Search" class="btn btn-success"/>
+        </div>
+    </div>
+
+</div>
+<div class="panel panel-primary form-horizontal" style=" width:100% !important">
+    <div class="panel-heading" style="text-align: center; vertical-align: middle !important;">
+        <div class="row">
+            <div class="col-md-11 vcenter">
+                @Html.Label("Employees")
+            </div>
+            <div class="col-md-1">
+                @Html.ActionLink("Create", "Create", null, new { @class = "btn btn-info pull-right" })
+            </div>
+        </div>
+    </div>
+    <div class="panel-body" style="height: 400px; overflow:hidden">
+        <div class="row">
+            <div class="row">
+                <div class="col-md-12">
+                    @Html.Grid(Model).Columns(columns =>
+               {
+               columns.Add(x => x.Persal_Number).Titled("Persal Number").Sortable(true);
+               columns.Add(x => x.User.First_Name).Titled("First Name").Sortable(true);
+               columns.Add(x => x.User.Last_Name).Titled("Last Name").Sortable(true);
+               columns.Add(x => x.User.Email_Address).Titled("Email Address").Sortable(true);
+               columns.Add().Encoded(false).Sanitized(false).SetWidth(30).RenderValueAs(d => @<b> @Html.ActionLink("Edit", "Edit", new { id = d.Employee_Id }, new { @class = "btn btn-success" }) </b>);
+         columns.Add().Encoded(false).Sanitized(false).SetWidth(30).RenderValueAs(d => @<b> @Html.ActionLink("Delete", "Delete", new { id = d.Employee_Id }, new { @class = "btn btn-danger" }) </b>);
+         }).WithPaging(5)
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+}

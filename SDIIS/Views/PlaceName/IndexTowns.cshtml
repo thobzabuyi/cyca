@@ -1,0 +1,337 @@
+﻿@model IEnumerable<Common_Objects.Models.Town>
+
+@{
+    ViewBag.Title = "IndexTowns";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .btn-delete {
+        background-color: rosybrown;
+    }
+
+    .table {
+        text-align: center;
+    }
+
+    .row {
+        text-align: right;
+    }
+    .vcenter
+    {
+        vertical-align:middle;
+    }
+           #BckBtn{
+           color: #555555;
+    text-decoration: none;
+    border:none;
+        line-height: 1.42857143;
+    border-radius: 4px;
+       }
+</style>
+<h3  style="text-align:center">Towns</h3>
+@using (Html.BeginForm("IndexTowns", "PlaceName", FormMethod.Get))
+{
+    <div class="panel-body" overflow:hidden">
+        <div class="panel panel-primary form-horizontal" style=" width:100% !important">
+
+            <div class="panel-heading" style="text-align: center; vertical-align: middle !important;">
+                <div class="row">
+                    <div class="col-md-7">
+                        @Html.Label("Search Towns")
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+
+            <div class="col-lg-1">
+            </div>
+            <div class="col-lg-1">
+                @Html.Label("Province:")
+            </div>
+            <div class="col-md-3">
+                @Html.DropDownList("SearchProvince", (IEnumerable<SelectListItem>)ViewBag.ProvinceList, "Select", htmlAttributes: new { @class = "form-control", @id = "EnquiredProvinceTId" })
+            </div>
+            <div class="col-lg-1">
+                @Html.Label("District:")
+            </div>
+            <div class="col-md-3">
+                @*<input type="text" name="SearchDistrict" class="form-control" />*@
+                @Html.DropDownList("SearchDistrict", (IEnumerable<SelectListItem>)ViewBag.DistrictList, "Select", htmlAttributes: new { @id = "EnquiredMagistratesTId", @class = "form-control" })
+            </div>
+
+            <div class="col-lg-1">
+                <br />
+            </div>
+            <div class="col-lg-1">
+                <br />
+            </div>
+        </div>
+        <div class="row">
+
+            <div class="col-lg-1">
+            </div>
+            <div class="col-lg-1 vcenter">
+                @Html.Label("Municipality:")
+            </div>
+            <div class="col-md-3">
+                @*<input type="text" name="SearchMunicipality" class="form-control" />*@  
+                @Html.DropDownList("SearchMunicipality", (IEnumerable<SelectListItem>)ViewBag.MunicipalityList, "Select", htmlAttributes: new { @id = "EnquiredLocalMuniTId", @class = "form-control" })
+                          
+            </div>
+            <div class="col-lg-1">
+                @Html.Label("Town:")
+
+
+            </div>
+            <div class="col-md-3">
+                @Html.DropDownList("SearchTown", (IEnumerable<SelectListItem>)ViewBag.TownList, "Select", htmlAttributes: new { @id = "EnquiredTownTId", @class = "form-control" })
+            </div>
+
+            <div class="col-lg-1">
+                <input type="submit" id="ButtonSave" value="Search" class="btn btn-success" />
+
+            </div>
+            <div class="col-lg-1">
+                <br />
+            </div>
+        </div>
+</div>
+}
+
+<div id='myModal2' class='modal'>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div id='myModalContent2'></div>
+        </div>
+    </div>
+</div> 
+
+<div id='myModal' class='modal'>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div id='myModalContent'></div>
+        </div>
+    </div>
+</div> 
+
+<table class="table">
+    <tr>
+        <th colspan="4"></th>
+        <th align="right">
+            <button type="button" href="javascript:void(0);" class="btn anchorDetail2">
+                Create
+            </button>
+            <button onclick="goBack()" id="BckBtn">Go Back</button>
+        </th>
+    </tr>
+    <tr>
+
+
+        <th style="text-align:center; width:200px">
+            Province
+        </th>
+        <th style="text-align:center; width:200px">
+            District
+        </th>
+        <th style="text-align:center; width:200px">
+            Municipality
+        </th>
+        <th style="text-align:center; width:200px">
+            Town
+        </th>
+        <th style="text-align:center; width:200px"></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+
+            @Html.HiddenFor(modelItem => item.Town_Id)
+
+ 
+            @Html.HiddenFor(modelItem => item.Local_Municipality_Id)
+
+        <td>
+            @Html.DisplayFor(modelItem => item.Local_Municipality.District.Province.Description)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Local_Municipality.District.Description)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Local_Municipality.Description)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem=>item.Description)
+        </td>
+        
+        <td style="width:200px">
+            <button type="button" href="javascript:void(0);" class="btn anchorDetail" data-id="@item.Town_Id">Edit</button>
+            @if (User.Identity.Name == "12345678")
+            {
+                <button type="button" class="btn btn-delete">
+                    @Html.ActionLink("Delete", "DeleteTown", new { id = item.Town_Id }, new { @class = "btn" })
+                </button>
+            }
+        </td>
+        <td style="width:200px"></td>
+    </tr>
+}
+
+</table>
+
+@section scripts
+{  
+    <script>
+        function goBack() {
+            window.history.back();
+        }
+    var TeamDetailPostBackURL = '/PlaceName/EditTown';
+    $(function () {
+        $(".anchorDetail").click(function () {
+         
+            var $buttonClicked = $(this);
+            var id = $buttonClicked.attr('data-id');
+            var options = { "backdrop": "static", keyboard: true };
+            $.ajax({
+                type: "GET",
+                url: TeamDetailPostBackURL,
+                contentType: "application/json; charset=utf-8",
+                data: { "Id": id },
+                datatype: "json",
+                success: function (data) {
+                    
+                    $('#myModalContent').html(data);
+                    $('#myModal').modal(options);
+                    $('#myModal').modal('show');
+
+                },
+                error: function () {
+                    alert("Dynamic content load failed.");
+                }
+            });
+        });
+        //$("#closebtn").on('click',function(){
+        //    $('#myModal').modal('hide');
+
+        $("#closbtn").click(function () {
+            $('#myModal').modal('hide');
+        });
+    });
+
+
+    var TeamDetailPostBackURL2 = '/PlaceName/CreateTown';
+    $(function () {
+        $(".anchorDetail2").click(function () {
+          
+            var $buttonClicked = $(this);
+            var id = $buttonClicked.attr('data-id');
+            var options = { "backdrop": "static", keyboard: true };
+            $.ajax({
+                type: "GET",
+                url: TeamDetailPostBackURL2,
+                contentType: "application/json; charset=utf-8",
+                data: { "Id": id },
+                datatype: "json",
+                success: function (data) {
+              
+                    $('#myModalContent2').html(data);
+                    $('#myModal2').modal(options);
+                    $('#myModal2').modal('show');
+
+                },
+                error: function () {
+                    alert("Dynamic content load failed on create.");
+                }
+            });
+        });
+        //$("#closebtn").on('click',function(){
+        //    $('#myModal').modal('hide');
+
+        $("#closbtn").click(function () {
+            $('#myModal1').modal('hide');
+        });
+    });
+
+    </script>
+
+<script type="text/javascript">
+        $(function () {
+            //Provincial List
+            $("#EnquiredProvinceTId").change(function () {
+                var dropdownPhysicalMunicipality = $('#EnquiredMagistratesTId');
+                dropdownPhysicalMunicipality.html('');
+                dropdownPhysicalMunicipality.append($('<option></option>').val("").html("- Please Select -"));
+
+                var dropdownCPhysicalLocalMunicipality = $('#DropdownPhysicalAddressLocalMunicipality');
+                dropdownCPhysicalLocalMunicipality.html('');
+                dropdownCPhysicalLocalMunicipality.append($('<option></option>').val("").html("- Please Select -"));
+
+                var dropdownPostalTown = $('#EnquiredTownMId');//Town Loading
+                dropdownPostalTown.html('');
+                dropdownPostalTown.append($('<option></option>').val("").html("- Please Select -"));
+
+                var selectedItem = $(this).val();
+                $.ajax({
+                    url: $.url('/PlaceName/FilterFromProvinceAjax'),
+                    data: { "provinceId": selectedItem },
+                    type: "GET",
+                    success: function (response, status, xhr) {
+                        $.each(response, function (id, option) {
+                            dropdownPhysicalMunicipality.append($('<option></option>').val(option.id).html(option.name));
+                        });
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        alert('Error populating postal address municipality dropdown');
+                    }
+                });
+
+            });
+            $("#EnquiredMagistratesTId").change(function () {
+                var dropdownPostalLocalMunicipality = $('#EnquiredLocalMuniTId');
+                dropdownPostalLocalMunicipality.html('');
+                dropdownPostalLocalMunicipality.append($('<option></option>').val("").html("- Please Select -"));
+
+                var dropdownPostalTown = $('#EnquiredTownTId');
+                dropdownPostalTown.html('');
+                dropdownPostalTown.append($('<option></option>').val("").html("- Please Select -"));
+
+                var selectedItem = $(this).val();
+                $.ajax({
+                    url: $.url('/PlaceName/FilterFromMunicipalityAjax'),
+                    data: { "municipalityId": selectedItem },
+                    type: "GET",
+                    success: function (response, status, xhr) {
+                        $.each(response, function (id, option) {
+                            dropdownPostalLocalMunicipality.append($('<option></option>').val(option.id).html(option.name));
+                        });
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        alert('Error populating postal address local municipality dropdown');
+                    }
+                });
+            });
+            $("#EnquiredLocalMuniTId").change(function () {
+                var dropdownPostalTown = $('#EnquiredTownTId');
+                dropdownPostalTown.html('');
+                dropdownPostalTown.append($('<option></option>').val("").html("- Please Select -"));
+
+                var selectedItem = $(this).val();
+                $.ajax({
+                    url: $.url('/PlaceName/FilterFromLocalMunicipalityAjax'),
+                    data: { "localMunicipalityId": selectedItem },
+                    type: "GET",
+                    success: function (response, status, xhr) {
+                        $.each(response, function (id, option) {
+                            dropdownPostalTown.append($('<option></option>').val(option.id).html(option.name));
+                        });
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        alert('Error populating postal address town dropdown');
+                    }
+                });
+            })
+        });
+</script>
+
+}  

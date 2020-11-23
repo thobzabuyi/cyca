@@ -1,0 +1,88 @@
+﻿
+@model IEnumerable<Common_Objects.Models.User_Role_Delegation>
+@using GridMvc.Html
+@{
+    ViewBag.Title = "Role Delegation Page";
+}
+@using (Html.BeginForm("Index", "RoleDelegation", FormMethod.Get))
+{
+<h3>@ViewBag.Message</h3>
+
+<div class="panel-body" overflow:hidden">
+    <div class="panel panel-primary form-horizontal" style=" width:100% !important">
+
+        <div class="panel-heading" style="text-align: center; vertical-align: middle !important;">
+            <div class="row">
+                <div class="col-md-11 vcenter">
+                    @Html.Label("Search Role Delegations")
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-3">
+            @Html.Label("Delegated From:")
+        </div>
+        <div class="col-md-3" form-group">
+            @Html.Editor("SearchDelegatedFrom", new { @class = "form-control" })
+        </div>
+        <div class="col-md-3">
+            @Html.Label("Delegated To:")
+        </div>
+        <div class="col-md-3">
+            @Html.Editor("DelegatedTo", new { @class = "form-control" })
+        </div>
+    </div>
+    <br />
+    <div class="row">
+        <div class="col-md-3">
+            @Html.Label("Date From:")
+        </div>
+        <div class="col-md-3 form-group">
+            <input class="jqueryui-marker-datepicker" data-val="true"
+                   id="SearchDateFrom" name="SearchDateFrom" type="date" />
+        </div>
+        <div class="col-md-3">
+            @Html.Label("Date To:")
+        </div>
+        <div class="col-md-3 form-group">
+            <input class="jqueryui-marker-datepicker" data-val="true"
+                   id="SearchDateTo" name="SearchDateTo" type="date" />
+        </div>
+        <div class="form-group" align="right">
+            <input type="submit" id="ButtonSave" value="Search" class="btn btn-success" />
+        </div>
+    </div>
+
+</div>
+
+<div class="panel panel-primary form-horizontal" style=" width:100% !important">
+    <div class="panel-heading" style="text-align: center; vertical-align: middle !important;">
+        <div class="row">
+            <div class="col-md-11">
+                @Html.Label("Role Delegations")
+            </div>
+            <div class="col-md-1">
+                @Html.ActionLink("Create", "Create", null, new { @class = "btn btn-info pull-right" })
+            </div>
+        </div>
+    </div>
+    <div class="panel-body" style="height: 450px; overflow-y:scroll; overflow-x:hidden">
+        <div class="row">
+            <div class="row">
+                <div class="col-md-12">
+                    @Html.Grid(Model).Columns(columns =>
+                   {
+                       columns.Add(x => x.Delegated_From_User_Name).Titled("Delegated From").Sortable(true);
+                       columns.Add(x => x.Delegated_To_User_Name).Titled("Delegated To").Sortable(true);
+                       columns.Add(x => x.Date_From).Titled("Date From").Sortable(true);
+                       columns.Add(x => x.Date_To).Titled("Date To").Sortable(true);
+                       columns.Add().Encoded(false).Sanitized(false).SetWidth(30).RenderValueAs(d => @<b> @Html.ActionLink("Edit", "Edit", new { id = d.User_Role_Delegation_Id }, new { @class = "btn btn-success" }) </b>);
+                       columns.Add().Encoded(false).Sanitized(false).SetWidth(30).RenderValueAs(d => @<b> @Html.ActionLink("Delete", "Delete", new { id = d.User_Role_Delegation_Id }, new { @class = "btn btn-danger" }) </b>);
+                    }).WithPaging(10)
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+}

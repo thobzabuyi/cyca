@@ -1,0 +1,644 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Net.Mail;
+using System.IO;
+
+namespace Common_Objects.Models
+{
+    public class IntakeAssessmentModel
+    {
+
+        public int? GetCaseMngSupId(int Id)
+        {
+            var dbContext = new SDIIS_DatabaseEntities();
+            return (from a in dbContext.Intake_Assessments
+                    where a.Intake_Assessment_Id == Id
+                    select a.Case_Manager_Supervisor_Id).FirstOrDefault();
+        }
+
+        public int? GetCaseMngId(int Id)
+        {
+            var dbContext = new SDIIS_DatabaseEntities();
+            return (from a in dbContext.Intake_Assessments
+                    where a.Intake_Assessment_Id == Id
+                    select a.Case_Manager_Id).FirstOrDefault();
+        }
+
+        public Intake_Assessment GetSpecificIntakeAssessment(int intakeAssessmentId)
+        {
+            Intake_Assessment intakeAssessment;
+
+            var dbContext = new SDIIS_DatabaseEntities();
+            try
+            {
+                var intakeAssessmentList = (from r in dbContext.Intake_Assessments
+                                              where r.Intake_Assessment_Id==(intakeAssessmentId)
+                                            select r).ToList();
+
+                intakeAssessment = (from r in intakeAssessmentList
+                                    select r).FirstOrDefault();
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+
+            return intakeAssessment;
+        }
+        public List<Intake_Assessment> GetListOfPCMIntakeAssessments(int provinceId, int caseManagerId)
+        {
+            List<Intake_Assessment> intakeAssessments;
+
+            var dbContext = new SDIIS_DatabaseEntities();
+
+            try
+            {
+                var intakeAssessmentList = (from r in dbContext.Intake_Assessments
+                                            where (r.Assessor.Employees.Any() && r.Assessor.Employees.FirstOrDefault().apl_Service_Office.apl_Local_Municipality.District.Province_Id == (provinceId))
+                                            select r).ToList();
+
+                intakeAssessments = (from r in intakeAssessmentList
+                                     select r).ToList();
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+
+            return intakeAssessments;
+        }
+
+        //Anmendment Thabiso
+        public string GetAssessedBy(int? Id)
+        {
+            var dbContext = new SDIIS_DatabaseEntities();
+            //int User_Id = dbContext.Employees.Find(Id).User_Id;
+            var assessementDetails = (from a in dbContext.Intake_Assessments
+                                      where a.Intake_Assessment_Id == Id
+                                      select a).FirstOrDefault();
+            int? assessedByid = assessementDetails.Assessed_By_Id;
+
+
+            return dbContext.Users.Find(assessedByid).First_Name + " " + dbContext.Users.Find(assessedByid).Last_Name;
+
+        }
+
+
+        //Amended by Herman
+        public List<Intake_Assessment> GetListOfRACAPIntakeAssessmentsParents(int provinceId, int caseManagerId, int IntakeAssessmentId)
+        {
+            List<Intake_Assessment> intakeAssessments;
+
+            var dbContext = new SDIIS_DatabaseEntities();
+            
+            try
+            {
+                var intakeAssessmentList = (from r in dbContext.Intake_Assessments
+                                            where
+                                            //(r.Assessor.Employees.Any() && r.Assessor.Employees.FirstOrDefault().apl_Service_Office.apl_Local_Municipality.Area.District.Province_Id == (provinceId)
+                                            (r.Problem_Sub_Category_Id == 19 || r.Problem_Sub_Category_Id == 20)
+                                            && r.Intake_Assessment_Id == IntakeAssessmentId
+                                            select r).ToList();
+
+                intakeAssessments = (from r in intakeAssessmentList
+                                     select r).ToList();
+            }
+           
+            catch (Exception ex)
+            {
+                return null;
+            }
+
+            return intakeAssessments;
+        }
+        //End Amended by Herman
+        public List<Intake_Assessment> GetListOfAdoptionIntakeAssessments(int provinceId, int caseManagerId)
+        {
+            List<Intake_Assessment> intakeAssessments;
+
+            var dbContext = new SDIIS_DatabaseEntities();
+
+            try
+            {
+                var intakeAssessmentList = (from r in dbContext.Intake_Assessments
+                                            where (r.Assessor.Employees.Any() && r.Assessor.Employees.FirstOrDefault().apl_Service_Office.apl_Local_Municipality.District.Province_Id == (provinceId))
+                                            select r).ToList();
+
+                intakeAssessments = (from r in intakeAssessmentList
+                                     select r).ToList();
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+
+            return intakeAssessments;
+        }
+
+        public List<Intake_Assessment> GetListOfRACAPIntakeAssessments(int provinceId, int caseManagerId)
+        {
+            List<Intake_Assessment> intakeAssessments;
+
+            var dbContext = new SDIIS_DatabaseEntities();
+
+            try
+            {
+                var intakeAssessmentList = (from r in dbContext.Intake_Assessments
+                                            where 
+                                            //(r.Assessor.Employees.Any() && r.Assessor.Employees.FirstOrDefault().apl_Service_Office.apl_Local_Municipality.Area.District.Province_Id == (provinceId)
+                                            (r.Problem_Sub_Category_Id==19 ||r.Problem_Sub_Category_Id==20)
+                                            select r).ToList();
+
+                intakeAssessments = (from r in intakeAssessmentList
+                                     select r).ToList();
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+
+            return intakeAssessments;
+        }
+
+        public List<Intake_Assessment> GetListOfIntakeAssessments(int? moduleId)
+        {
+            List<Intake_Assessment> intakeAssessments;
+
+            using (var dbContext = new SDIIS_DatabaseEntities())
+            {
+                try
+                {
+                    var intakeAssessmentList = (from r in dbContext.Intake_Assessments
+                                                where r.Problem_Sub_Category.Module_Id.Equals((int)ModuleEnum.CPR)
+                                                select r).ToList();
+
+                    if ((moduleId != null) && (moduleId != -1))
+                        intakeAssessmentList.RemoveAll(x => x.Problem_Sub_Category != null && x.Problem_Sub_Category.Module_Id != moduleId);
+
+                    intakeAssessments = (from r in intakeAssessmentList
+                                         select r).ToList();
+                }
+                catch (Exception)
+                {
+                    return null;
+                }
+            }
+
+            return intakeAssessments;
+        }
+
+        public List<Intake_Assessment> GetListOfIntakeAssessments(int? moduleId, int provinceId)
+        {
+            List<Intake_Assessment> intakeAssessments;
+
+            var dbContext = new SDIIS_DatabaseEntities();
+
+            try
+            {
+                var intakeAssessmentList = (from r in dbContext.Intake_Assessments
+                                            where ((r.Assessor.apl_Social_Worker.Any() && r.Assessor.apl_Social_Worker.FirstOrDefault().apl_Service_Office.apl_Local_Municipality.District.Province_Id == (provinceId))
+                                                || (r.Assessor.Employees.Any() && r.Assessor.Employees.FirstOrDefault().apl_Service_Office.apl_Local_Municipality.District.Province_Id == (provinceId)))
+                                            //where r.Problem_Sub_Category.Module_Id == (int)ModuleEnum.CPR
+                                            select r).ToList();
+
+                if ((moduleId != null) && (moduleId != -1))
+                    intakeAssessmentList.RemoveAll(x => x.Problem_Sub_Category != null && x.Problem_Sub_Category.Module_Id != moduleId);
+
+                intakeAssessments = (from r in intakeAssessmentList
+                                     select r).ToList();
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+
+            return intakeAssessments;
+        }
+
+        public List<Intake_Assessment> GetListOfIntakeAssessmentsForVEPByEmployeeId(int employeeId)
+        {
+            List<Intake_Assessment> intakeAssessments = new List<Intake_Assessment>();
+
+            var dbContext = new SDIIS_DatabaseEntities();
+
+            try
+            {
+                var intakeAssessmentList = (from r in dbContext.Intake_Assessments
+                                            where (
+                                            r.Problem_Sub_Category_Id == 21 && r.Case_Manager_Id == employeeId)
+                                            &&
+                                            (r.Treatment_Date == null)
+                                            //where r.Problem_Sub_Category.Module_Id == (int)ModuleEnum.CPR
+                                            select r).ToList();
+
+                //if ((moduleId != null) && (moduleId != -1))
+                //    intakeAssessmentList.RemoveAll(x => x.Problem_Sub_Category != null && x.Problem_Sub_Category.Module_Id != moduleId);
+
+                //intakeAssessments = (from r in intakeAssessmentList
+                //                     select r).ToList();
+
+                return intakeAssessmentList;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+
+            
+        }
+
+        public List<Intake_Assessment> GetListOfIntakeAssessments(int? moduleId, int provinceId, int caseManagerId)
+        {
+            List<Intake_Assessment> intakeAssessments;
+
+            var dbContext = new SDIIS_DatabaseEntities();
+
+            try
+            {
+                var intakeAssessmentList = (from r in dbContext.Intake_Assessments
+                                            where ((r.Assessor.apl_Social_Worker.Any() && r.Assessor.apl_Social_Worker.FirstOrDefault().apl_Service_Office.apl_Local_Municipality.District.Province_Id == (provinceId))
+                                                || (r.Assessor.Employees.Any() && r.Assessor.Employees.FirstOrDefault().apl_Service_Office.apl_Local_Municipality.District.Province_Id == (provinceId)))
+                                                && (r.Case_Manager_Id == caseManagerId)
+                                            select r).ToList();
+
+                if ((moduleId != null) && (moduleId != -1))
+                    intakeAssessmentList.RemoveAll(x => x.Problem_Sub_Category != null && x.Problem_Sub_Category.Module_Id != moduleId);
+
+                intakeAssessments = (from r in intakeAssessmentList
+                                     select r).ToList();
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+
+            return intakeAssessments;
+        }
+
+        public Intake_Assessment CreateIntakeAssessment(int clientId, DateTime assessmentDate, int? assessedById, int? caseManagerSupervisorId, int? caseManagerId, string preliminaryAssessment, string presentingProblem,
+            int? problemSubCategoryId, bool isPriorityIntervention, bool isReferredForAssessment, bool isReferredToOtherServiceProvider, bool isClosed, DateTime? closedDate,
+            DateTime? treatmentDate, string caseBackground, string supervisorComments, string socialWorkerComments, int? referredFromOrganizationId, int? referredToOrganizationId,
+            string caseAllocationComments, DateTime? dateAllocated, DateTime? dateDue, bool isActive, bool isDeleted, DateTime dateCreated, string createdBy)
+        {
+            Intake_Assessment newIntakeAssessment;
+
+            using (var dbContext = new SDIIS_DatabaseEntities())
+            {
+                ///get supervisor email address to send a mail that he / she was assigned a new case.
+                ///
+
+
+
+                var intakeAssessment = new Intake_Assessment
+                {
+                    Client_Id = clientId,
+                    Assessment_Date = assessmentDate,
+                    Assessed_By_Id = assessedById,
+                    Case_Manager_Supervisor_Id = caseManagerSupervisorId,
+                    Case_Manager_Id = caseManagerId,
+                    Preliminary_Assessment = preliminaryAssessment,
+                    Presenting_Problem = presentingProblem,
+                    Problem_Sub_Category_Id = problemSubCategoryId,
+                    Is_Priority_Intervention = isPriorityIntervention,
+                    Is_Referred_For_Assessment = isReferredForAssessment,
+                    Is_Referred_To_Other_Service_Provider = isReferredToOtherServiceProvider,
+                    Is_Closed = isClosed,
+                    ClosedDate = closedDate,
+                    Treatment_Date = treatmentDate,
+                    Case_Background = caseBackground,
+                    Supervisor_Comments = supervisorComments,
+                    Social_Worker_Comments = socialWorkerComments,
+                    Referred_From_Organization_Id = referredFromOrganizationId,
+                    Referred_To_Organization_Id = referredToOrganizationId,
+                    Case_Allocation_Comments = caseAllocationComments,
+                    Date_Allocated = dateAllocated,
+                    Date_Due = dateDue,
+                    Is_Active = isActive,
+                    Is_Deleted = isDeleted,
+                    Date_Created = dateCreated,
+                    Created_By = createdBy
+                };
+
+                try
+                {
+                    newIntakeAssessment = dbContext.Intake_Assessments.Add(intakeAssessment);
+                    dbContext.SaveChanges();
+                    //sendAssignmentEmail(Convert.ToInt32(newIntakeAssessment.Case_Manager_Supervisor_Id), Convert.ToInt32(newIntakeAssessment.Intake_Assessment_Id));
+                }
+                catch (Exception)
+                {
+                    return null;
+                }
+            }
+
+            return newIntakeAssessment;
+        }
+
+        public Intake_Assessment EditIntakeAssessment(int intakeAssessmentId, int clientId, DateTime assessmentDate, int? assessedById, int? caseManagerSupervisorId, int? caseManagerId, string preliminaryAssessment, string presentingProblem,
+            int? problemSubCategoryId, bool isPriorityIntervention, bool isReferredForAssessment, bool isReferredToOtherServiceProvider, bool isClosed, DateTime? closedDate,
+            DateTime? treatmentDate, string caseBackground, string supervisorComments, string socialWorkerComments, int? referredFromOrganizationId, int? referredToOrganizationId,
+            string caseAllocationComments, DateTime? dateAllocated, DateTime? dateDue, bool isActive, bool isDeleted, DateTime dateLastModified, string modifiedBy)
+        {
+            Intake_Assessment editIntakeAssessment;
+
+            using (var dbContext = new SDIIS_DatabaseEntities())
+            {
+                try
+                {
+                    editIntakeAssessment = (from e in dbContext.Intake_Assessments
+                                            where e.Intake_Assessment_Id.Equals(intakeAssessmentId)
+                                            select e).FirstOrDefault();
+
+                    if (editIntakeAssessment == null) return null;
+
+                    editIntakeAssessment.Client_Id = clientId;
+                    editIntakeAssessment.Assessment_Date = assessmentDate;
+                    editIntakeAssessment.Assessed_By_Id = assessedById;
+
+                    if (editIntakeAssessment.Case_Manager_Supervisor_Id != caseManagerSupervisorId)
+                    {
+                        //sendAssignmentEmail(Convert.ToInt32(caseManagerSupervisorId), Convert.ToInt32(editIntakeAssessment.Intake_Assessment_Id));
+                    }
+                    editIntakeAssessment.Case_Manager_Supervisor_Id = caseManagerSupervisorId;
+
+                    if (editIntakeAssessment.Case_Manager_Id != caseManagerId)
+                    {
+                        //sendAssignmentEmail(Convert.ToInt32(caseManagerId), Convert.ToInt32(editIntakeAssessment.Intake_Assessment_Id));
+                    }
+                    if (caseManagerId != 0) { 
+                    editIntakeAssessment.Case_Manager_Id = caseManagerId;
+                    }
+                    editIntakeAssessment.Preliminary_Assessment = preliminaryAssessment;
+                    editIntakeAssessment.Presenting_Problem = presentingProblem;
+                    editIntakeAssessment.Problem_Sub_Category_Id = problemSubCategoryId;
+                    editIntakeAssessment.Is_Priority_Intervention = isPriorityIntervention;
+                    editIntakeAssessment.Is_Referred_For_Assessment = isReferredForAssessment;
+                    editIntakeAssessment.Is_Referred_To_Other_Service_Provider = isReferredToOtherServiceProvider;
+                    editIntakeAssessment.Is_Closed = isClosed;
+                    editIntakeAssessment.ClosedDate = closedDate;
+                    editIntakeAssessment.Treatment_Date = treatmentDate;
+                    editIntakeAssessment.Case_Background = caseBackground;
+                    editIntakeAssessment.Supervisor_Comments = supervisorComments;
+                    editIntakeAssessment.Social_Worker_Comments = socialWorkerComments;
+                    editIntakeAssessment.Referred_From_Organization_Id = referredFromOrganizationId;
+                    editIntakeAssessment.Referred_To_Organization_Id = referredToOrganizationId;
+                    editIntakeAssessment.Case_Allocation_Comments = caseAllocationComments;
+                    editIntakeAssessment.Date_Allocated = dateAllocated;
+                    editIntakeAssessment.Date_Due = dateDue;
+                    editIntakeAssessment.Is_Active = isActive;
+                    editIntakeAssessment.Is_Deleted = isDeleted;
+                    editIntakeAssessment.Date_Last_Modified = dateLastModified;
+                    editIntakeAssessment.Modified_By = modifiedBy;
+                    editIntakeAssessment.Case_Manager_Supervisor_Id = caseManagerSupervisorId;
+                    if (caseManagerId != 0)
+                    {
+                        editIntakeAssessment.Case_Manager_Id = caseManagerId;
+                    }
+                    dbContext.SaveChanges();
+                }
+                catch (System.Data.Entity.Validation.DbEntityValidationException dbEx)
+                {
+
+                    Exception raise = dbEx;
+                    foreach (var validationErrors in dbEx.EntityValidationErrors)
+                    {
+                        foreach (var validationError in validationErrors.ValidationErrors)
+                        {
+                            string message = string.Format("{0}:{1}",
+                                validationErrors.Entry.Entity.ToString(),
+                                validationError.ErrorMessage);
+                            // raise a new exception nesting
+                            // the current instance as InnerException
+                            raise = new InvalidOperationException(message, raise);
+                        }
+                    }
+                    throw raise;
+                }
+            }
+
+            return editIntakeAssessment;
+        }
+
+        public Intake_Assessment AcceptVEPCase(int intakeAssessmentId)
+        {
+            Intake_Assessment editIntakeAssessment;
+
+            var dbContext = new SDIIS_DatabaseEntities();
+
+            try
+            {
+                editIntakeAssessment = dbContext.Intake_Assessments.SingleOrDefault(a => a.Intake_Assessment_Id == intakeAssessmentId);
+
+                if (editIntakeAssessment == null) return null;
+
+                editIntakeAssessment.Treatment_Date = DateTime.Now;
+
+                dbContext.SaveChanges();
+
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+
+            return editIntakeAssessment;
+        }
+
+        public void sendAssignmentEmail (int userId, int AssessmentId)
+        {
+            var _db = new SDIIS_DatabaseEntities();
+            var EmailAddress = _db.Employees.Where(x => x.User_Id == userId).FirstOrDefault();
+            if (EmailAddress != null) { 
+            var UserFullName = EmailAddress.User.First_Name + " " + EmailAddress.User.Last_Name;
+          
+            if (EmailAddress != null)
+            {
+                //Get Email Template and add the information to it before sending.
+                var emailTemplate = File.ReadAllText(@"C:\_Work\DSD-Project\SDIIS\EmailTemplates\AllocationEmailTemplate.html");
+                var newText = emailTemplate.Replace("{%UserName%}", UserFullName);
+                var FinalBodyText = newText.Replace("{{%CaseUrl%}}", "http://localhost:52033/Intake/EditAssessment/" + AssessmentId);
+                var body = "<p>Email From: {0} ({1})</p><p>Message:</p><p>{2}</p>";
+                var message = new MailMessage();
+                message.To.Add(new MailAddress(EmailAddress.User.Email_Address));  // replace with valid value 
+                message.From = new MailAddress("mvjaneke@outlook.com","Intake");  // replace with valid value
+                message.Subject = "New Assignment";
+                message.Body = FinalBodyText;
+                message.IsBodyHtml = true;
+
+                SmtpClient smtp = new SmtpClient();
+                smtp.Host = "smtp.gmail.com";
+                smtp.Port = 587;
+                smtp.EnableSsl = true;
+
+                smtp.DeliveryMethod = SmtpDeliveryMethod.Network;
+                smtp.UseDefaultCredentials = false;
+                smtp.Credentials = new NetworkCredential("mvjaneke@gmail.com", "G0dz1ll4001");
+                smtp.Send(message);
+                
+            }
+            }
+
+        }
+
+        public Intake_Assessment AssignCaseManagerSupervisor(int intakeAssessmentId, int caseManagerSupervisorId)
+        {
+            Intake_Assessment editIntakeAssessment;
+
+            var dbContext = new SDIIS_DatabaseEntities();
+
+            try
+            {
+                editIntakeAssessment = (from e in dbContext.Intake_Assessments
+                                        where e.Intake_Assessment_Id.Equals(intakeAssessmentId)
+                                        select e).FirstOrDefault();
+
+                if (editIntakeAssessment == null) return null;
+
+                editIntakeAssessment.Case_Manager_Supervisor_Id = caseManagerSupervisorId;
+
+                dbContext.SaveChanges();
+
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+
+            return editIntakeAssessment;
+        }
+
+        public Intake_Assessment AssignCaseManager(int intakeAssessmentId, int caseManagerId)
+        {
+            Intake_Assessment editIntakeAssessment;
+
+            var dbContext = new SDIIS_DatabaseEntities();
+
+            try
+            {
+                editIntakeAssessment = (from e in dbContext.Intake_Assessments
+                                        where e.Intake_Assessment_Id.Equals(intakeAssessmentId)
+                                        select e).FirstOrDefault();
+
+                if (editIntakeAssessment == null) return null;
+
+                editIntakeAssessment.Case_Manager_Id = caseManagerId;
+
+                dbContext.SaveChanges();
+
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+
+            return editIntakeAssessment;
+        }
+
+        public Intake_Assessment AddReferralFocusAreaToIntakeAssessment(int intakeAsssessmentId, int referralFocusAreaId)
+        {
+            var dbContext = new SDIIS_DatabaseEntities();
+
+            try
+            {
+                var intakeAssessmentToEdit = dbContext.Intake_Assessments.FirstOrDefault(x => x.Intake_Assessment_Id.Equals(intakeAsssessmentId));
+                if (intakeAssessmentToEdit == null) return null;
+
+                var referralFocusAreaToAdd = dbContext.Referral_Focus_Areas.FirstOrDefault(x => x.Referral_Focus_Area_Id.Equals(referralFocusAreaId));
+                if (referralFocusAreaToAdd == null) return null;
+
+                intakeAssessmentToEdit.Referral_Focus_Areas.Add(referralFocusAreaToAdd);
+
+                dbContext.SaveChanges();
+
+                return intakeAssessmentToEdit;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
+        public Intake_Assessment AddReferralFocusAreaToIntakeAssessment(int intakeAssessmentId, List<int> referralFocusAreaIds)
+        {
+            var dbContext = new SDIIS_DatabaseEntities();
+
+            try
+            {
+                var intakeAssessmentToEdit = dbContext.Intake_Assessments.FirstOrDefault(x => x.Intake_Assessment_Id.Equals(intakeAssessmentId));
+                if (intakeAssessmentToEdit == null) return null;
+
+                intakeAssessmentToEdit.Referral_Focus_Areas.Clear();
+
+                foreach (var roleId in referralFocusAreaIds)
+                {
+                    var focusAreaToAdd = dbContext.Referral_Focus_Areas.FirstOrDefault(x => x.Referral_Focus_Area_Id.Equals(roleId));
+                    if (focusAreaToAdd == null) return null;
+
+                    intakeAssessmentToEdit.Referral_Focus_Areas.Add(focusAreaToAdd);
+                }
+
+                dbContext.SaveChanges();
+
+                return intakeAssessmentToEdit;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+        #region Avoid Duplication inserted by Herman
+
+        public int CheckIfAssessmentExists(int Client_IdCheck, int? Assessed_ByCheck, string PreLimAss)
+        {
+            var dbContext = new SDIIS_DatabaseEntities();
+
+            int Check = (from a in dbContext.Intake_Assessments
+                         where a.Client_Id == Client_IdCheck && a.Assessed_By_Id == Assessed_ByCheck && a.Preliminary_Assessment== PreLimAss
+                         select a.Intake_Assessment_Id).FirstOrDefault();
+            if (Check != 0)
+            {
+                return Check;
+            }
+            else
+            {
+                return 0;
+            }
+
+        }
+
+        #endregion
+
+        public string GetDistrictDescription(string TownId)
+        {
+            var dbContext = new SDIIS_DatabaseEntities();
+            if (TownId!=null&& TownId != "")
+            {
+                int newTownId = Convert.ToInt32(TownId);
+                return dbContext.Districts.Find(dbContext.Local_Municipalities.Find(dbContext.Towns.Find(newTownId).Local_Municipality_Id).District_Municipality_Id).Description;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        public string GetProvinceDescription(string TownId)
+        {
+            var dbContext = new SDIIS_DatabaseEntities();
+            if (TownId != null && TownId != "")
+            {
+                int newTownId = Convert.ToInt32(TownId);
+                int newLocMunId = dbContext.Towns.Find(newTownId).Local_Municipality_Id;
+                int newDisId = dbContext.Local_Municipalities.Find(newLocMunId).District_Municipality_Id;
+                int newProvId = dbContext.Districts.Find(newDisId).Province_Id;
+                return dbContext.Provinces.Find(newProvId).Description;
+            }
+            else
+            {
+                return null;
+            }
+        }
+    }
+}

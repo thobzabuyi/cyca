@@ -1,0 +1,404 @@
+﻿@using MvcCheckBoxList.Model
+
+@model Common_Objects.Models.Employee
+
+@{
+    ViewBag.Title = "Create Employee";
+}
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $(".chosen-select").chosen();
+
+        $(".SocialWorkerDetails").hide();
+    });
+
+    function valueChanged() {
+        if ($('.isSocialWorkerCheck').is(":checked"))
+            $(".SocialWorkerDetails").show();
+        else
+            $(".SocialWorkerDetails").hide();
+    }
+
+</script>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="panel panel-primary">
+        <div class="panel-heading" style="text-align: center">
+            Create an Agent
+        </div>
+        <div class="panel-body">
+            
+            <div class="row">
+
+                <div class="col-md-6">
+                    <div class="row">
+                        <div class="col-md-6 form-group">
+                            @Html.LabelFor(x => x.Persal_Number, new { @class = "control-label" })
+                        </div>
+                        <div class="col-md-6">
+                            @Html.TextBoxFor(model => model.Persal_Number, new { @class = "form-control" })
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="row">
+                        <div class="col-md-6 form-group">
+                            @Html.LabelFor(x => x.User.Initials, new { @class = "control-label" })
+                        </div>
+                        <div class="col-md-6">
+                            @Html.TextBoxFor(model => model.User.Initials, new { @class = "form-control" })
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="row">
+
+                <div class="col-md-6">
+                    <div class="row">
+                        <div class="col-md-6 form-group">
+                            @Html.LabelFor(x => x.User.First_Name, new { @class = "control-label" })
+                        </div>
+                        <div class="col-md-6">
+                            @Html.TextBoxFor(model => model.User.First_Name, new { @class = "form-control" })
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="row">
+                        <div class="col-md-6 form-group">
+                            @Html.LabelFor(x => x.User.Last_Name, new { @class = "control-label" })
+                        </div>
+                        <div class="col-md-6">
+                            @Html.TextBoxFor(model => model.User.Last_Name, new { @class = "form-control" })
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="row">
+
+                <div class="col-md-6">
+                    <div class="row">
+                        <div class="col-md-6 form-group">
+                            @Html.LabelFor(x => x.User.Email_Address, new { @class = "control-label" })
+                        </div>
+                        <div class="col-md-6">
+                            @Html.TextBoxFor(model => model.User.Email_Address, new { @class = "form-control" })
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="row">
+                        <div class="col-md-6 form-group">
+                            @Html.LabelFor(x => x.ID_Number, new { @class = "control-label" })
+                        </div>
+                        <div class="col-md-6">
+                            @Html.TextBoxFor(model => model.ID_Number, new { @class = "form-control" })
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            
+            
+
+
+            <div class="row">
+
+                <div class="col-md-6">
+                    <div class="row">
+                        <div class="col-md-6 form-group">
+                            @Html.LabelFor(x => x.Heads_of_Department_List, new { @class = "control-label" })
+                        </div>
+                        <div class="col-md-6">
+                            @Html.DropDownListFor(n => n.Head_Of_Department_Id, Model.Heads_of_Department_List, "- Please select -", new { @id = "DropdownModule", @class = "form-control chosen-select" })
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="row">
+                        <div class="col-md-6 form-group">
+                            @Html.LabelFor(x => x.Supervisors_List, new { @class = "control-label" })
+                        </div>
+                        <div class="col-md-6">
+                            @Html.DropDownListFor(n => n.Supervisor_Id, Model.Supervisors_List, "- Please select -", new { @id = "DropdownModule", @class = "form-control chosen-select" })
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="row">
+
+                <div class="col-md-6">
+                    <div class="row">
+                        <div class="col-md-6 form-group">
+                            @Html.LabelFor(x => x.Phone_Number, new { @class = "control-label" })
+                        </div>
+                        <div class="col-md-6">
+                            @Html.TextBoxFor(model => model.Phone_Number, new { @class = "form-control" })
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="row">
+                        <div class="col-md-6 form-group">
+                            @Html.LabelFor(x => x.Mobile_Phone_Number, new { @class = "control-label" })
+                        </div>
+                        <div class="col-md-6">
+                            @Html.TextBoxFor(model => model.Mobile_Phone_Number, new { @class = "form-control" })
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="row">
+
+                <div class="col-md-6">
+                    <div class="row">
+                        <div class="col-md-6 form-group">
+                            @Html.LabelFor(x => x.Gender_List, new { @class = "control-label" })
+                        </div>
+                        <div class="col-md-6">
+                            @Html.DropDownListFor(n => n.Gender_Id, Model.Gender_List, "- Please select -", new { @id = "DropdownModule", @class = "form-control chosen-select" })
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="row">
+                        <div class="col-md-6 form-group">
+                            @Html.LabelFor(x => x.Race_List, new { @class = "control-label" })
+                        </div>
+                        <div class="col-md-6">
+                            @Html.DropDownListFor(n => n.Race_Id, Model.Race_List, "- Please select -", new { @id = "DropdownModule", @class = "form-control chosen-select" })
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="row">
+                        <div class="col-md-6 form-group">
+                            @*@Html.LabelFor(x => x.Paypoint_List, new { @class = "control-label" })*@
+                            @Html.LabelFor(x => x.EmployeeService_List, new { @class = "control-label" })
+                        </div>
+                        <div class="col-md-6">
+                            @Html.DropDownList("ServiceList", (IEnumerable<SelectListItem>)ViewBag.AvailableEmployeeServices, "- Please select -", new { @class = "form-control chosen-select", @multiple = "multiple" })
+                            @*@Html.DropDownListFor(n => n.SelectedEmployeeService_Ids, Model.EmployeeService_List, "- Please select -", new { @id = "DropdownModule", @class = "form-control chosen-select", @multiple = "multiple" })*@
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="row">
+                        <div class="col-md-6 form-group">
+                            @Html.LabelFor(x => x.Job_Position_List, new { @class = "control-label" })
+                        </div>
+                        <div class="col-md-6">
+                            @Html.DropDownList("JobPositionList", (IEnumerable<SelectListItem>)ViewBag.AvailableJobPosition, "- Please select -", new { @class = "form-control chosen-select", @multiple = "multiple" })
+
+                           @* @Html.DropDownList("JobPosition", (IEnumerable<SelectListItem>)ViewBag.AvailableJobPosition, "- Please select -", new { @id = "DropdownModule", @class = "form-control chosen-select", @multiple = "multiple" })*@
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+
+                <div class="col-md-6">
+                    <div class="row">
+                        <div class="col-md-6 form-group">
+                            @Html.LabelFor(x => x.Service_Office_List, new { @class = "control-label" })
+                        </div>
+                        <div class="col-md-6">
+                            @Html.DropDownListFor(n => n.Service_Office_Id, Model.Service_Office_List, "- Please select -", new { @id = "DropdownModule", @class = "form-control chosen-select" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="row">
+                        <div class="col-md-6 form-group">
+                            @Html.LabelFor(x => x.Paypoint_List, new { @class = "control-label" })
+                        </div>
+                        <div class="col-md-6">
+                            @Html.DropDownListFor(n => n.Paypoint_Id, Model.Paypoint_List, "- Please select -", new { @id = "DropdownModule", @class = "form-control chosen-select" })
+                        </div>
+                    </div>
+                </div>
+
+                
+
+            </div>
+            <div class="row">
+
+                <div class="col-md-6">
+                    <div class="row">
+                        <div class="col-md-6 form-group">
+                            @Html.LabelFor(x => x.Is_Shift_Worker, new { @class = "control-label" })
+                        </div>
+                        <div class="col-md-6">
+                            @Html.CheckBoxFor(model => model.Is_Shift_Worker)
+                            <label for="Is_Shift_Worker">Yes</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="row">
+                        <div class="col-md-6 form-group">
+                            @Html.LabelFor(x => x.Salary_Level_List, new { @class = "control-label" })
+                        </div>
+                        <div class="col-md-6">
+                            @Html.DropDownListFor(n => n.Salary_Level_Id, Model.Salary_Level_List, "- Please select -", new { @id = "DropdownModule", @class = "form-control chosen-select" })
+                        </div>
+                    </div>
+                </div>
+                
+
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="row">
+                        <div class="col-md-6 form-group">
+                            @Html.Label("Social Worker?", new { @class = "control-label" })
+                        </div>
+                        <div class="col-md-6">
+                            @Html.CheckBoxFor(model => model.Is_SocialWorker, new { @class = "isSocialWorkerCheck", onchange = "valueChanged()" })
+                            <label for="Is_Active">Yes</label>
+                            <div class="SocialWorkerDetails">
+                                <div class="col-md-12">
+                                    @Html.LabelFor(m => m.PracticeNumber, new { @class = "control-label" })
+                                    @Html.TextBoxFor(m => m.PracticeNumber, new { @class = "form-control" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="row">
+                        <div class="col-md-6 form-group">
+                            @Html.LabelFor(x => x.Is_Casual_Worker, new { @class = "control-label" })
+                        </div>
+                        <div class="col-md-6">
+                            @Html.CheckBoxFor(model => model.Is_Casual_Worker)
+                            <label for="Is_Casual_Worker">Yes</label>
+                        </div>
+                    </div>
+                </div>
+                
+
+            </div>
+
+            <div class="row">
+
+                <div class="col-md-6">
+                    <div class="row">
+                        <div class="col-md-6 form-group">
+                            @Html.LabelFor(x => x.User.Roles, new { @class = "control-label" })
+                        </div>
+                        <div class="col-md-6">
+                            @Html.CheckBoxListFor(x => x.User.Posted_Roles.Role_IDs,
+                            x => x.User.Available_Roles,
+                            x => x.Role_Id,
+                            x => x.Description,
+                            x => x.User.Roles.ToList(), Position.Vertical)
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="row">
+                        <div class="col-md-6 form-group">
+                            @Html.LabelFor(x => x.Is_Active, new { @class = "control-label" })
+                        </div>
+                        <div class="col-md-6">
+                            @Html.CheckBoxFor(model => model.Is_Active)
+                            <label for="Is_Active">Yes</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="row">
+                        <div class="col-md-6 form-group">
+                            @Html.LabelFor(x => x.User.Groups, new { @class = "control-label" })
+                        </div>
+                        <div class="col-md-6">
+                            @Html.CheckBoxListFor(x => x.User.Posted_Roles.Role_IDs,
+                            x => x.User.Available_Groups,
+                            x => x.Group_Id,
+                            x => x.Description,
+                            x => x.User.Groups.ToList(), Position.Vertical)
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+        @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+
+        <div class="panel-footer">
+            <input type="submit" id="ButtonSave" value="Save" class="btn btn-success" />
+            @Html.ActionLink("Cancel", "Index", null, new { @class = "btn btn-danger" })
+        </div>
+    </div>
+}
+
+<script type="text/javascript">
+
+    //Get Selected Services Type Search Result fieds
+    $("#EmployeeServices").change(function () {
+
+        var obj = [],
+                items = '';
+        $('#EmployeeServices option:selected').each(function (i) {
+            obj.push($(this).val());
+        });
+
+        $.ajax({
+            url: $.url('/Employee/SetEmployeeServices'),
+            data: { 'employeeServicesList': obj },
+            type: "POST",
+            success: function (response, status, xhr) {
+
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                alert('Error on search for employee service selected.');
+            }
+        });
+    });
+
+    //Get Selected Job Position Type Search Result fieds
+    $("#EmployeeJobPosition").change(function () {
+
+        var obj = [],
+                items = '';
+        $('#EmployeeJobPosition option:selected').each(function (i) {
+            obj.push($(this).val());
+        });
+
+        $.ajax({
+            url: $.url('/Employee/SetEmployeeJobPosition'),
+            data: { 'employeeJobPositionList': obj },
+            type: "POST",
+            success: function (response, status, xhr) {
+
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                alert('Error on search for job position selected.');
+            }
+        });
+    });
+
+</script>

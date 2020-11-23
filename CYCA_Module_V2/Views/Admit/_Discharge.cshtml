@@ -1,0 +1,621 @@
+﻿@model CYCA_Module_V2.Common_Objects.CYCADischargeViewModel
+@using Common_Objects.ViewModels
+
+@{
+  ViewBag.Title = "Discharge";
+}
+<div class="row">
+  <div class="portlet-body">
+    <div class="col-md-12 col-sm-12">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3>Discharge for @Model.ChildFullName</h3>
+        </div>
+        <div class="panel-body">
+          <form id="myFormDischarge">
+            <div class="row">
+              <div class="col-md-4">
+                @Html.HiddenFor(m => m.PersonId)
+                @Html.HiddenFor(m => m.AdmissionId)
+                @Html.HiddenFor(m => m.DischargeId)
+                @Html.LabelFor(m => m.selectedUserHandedOver)
+              </div>
+              <div class="col-md-8 form-group" style="">
+                  @Html.DropDownListFor(m => m.UserHandedOverId, ViewBag.StaffViewList as SelectList, "--Select--", new { @class = "form-control", required = "required" })
+
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-4">
+                @Html.LabelFor(x => x.UserReceivedName)
+              </div>
+              <div class="col-md-8 form-group" style="">
+                @*@Html.TextBoxFor(m => m.CaseEndDate, new { @id = "caseenddate", @class = "form-control jqueryui-marker-datepicker", required = "required" })*@
+                @Html.TextBoxFor(m => m.UserReceivedName, new { @class = "form-control", required = "required" })
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-4">
+                @Html.LabelFor(x => x.selectedUserReceivedDesignation)
+              </div>
+              <div class="col-md-8 form-group" style="">
+                @Html.DropDownListFor(m => m.UserReceivedDesignationId, ViewBag.ReceivingPersonDesignationList as SelectList, "--Select--", new { @class = "form-control", required = "required" })
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-4">
+                @Html.LabelFor(x => x.selectedUserReceivedOrganisation)
+              </div>
+              <div class="col-md-8 form-group" style="">
+                @Html.DropDownListFor(m => m.UserReceivedOrganisationId, ViewBag.OrganizationList as SelectList, "--Select--", new { @class = "form-control", required = "required", onchange = "ShowHideOrg()" })
+              </div>
+            </div>
+            <div id="dvOtherOrg" class="row" style="display: none">
+              <div class="col-md-4">
+                @Html.LabelFor(x => x.OtherOrgComment)
+              </div>
+              <div class="col-md-8 form-group">
+                @*@Html.TextBoxFor(m => m.Additional_Info, new { @class = "form-control", required = "required" })*@
+                <!-- <textarea class="form-control" type="text" id="OtherOrgComment" required></textarea>-->
+                @Html.TextAreaFor(m => m.OtherOrgComment, new { @class = "form-control", required = "required" })
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-4">
+                @Html.LabelFor(x => x.selectedDischargeReason)
+              </div>
+              <div class="col-md-8 form-group" style="">
+                @Html.DropDownListFor(m => m.DischargeReasonId, ViewBag.DischargeReasonList as SelectList, "--Select--", new { @class = "form-control", required = "required" })
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-4">
+                @Html.LabelFor(x => x.DischargeDate)
+              </div>
+              <div class="col-md-8 form-group" style="">
+                @Html.TextBoxFor(m => m.DischargeDate, new { @class = "form-control jqueryui-marker-datepicker", required = "required" })
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-4">
+                @Html.LabelFor(x => x.Comments)
+              </div>
+              <div class="col-md-8 form-group">
+                @Html.TextAreaFor(m => m.Comments, new { @class = "form-control" })
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-4">
+
+                Document Type:
+              </div>
+              <div class="col-md-8 form-group">
+                @Html.DropDownListFor(m => m.DocType_Id, ViewBag.DocumentTypeList as SelectList, "--Select--", new { @id = "DocType_Id", @class = "form-control", onchange = "ShowHideDiv(), chkatchtbl()" })
+              </div>
+              <div id="dvOther" style="display: none">
+                <div class="col-md-4">
+                  Explain Document Type:
+                </div>
+                <div class="col-md-8 form-group">
+                  @*@Html.TextBoxFor(m => m.Additional_Info, new { @class = "form-control", required = "required" })*@
+                  <input class="form-control" type="text" id="Exp" required />
+                </div>
+              </div>
+              <div class="col-md-4">
+                Documents:
+
+              </div>
+              <div class="col-md-8 form-group" style="">
+                @*@Html.TextBoxFor(m => m.Document_Name, new { type = "file", @id = "Document_Name", @class = "form-control" })*@
+                <input name="addFile" id="fileInput" type="file" multiple required disabled>
+              </div>
+              <br />            <br />
+              <div>
+                @if (Model.RequestType == "View" || Model.RequestType == "Update")
+                {
+                  if (Model.Files != null)
+                  {
+                    if (Model.Files.Count > 0)
+                    {
+
+                      <div class="col-md-4 ExistingFiles" style="padding-right: 100px" id="ExistingFiles">
+                        <table class="table">
+                          <tr><u>Existing Files:</u></tr>
+                          <tr>
+                            <th>
+                              Attachment(s)
+                            </th>
+                            @if (Model.RequestType != "View")
+                            {
+                              <th>
+                                Action
+                              </th>
+                            }
+                          </tr>
+
+                          @foreach (Common_Objects.Models.CYCA_Admissions_Document f in Model.Files)
+                          {
+                            <tr>
+                              <td>
+                                <a class="download-file1" href="@Url.Action("DownloadFile", "Admit", new { id = f.Document_Id, })" target="_blank">
+                                  @f.Document_Name
+                                </a>
+                              </td>
+                              @if (Model.RequestType != "View")
+                              {
+                                <td>
+                                  <span class='red'>
+                                    <i class="fa fa-trash"></i>
+                                  </span>
+                                  <input type="button" value="Remove" placeholder="@f.Document_Id" name=" @f.Document_Name" onclick="DeleteFiles(this.placeholder,this.name)" class="anchorButton" />
+                                  <br />
+                                </td>
+                              }
+                            </tr>
+
+                          }
+                        </table>
+
+                      </div>
+                    }
+
+                  }
+                }
+                <div class="col-md-4">
+
+                  <table class="table" id="FilesList" style="visibility:hidden">
+                    <tr><th><u>New Files:</u></th></tr>
+                    <tr>
+                      <th>
+                        Attachment(s)
+                      </th>
+                      <th>
+                        Action
+                      </th>
+                    </tr>
+                  </table>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-4">
+                @Html.LabelFor(x => x.KeepBedSpace, new { @class = "control-label" })
+              </div>
+              <div class="col-md-8 form-group">
+                @Html.CheckBoxFor(x => x.KeepBedSpace)
+              </div>
+            </div>
+            <div class="row" id="rowExpectedReturnDate" onload="displayReturnDate(m.bedspace)">
+
+              <div class="col-md-4">
+                @Html.LabelFor(x => x.ExpectedReturnDate)
+              </div>
+              <div class="col-md-8 form-group" style="">
+                @Html.TextBoxFor(m => m.ExpectedReturnDate, new { @class = "form-control jqueryui-marker-datepicker", required = "required" })
+              </div>
+            </div>
+
+            <div class="row pull-right">
+              <div class="col-md-12">
+                @if (Model.RequestType == "Update")
+                {
+                  <a class="btn btn-primary" id="UpdateDischarge" style="visibility:visible">Update</a>
+                }
+                @if (Model.RequestType == "Discharge")
+                {
+                  <a class="btn btn-primary" id="SaveDischarge">Save</a>
+                }
+                <a class="btn btn-default" id="Cancel">Cancel</a>
+
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+
+ function displayReturnDate(keep) {
+    console.log(keep + "we have results");
+    if (keep) {
+      $("#rowExpectedReturnDate").show();
+    }
+  }
+
+
+  $(document).ready(function () {
+
+    var requestType = '@Model.RequestType';
+    if ('@Model.selectedUserReceivedOrganisation' == 'OTHER')
+    {
+      ShowHideOrg();
+    }
+    if (requestType == "View") {
+      $("#myFormDischarge :input").prop("disabled", true);
+      document.getElementsByClassName('file-link').prop("disabled", true);
+    }
+    var bedspace = document.getElementById('KeepBedSpace').checked;
+
+    if (open == "yes")
+    {
+      document.getElementById("SaveDischarge").style.visibility = "hidden";
+    };
+  });
+
+
+  function disableLink(el) {
+    el.onclick = function () {
+      return false;
+    }
+  }
+
+
+    $(function () {
+        // Initialize items marked as datepickers
+        $("#DischargeDate").datetimepicker({
+            dateFormat: "dd M yy",
+            changeMonth: true,
+            changeYear: true,
+            minDate: new Date(),
+            maxDate: new Date(),
+            //yearRange: "-60:+0",
+            controlType: 'select',
+            timeFormat: 'hh:mm TT',
+            onClose: function () {
+                $(this).valid();
+            }
+        });
+        $("#ExpectedReturnDate").datetimepicker({
+            dateFormat: "dd M yy",
+            changeMonth: true,
+            changeYear: true,
+            minDate: new Date(),
+            //yearRange: "-60:+0",
+            controlType: 'select',
+            timeFormat: 'hh:mm TT',
+            onClose: function () {
+                $(this).valid();
+            }
+        });
+        $("#rowExpectedReturnDate").hide();
+    });
+    $('#KeepBedSpace').change(function () {
+        if (this.checked) {
+            $("#rowExpectedReturnDate").show();
+        } else {
+            $("#rowExpectedReturnDate").hide();
+        }
+    });
+
+  (function () {
+    if (this.checked) {
+      $("#rowExpectedReturnDate").show();
+    } else {
+      $("#rowExpectedReturnDate").hide();
+    }
+  });
+    function EnrollFingerPrints() {
+        if (signalHub.IsConnected) {
+            //Call Server Methods
+            request.requestType = "Verify";
+            FingerPrintServerProxy.invoke('fPCaptureRq', request).done(function () {
+                //console.log('Invocation of fPCaptureRq succeeded');
+            }).fail(function (error) {
+                //console.log('Invocation of fPCaptureRq failed. Error: ' + error);
+            });
+        } else {
+            var clickedEnroll = false;
+            $.confirm({
+                title: 'Discharge',
+                content: 'There is no biometrics detected, would you still like to discharge the child?',
+                buttons: {
+                    Yes: function () {
+                        if (clickedEnroll == false) {
+                            clickedEnroll = true;
+                            SendDataToServer();
+                        }
+                    },
+                    No: function () {
+                    }
+                }
+            });
+        }
+
+    }
+    //function SendDataToServer() {
+    //    $.ajax({
+    //        type: "Post",
+    //        url: "/Admit/AddDischarge",
+    //        data: {
+    //            AdmissionId: $("#AdmissionId").val(),
+    //            PersonId: $("#PersonId").val(),
+    //            KeepBedSpace: $("#KeepBedSpace").is(":checked"),
+    //            Comments: $("#Comments").val(),
+    //            DischargeDate: $("#DischargeDate").val(),
+    //            DischargeReasonId: $("#DischargeReasonId").val(),
+    //            UserReceivedDesignationId: $("#UserReceivedDesignationId").val(),
+    //            UserReceivedOrganisationId: $("#UserReceivedOrganisationId").val(),
+    //            UserReceivedName: $("#UserReceivedName").val(),
+    //            UserHandedOverId: $("#UserHandedOverId").val(),
+    //            ExpectedReturnDate: $("#ExpectedReturnDate").val()
+    //        },
+    //        success: function (result) {
+    //            location.reload(true);
+    //        },
+    //        error: function (xhr, ajaxOptions, error) {
+
+    //        }
+    //    });
+    //}
+  $("#Cancel").click(function () {
+    if ('@Model.RequestType' == 'View' || '@Model.RequestType' == "Update") {
+      closeView("yes close this view");
+    } else {
+      location.reload(true);
+    }
+    })
+    //$("#Save").click(function () {
+    //    //Vaidate Form
+    //    var $valid = $("#myForm").valid();
+    //    if (!$valid) {
+    //        return;
+    //    }
+    //    console.log(true);
+    //    SendDataToServer();
+    //});
+
+    function ShowHideDiv() {
+        //var DocType_Id = document.getElementById("DocType_Id");
+        //var dvOther = document.getElementById("dvOther");
+        //dvOther.style.display = DocType_Id.value == "4" ? "block" : "none";
+
+        var DocType_Id = document.getElementById("DocType_Id");
+        var dvOther = document.getElementById("dvOther");
+        var selectedText = DocType_Id.options[DocType_Id.selectedIndex].text;
+        console.log(selectedText.toUpperCase() + "inside org");
+
+        dvOther.style.display = selectedText == "Other" ? "block" : "none";
+  }
+  function ShowHideOrg() {
+
+    var organisation_Id = document.getElementById("UserReceivedOrganisationId");
+    var dvOtherOrg = document.getElementById("dvOtherOrg");
+    var selectedText = organisation_Id.options[organisation_Id.selectedIndex].text;
+    console.log(selectedText.toUpperCase() + "inside org");
+
+    dvOtherOrg.style.display = selectedText == "OTHER" ? "block" : "none";
+  }
+  var formdata = new FormData(); //FormData object
+  var removeFiles = [];
+    $(document).ready(function () {
+      chkatchtbl();
+      var bedspace = document.getElementById('KeepBedSpace').checked;
+      displayReturnDate(bedspace);
+        $("#fileInput").on("change", function () {
+            var fileInput = document.getElementById('fileInput');
+            //Iterating through each files selected in fileInput
+            for (i = 0; i < fileInput.files.length; i++) {
+
+                var sfilename = fileInput.files[i].name;
+                let srandomid = Math.random().toString(36).substring(7);
+
+                formdata.append(sfilename, fileInput.files[i]);
+                var markup = "<tr id='" + srandomid + "'><td>" + sfilename + "</td><td><a href='#' onclick='DeleteFile(\"" + srandomid + "\",\"" + sfilename +
+                    "\")'><span class='red'><i class='fa fa-trash'></i>Remove</span></a></td></tr>"; // Binding the file name
+                $("#FilesList tbody").append(markup);
+            }
+            chkatchtbl();
+            $('#fileInput').val('');
+        });
+
+        $("#SaveDischarge").click(function () {
+            var $valid = $("#myFormDischarge").valid();
+            if (!$valid) {
+                return;
+            }
+            formdata.append('uploadername', $('#txtuploader').val());
+            formdata.append("AdmissionId", $("#AdmissionId").val());
+            formdata.append("PersonId", $("#PersonId").val());
+            formdata.append("KeepBedSpace", $("#KeepBedSpace").is(":checked"));
+            formdata.append("Comments", $("#Comments").val());
+            formdata.append("DischargeDate", $("#DischargeDate").val());
+            formdata.append("DischargeReasonId", $("#DischargeReasonId").val());
+            formdata.append("UserReceivedDesignationId", $("#UserReceivedDesignationId").val());
+            formdata.append("UserReceivedOrganisationId", $("#UserReceivedOrganisationId").val());
+            formdata.append("UserReceivedName", $("#UserReceivedName").val());
+            formdata.append("UserHandedOverId", $("#UserHandedOverId").val());
+            formdata.append("ExpectedReturnDate", $("#ExpectedReturnDate").val());
+            formdata.append("DocType_Id", $("#DocType_Id").val());
+            formdata.append("OtherOrgComment", $("#OtherOrgComment").val());
+            var clicked = false;
+               $.confirm({
+                        title: 'Discharge Child',
+                        content: 'Are you sure you want to discharge this child?',
+                        buttons: {
+                            Yes: function () {
+                                if (clicked == false) {
+                                    clicked = true;
+                                $.ajax({
+                                    url: '@Url.Action("AddDischarge", "Admit")',
+                                    type: "POST",
+                                    contentType: false, // Not to set any content header
+                                    processData: false, // Not to process data
+                                    data: formdata,
+                                    async: false,
+                                    success: function (response) {
+
+                                        location.reload(true);
+                                    },
+                                    error: function (error) {
+                                        console.log(error);
+                                    }
+                                });
+                            }
+                            },
+                            No: function () {
+
+                            }
+                        }
+                    });
+
+        });
+      $("#UpdateDischarge").click(function () {
+          var $valid = $("#myFormDischarge").valid();
+            if (!$valid) {
+                return;
+            }
+            formdata.append('uploadername', $('#txtuploader').val());
+            formdata.append("AdmissionId", $("#AdmissionId").val());
+            formdata.append("DischargeId", $("#DischargeId").val());
+            formdata.append("PersonId", $("#PersonId").val());
+            formdata.append("KeepBedSpace", $("#KeepBedSpace").is(":checked"));
+            formdata.append("Comments", $("#Comments").val());
+            formdata.append("DischargeDate", $("#DischargeDate").val());
+            formdata.append("DischargeReasonId", $("#DischargeReasonId").val());
+            formdata.append("UserReceivedDesignationId", $("#UserReceivedDesignationId").val());
+            formdata.append("UserReceivedOrganisationId", $("#UserReceivedOrganisationId").val());
+            formdata.append("UserReceivedName", $("#UserReceivedName").val());
+            formdata.append("UserHandedOverId", $("#UserHandedOverId").val());
+            formdata.append("ExpectedReturnDate", $("#ExpectedReturnDate").val());
+        formdata.append("DocType_Id", $("#DocType_Id").val());
+          formdata.append("OtherOrgComment", $("#OtherOrgComment").val());
+          var clickUpdate = false;
+               $.confirm({
+                        title: 'Update Discharge',
+                        content: 'Are you sure you want to update these Discharge details?',
+                        buttons: {
+                            Yes: function () {
+                                if (clickUpdate == false) {
+                                    clickUpdate = true;
+                                console.log(removeFiles);
+                                $.ajax({
+                                    url: '@Url.Action("DeleteDocumentFilesByIDs", "Admit")',
+                                    type: "POST",
+                                    data: JSON.stringify(removeFiles),
+                                    dataType: "json",
+                                    contentType: 'application/json; charset=utf-8',
+                                    async: false,
+                                    success: function (response) {
+                                        console.log(response + "on the deleting of the files first");
+                                    },
+                                    error: function (error) {
+                                        console.log(error);
+                                    }
+                                });
+
+                                $.ajax({
+                                    url: '@Url.Action("UpdateDischarge", "Admit")',
+                                    type: "POST",
+                                    contentType: false, // Not to set any content header
+                                    processData: false, // Not to process data
+                                    data: formdata,
+                                    async: false,
+                                    success: function (response) {
+                                        console.log(response + "  fixing this ");
+                                        CloseEdit(response);
+                                    },
+                                    error: function (error) {
+                                        console.log(error);
+                                    }
+                                });
+                            }
+                            },
+                            No: function () {
+
+                            }
+                        }
+                    });
+
+        });
+    });
+  function closeView() {
+    CloseView("Discharge close this view");
+  }
+
+    function DeleteFile(Fileid, FileName) {
+      formdata.delete(FileName);
+        $("#" + Fileid).remove();
+        chkatchtbl();
+    }
+
+  function DeleteFiles(Fileid, documentName ) {
+    removeFiles.push(Fileid);
+      $('.ExistingFiles tr').each(function () {
+        var tdText = $(this).children('td:nth-child(1)').text();
+        if (tdText.includes(documentName)) {
+          $(this).remove();
+          }
+
+      });
+  }
+    //function chkatchtbl() {
+    //    //if ($('#FilesList tr').length > 1) {
+    //    //    $("#FilesList").css("visibility", "visible");
+    //    //} else {
+    //    //    $("#FilesList").css("visibility", "hidden");
+    //    //}
+    //  console.log(":inside the checkbox thingie");
+    //  $("#fileInput").removeAttr("disabled");
+
+    //    if (document.getElementById("DocType_Id").value >=1) {
+
+
+    //        if ($('#FilesList tr').length > 1) {
+    //          $("#fileInput").removeAttr("required");
+    //            $("#FilesList").css("visibility", "visible");
+    //        } else {
+    //            $("#fileInput").attr("required", "required")
+    //        }
+    //    } else {
+    //      console.log("the else method");
+    //      $("#fileInput").attr("enabled", "enabled");
+    //      $("#fileInput").removeAttr("required");
+    //        $("#FilesList").css("visibility", "hidden");
+    //        if ($('#FilesList tr').length > 1) {
+    //            $("#FilesList").css("visibility", "visible");
+    //            $("#DocType_Id").attr("required", "required")
+    //        }
+    //    }
+    //}
+
+
+        function chkatchtbl() {
+          var requestTypes = '@Model.RequestType';
+
+            if (requestTypes === "Update" && document.getElementById("DocType_Id").value >= 1) {
+              $("#fileInput").removeAttr("disabled");
+            if ($('#FilesList tr').length > 2 || $('#ExistingFiles tr').length > 0) {
+
+                $("#fileInput").removeAttr("required")
+                $("#FilesList").css("visibility", "visible");
+            } else {
+                $("#fileInput").attr("required", "required")
+                $("#FilesList").css("visibility", "hidden");
+            }
+        }
+            else if (document.getElementById("DocType_Id").value >= 1) {
+
+            $("#fileInput").removeAttr("disabled")
+            if ($('#FilesList tr').length > 2) {
+                $("#fileInput").removeAttr("required")
+                $("#FilesList").css("visibility", "visible");
+            } else {
+                $("#fileInput").attr("required", "required")
+                $("#FilesList").css("visibility", "hidden");
+            }
+
+        } else {
+            $("#fileInput").attr("disabled", "disabled")
+            $("#FilesList").css("visibility", "hidden");
+            if ($('#FilesList tr').length > 2) {
+                $("#FilesList").css("visibility", "visible");
+                $("#DocType_Id").attr("required", "required")
+            }
+        }
+
+    }
+</script>

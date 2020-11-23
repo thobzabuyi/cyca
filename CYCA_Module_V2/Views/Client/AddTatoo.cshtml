@@ -1,0 +1,612 @@
+﻿
+@model Common_Objects.ViewModels.TatooVewModel
+@{
+    ViewBag.Title = "New Tatoo";
+}
+
+<div id="mainDiv">
+    <div class="row">
+        <div class="col-md-12 col-sm-12">
+            <div class="panel panel-default">
+                @if (Model.RequestType == "Update" || Model.RequestType == "View")
+                {
+                    <div class="panel-heading text-center">
+                        <strong style="color:#158cba"> Tattoo Details</strong>
+                    </div>
+
+                }
+                else
+                {
+                    <div class="panel-heading text-center">
+                        <strong style="color:#158cba">Tattoo</strong>
+                    </div>
+                }
+                <div class="panel-body">
+                    <form id="myFormAdmit">
+                        <div class="row">
+                            <div class="col-md-4">
+                                @Html.HiddenFor(m => m.Admission_Id)
+                                @Html.HiddenFor(m => m.clientID)
+                                @Html.HiddenFor(m => m.Tatoo_Id)
+                                @*@Html.LabelFor(x => x.Tatoo_Visible)*@
+                            </div>
+                            @*<div class="col-md-8 form-group" style="">
+                                <label>@Html.RadioButtonFor(m => m.Tatoo_Visible, true, new { @id = "Tatoo_Visible" }) Yes</label>
+                                <label>@Html.RadioButtonFor(m => m.Tatoo_Visible, false, new { @id = "Tatoo_Visible" }) No</label>
+                            </div>*@
+                        </div>
+                        <div >
+                            <div class="row">
+                                <div class="col-md-4">
+
+                                    @Html.LabelFor(x => x.Tatoo_Description)
+                                </div>
+                                <div class="col-md-8 form-group" style="">
+                                    @Html.TextBoxFor(m => m.Tatoo_Description, new { @class = "form-control", required = "required" })
+                                </div>
+                                <div class="col-md-4">
+
+                                    @Html.LabelFor(x => x.Tatoo_Size)
+                                </div>
+                                <div class="col-md-8 form-group" style="">
+                                    @Html.TextBoxFor(m => m.Tatoo_Size, new { @class = "form-control", required = "required" })
+                                </div>
+                                <div class="col-md-4">
+
+                                    @Html.LabelFor(x => x.Tatoo_Position)
+                                </div>
+                                <div class="col-md-8 form-group" style="">
+                                    @Html.TextBoxFor(m => m.Tatoo_Position, new { @class = "form-control", required = "required" })
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+
+                                @Html.LabelFor(x => x.selectedDocType)
+                            </div>
+                            <div class="col-md-8 form-group">
+                                @Html.DropDownListFor(m => m.Document_Type_Id, ViewBag.DocumentTypeList as SelectList, "--Select--", new { @id = "Document_Type_Id", @class = "form-control", onchange = "ShowHideDiv(), chkatchtbl()" })
+                            </div>
+                            @if ((Model.RequestType == "View" || Model.RequestType == "Update") && Model.Document_Type_Id == 4)
+                            {
+                                <div id="dvOtherTattoo">
+                                    <div class="col-md-4">
+                                        Explain Document Type:
+                                    </div>
+                                    <div class="col-md-8 form-group">
+                                        @Html.TextBoxFor(m => m.Additional_Info, new { @class = "form-control", required = "required" })
+                                    </div>
+                                </div>
+                            }
+                            else
+                            {
+                                <div id="dvOtherTattoo" style="display: none">
+                                    <div class="col-md-4">
+                                        Explain Document Type:
+                                    </div>
+                                    <div class="col-md-8 form-group">
+                                        @Html.TextBoxFor(m => m.Additional_Info, new { @class = "form-control", required = "required" })
+                                    </div>
+                                </div>
+                            }
+
+
+                            <div class="col-md-4">
+                                Document Name
+                            </div>
+                            <div class="col-md-8 form-group" style="">
+                                <input id="fileInput" type="file" multiple required disabled>
+                            </div>
+                            <br />            <br />
+                            <div>
+                                @if (Model.RequestType == "View" || Model.RequestType == "Update")
+                                {
+                                    if (Model.documents != null)
+                                    {
+                                        if (Model.documents.Count > 0)
+                                        {
+                                            <div class="col-md-4 ExistingFiles" style="padding-right: 100px" id="ExistingFiles">
+                                                <table class="table">
+                                                    <tr><u>Existing Files:</u></tr>
+                                                    <tr>
+                                                        <th>
+                                                            Attachment(s)
+                                                        </th>
+                                                        @if (Model.RequestType != "View")
+                                                        {
+                                                            <th>
+                                                                Action
+                                                            </th>
+                                                        }
+                                                    </tr>
+
+                                                    @foreach (Common_Objects.Models.CYCA_GangAndTatooDocument f in Model.documents)
+                                                    {
+                                                        <tr>
+                                                            <td>
+                                                                <a class="download-file1" href="@Url.Action("DownloadGangFile", "Admit", new { id = f.Document_Id,  })" target="_blank">
+                                                                    @f.Document_Name
+                                                                </a>
+                                                            </td>
+                                                            @if (Model.RequestType != "View")
+                                                            {
+                                                                <td>
+                                                                    <span class='red'>
+                                                                        <i class="fa fa-trash"></i>
+                                                                    </span>
+                                                                    <input type="button" value="Remove" placeholder="@f.Document_Id" name=" @f.Document_Name" onclick="DeleteFiles(this.placeholder,this.name)" class="anchorButton" />
+                                                                    <br />
+                                                                </td>
+                                                            }
+                                                        </tr>
+                                                    }
+                                                </table>
+
+                                            </div>
+                                        }
+
+                                    }
+                                }
+                                <div class="col-md-4">
+                                    <table class="table" id="FilesList" style="visibility:hidden">
+                                        <tr><th><u>New Files:</u></th></tr>
+                                        <tr>
+                                            <th>
+                                                Attachment(s)
+                                            </th>
+                                            <th>
+                                                Action
+                                            </th>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="row pull-right">
+                            <div class="col-md-12">
+                                @if (Model.RequestType == "Update")
+                                {
+                                    <a class="btn btn-primary" id="UpdateAdmit" style="visibility:visible">Update</a>
+                                    <a class="btn btn-default" id="cancel">Cancel</a>
+                                }
+                                else if (Model.RequestType == "View")
+                                {
+                                    <a class="btn btn-default" id="Close">Close</a>
+                                }
+                                else
+                                {
+                                    <a class="btn btn-primary" id="SaveTatoo">Save</a>
+                                    <a class="btn btn-default" id="cancel">Cancel</a>
+                                }
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+
+     $(document).ready(function () {
+         var requestType = '@Model.RequestType';
+      ShowHideDiv();
+         chkatchtbl();
+         if (requestType == "View") {
+
+               $("#myFormAdmit :input").prop("disabled", true);
+           document.getElementsByClassName('file-link').prop("disabled", true);
+            }
+        if (open == "yes")
+        {
+         console.log("in edit mode");
+       document.getElementById("SaveAdmit").style.visibility = "hidden";
+         };
+
+     });
+    function disableLink(el) {
+        el.onclick = function () {
+            return false;
+        }
+    }
+        $(function () {
+            // Initialize items marked as datepickers
+            $("#caseenddate").datetimepicker({
+                dateFormat: "dd M yy",
+                changeMonth: true,
+                changeYear: true,
+                minDate: new Date(),
+                //yearRange: "-60:+0",
+                controlType: 'select',
+                timeFormat: 'hh:mm TT',
+                onClose: function () {
+                    $(this).valid();
+                }
+            });
+            $("#myFormAdmit").validate();
+            //Check if signalR is working
+            console.log(signalHub.IsConnected);
+            if (signalHub.IsConnected) {
+                $('.signalRObject').removeAttr('disabled');
+            } else {
+                $('.signalRObject').attr('disabled', 'disabled');
+            };
+        });
+        function ShowHideDiv() {
+
+            //var Document_Type_Id = document.getElementById("Document_Type_Id");
+            //var dvOther = document.getElementById("dvOther");
+            //dvOther.style.display = Document_Type_Id.value == "4" ? "block" : "none";
+
+            var Document_Type_Id = document.getElementById("Document_Type_Id");
+            var dvOther = document.getElementById("dvOtherTattoo");
+            var selectedText = Document_Type_Id.options[Document_Type_Id.selectedIndex].text;
+            console.log(selectedText.toUpperCase() + "inside TATTT");
+            dvOther.style.display = selectedText == "Other" ? "block" : "none";
+
+
+
+        }
+
+    function EnrollFingerPrints() {
+            $('#btnEnroll').prop('disabled', true);
+            //Call Server Methods
+            request.requestType = "Enroll";
+            FingerPrintServerProxy.invoke('fPCaptureRq', request).done(function () {
+                //console.log('Invocation of fPCaptureRq succeeded');
+            }).fail(function (error) {
+                //console.log('Invocation of fPCaptureRq failed. Error: ' + error);
+            });
+        }
+
+    var formdata = new FormData(); //FormData object
+    var removeFiles = [];
+    $(document).ready(function () {
+        @*var member = '@Model.Tatoo_Visible';
+        var dvHasGang = document.getElementById("HasGangDiv");
+        dvHasGang.style.display = member == "True" ? "block" : "none";
+
+        $('input:radio[name="Tatoo_Visible"]').change(function () {
+
+            var isMember = document.getElementById("Tatoo_Visible");
+            var selectedText = $(this).val();
+            dvHasGang.style.display = selectedText == "True" ? "block" : "none";
+
+        });*@
+
+
+
+        $("#fileInput").on("change", function () {
+            var fileInput = document.getElementById('fileInput');
+            //Iterating through each files selected in fileInput
+            for (i = 0; i < fileInput.files.length; i++) {
+
+                var sfilename = fileInput.files[i].name;
+                let srandomid = Math.random().toString(36).substring(7);
+
+                formdata.append(sfilename, fileInput.files[i]);
+                var markup = "<tr id='" + srandomid + "'><td>" + sfilename + "</td><td><a href='#' onclick='DeleteFile(\"" + srandomid + "\",\"" + sfilename +
+                    "\")'><span class='red'>Remove file</span></a></td></tr>"; // Binding the file name
+                $("#FilesList tbody").append(markup);
+
+            }
+            chkatchtbl();
+            $('#fileInput').val('');
+        });
+    });
+    $("#SaveTatoo").click(function () {
+        var $valid = $("#myFormAdmit").valid();
+            if (!$valid) {
+                return;
+            }
+            formdata.append('uploadername', $('#txtuploader').val());
+        formdata.append("Admission_Id", $("#Admission_Id").val());
+        formdata.append("clientID", $("#clientID").val());
+        formdata.append("Tatoo_Visible", $("#Tatoo_Visible").val());
+        formdata.append("Tatoo_Description", $("#Tatoo_Description").val());
+        formdata.append("Tatoo_Size", $("#Tatoo_Size").val());
+        formdata.append("Tatoo_Position", $("#Tatoo_Position").val());            
+         formdata.append("Document_Type_Id", $("#Document_Type_Id").val());
+        formdata.append("Additional_Info", $("#Additional_Info").val());
+
+        
+
+
+        //if ($.confirm({
+        //    title: 'Add Tattoo',
+        //    content: 'Are you sure you want to add this tattoo?'
+        //})) {
+        //    console.log("confirmed here");
+        //    event.preventDefault();
+        //    AjaxShowTabs(currentPersonId, currentTab, currentFormType, currentTarget);
+
+
+        //} else {
+        //    console.log("didnt confirm");
+        //}
+        console.log(formdata); 
+        var clicked = false;
+        if ($.confirm({
+            title: 'Add Tattoo',
+            content: 'Are you sure you want to add this tattoo?',
+            buttons: {
+                Yes: function () {
+                    var btn = document.getElementsByClassName("jconfirm-buttons").children;
+                    console.log("in save mode " + clicked);
+                    event.preventDefault();
+                    $(this).prop('disabled', true);
+                    if (clicked == false) {
+                        clicked = true;
+                        $.ajax({
+                            url: '@Url.Action("SaveTatoo", "Client")',
+                            type: "POST",
+                            contentType: false, // Not to set any content header
+                            processData: false, // Not to process data
+                            data: formdata,
+                            async: false,
+                            success: function (result) {
+
+                                AjaxShowTabs(currentPersonId, currentTab, currentFormType, currentTarget);
+
+                            },
+                            error: function (error) {
+                                console.log(error);
+                            }
+                        });
+                    }
+
+                },
+                No: function () {
+                    //location.reload(true);
+                    //ConfirmUploadDocuments(result);
+                }
+            },
+
+        })) {
+            console.log("preventing here");
+            event.preventDefault();
+        }
+    });
+
+    $("#UpdateAdmit").click(function () {
+        var $valid = $("#myFormAdmit").valid();
+            if (!$valid) {
+                return;
+            }
+        var admitId = '@Model.Admission_Id';
+        @*var ReadmitId = '@Model.Re_Admission_Id';*@
+
+        console.log(admitId);
+
+
+        formdata.append('uploadername', $('#txtuploader').val());
+        formdata.append('uploadername', $('#txtuploader').val());
+        formdata.append("Admission_Id", $("#Admission_Id").val());
+        formdata.append("Tatoo_Id", $("#Tatoo_Id").val());
+        formdata.append("ClientID", $("#ClientID").val());
+        formdata.append("Tatoo_Visible", $("#Tatoo_Visible").val());
+        formdata.append("Tatoo_Description", $("#Tatoo_Description").val());
+        formdata.append("Tatoo_Size", $("#Tatoo_Size").val());
+        formdata.append("Tatoo_Position", $("#Tatoo_Position").val());
+        formdata.append("Document_Type_Id", $("#Document_Type_Id").val());
+        formdata.append("Additional_Info", $("#Additional_Info").val());
+        var clickedUpdate = false;
+       
+               $.confirm({
+                        title: 'Update Tattoo',
+                        content: 'Are you sure you want to update these Tattoo details?',
+                        buttons: {
+                            Yes: function () {
+                                console.log(clickedUpdate + "activated the clicj");
+                                if (clickedUpdate == false) {
+                                    clickedUpdate = true;
+                                $.ajax({
+                                    url: '@Url.Action("DeleteGangAndTatooDocumentFilesByIDs", "Client")',
+                                    type: "POST",
+                                    data: JSON.stringify(removeFiles),
+                                    dataType: "json",
+                                    contentType: 'application/json; charset=utf-8',
+                                    async: false,
+                                    success: function (response) {
+                                        console.log(response + "on the deleting of the files first");
+                                    },
+                                    error: function (error) {
+                                        console.log(error);
+                                    }
+                                });
+
+                                $.ajax({
+                                    url: '@Url.Action("UpdateTatoo", "Client")',
+                                    type: "POST",
+                                    contentType: false, // Not to set any content header
+                                    processData: false, // Not to process data
+                                    data: formdata,
+                                    async: false,
+                                    success: function (response) {
+                                        console.log(response + "  fixing this ");
+                                        //location.reload(true);
+                                        AjaxShowTabs(currentPersonId, currentTab, currentFormType, currentTarget);
+                                    },
+                                    error: function (error) {
+                                        console.log(error);
+                                    }
+                                });
+                            }
+                            },
+                            No: function () {
+                                //location.reload(true);
+                            }
+                        }
+                    });
+
+        });
+        function DeleteFile(Fileid, FileName) {
+            formdata.delete(FileName)
+            $("#" + Fileid).remove();
+            chkatchtbl();
+    }
+    function DeleteFiles(Fileid, documentName) {
+        removeFiles.push(Fileid);
+        $('.ExistingFiles tr').each(function () {
+            var tdText = $(this).children('td:nth-child(1)').text();
+            if (tdText.includes(documentName)) {
+                $(this).remove();
+            }
+        });
+    }
+            function NewBodySearch(id) {
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Content("~/Admit/AdmitNewBodilySearch")',
+                data: {
+                    Id: id
+                },
+                success: function (result) {
+                    $('#mainDiv').html(result);
+                }
+            });
+        }
+        function NewUploadDocument(id) {
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Content("~/Admit/AdmitNewUploadDocument")',
+                data: {
+                    Id: id
+                },
+                success: function (result) {
+                    $('#mainDiv').html(result);
+                }
+            });
+        }
+        function NewGangMembership(id) {
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Content("~/Admit/AdmitNewGangMembership")',
+                data: {
+                    Id: id
+                },
+                success: function (result) {
+                    $('#mainDiv').html(result);
+                }
+            });
+        }
+
+    function ConfirmUploadDocuments(id) {
+        var clickedUpload = false;
+            $.confirm({
+                title: 'Documents Upload',
+                content: 'Would you like to upload document(s)?',
+                buttons: {
+                    Yes: function () {
+                        if (clickedUpload == false) {
+                            clickedUpload = true;
+                            NewUploadDocument(id);
+                        }
+                    },
+                    No: function () {
+                        location.reload(true);
+                    }
+                }
+            });
+        }
+    function ConfirmGangMembership(id) {
+        var conclick = false;
+            $.confirm({
+                title: 'New Admission',
+                content: 'Would you like to add gang membership?',
+                buttons: {
+                    Yes: function () {
+                        if (conclick == false) {
+                            conclick = true;
+                            NewGangMembership(id);
+                        }
+                    },
+                    No: function () {
+                        ConfirmUploadDocuments(id);
+                    }
+                }
+            });
+    }
+    //    function chkatchtbl() {
+    //        //if ($('#FilesList tr').length > 1) {
+    //        //    $("#FilesList").css("visibility", "visible");
+    //        //} else {
+    //        //    $("#FilesList").css("visibility", "hidden");
+    //        //}
+    //        if (document.getElementById("Document_Type_Id").value >=1) {
+    //            $("#fileInput").removeAttr("disabled")
+    //            if ($('#FilesList tr').length > 1) {
+    //                $("#fileInput").removeAttr("required")
+    //                $("#FilesList").css("visibility", "visible");
+    //            } else {
+    //                $("#fileInput").attr("required", "required")
+    //            }
+    //        } else {
+    //            $("#fileInput").attr("disabled", "disabled")
+    //            $("#fileInput").removeAttr("required")
+    //            $("#FilesList").css("visibility", "hidden");
+    //            if ($('#FilesList tr').length > 1) {
+    //                $("#FilesList").css("visibility", "visible");
+    //                $("#Document_Type_Id").attr("required", "required")
+    //            }
+    //        }
+    //}
+     function chkatchtbl() {
+        var requestTypes = '@Model.RequestType';
+      
+        if (requestTypes === "Update" && document.getElementById("Document_Type_Id").value >= 1) {
+            $("#fileInput").removeAttr("disabled")
+
+            if ($('#FilesList tr').length > 2 || $('#ExistingFiles tr').length > 0) {
+
+                $("#fileInput").removeAttr("required")
+                $("#FilesList").css("visibility", "visible");
+            } else {
+                $("#fileInput").attr("required", "required")
+                $("#FilesList").css("visibility", "hidden");
+            }
+        }
+        else if (document.getElementById("Document_Type_Id").value >= 1) {
+
+            $("#fileInput").removeAttr("disabled")
+            if ($('#FilesList tr').length > 2) {
+                $("#fileInput").removeAttr("required")
+                $("#FilesList").css("visibility", "visible");
+            } else {
+                $("#fileInput").attr("required", "required")
+                $("#FilesList").css("visibility", "hidden");
+            }
+
+        } else {
+            $("#fileInput").attr("disabled", "disabled")
+            $("#FilesList").css("visibility", "hidden");
+            if ($('#FilesList tr').length > 2) {
+                $("#FilesList").css("visibility", "visible");
+                $("#Document_Type_Id").attr("required", "required")
+            }
+        }
+
+    }
+
+
+    $("#cancel").click(function () {
+        //location.reload(true);
+        AjaxShowTabs(currentPersonId, currentTab, currentFormType, currentTarget);
+    });
+    $("#Cancel").click(function () {
+        location.reload(true);
+
+    });
+    $("#Close").click(function () {
+        AjaxShowTabs(currentPersonId, currentTab, currentFormType, currentTarget);
+
+    });
+    function closeView() {
+        CloseView("Discharge close this view");
+    }
+
+
+</script>

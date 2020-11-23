@@ -1,0 +1,348 @@
+﻿@model Common_Objects.ViewModels.CYCAAdmissionViewModel
+@{
+    ViewBag.Title = "Body Search";
+    Layout = null;
+}
+
+    <div class="row">
+        @*<div class="portlet-body">*@
+            <div class="col-md-12 col-sm-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3>New Body Search for @Model.childFullNames</h3>
+                        <p id="admit" hidden>@Model.Admission_Id</p>
+                    </div>
+                    <div class="panel-body">
+                        <form id="myForm">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    @Html.HiddenFor(m => m.Admission_Id, new { @id = "Admission_Id" })
+                                    @Html.HiddenFor(m => m.Bodily_Search_Id, new { @id = "Bodily_Search_Id" })
+                                    @Html.LabelFor(x => x.selectedSearchReason)
+                                    @*Reason For Bodily Search*@
+                                </div>
+                                <div class="col-md-8 form-group" style="">
+
+                                    @Html.DropDownList("Reason", (IEnumerable<SelectListItem>)ViewBag.SearchReasonList, "--Select--", new { @id = "SearchReasonId", @class = "form-control", required = "required", onchange = "ShowHideDiv()" })
+
+                                </div>
+                                <div id="dvOtherReason" style="display: none">
+                                    <div class="col-md-4">
+                                        Describe other Search Reason:
+                                    </div>
+                                    <div class="col-md-8 form-group">
+                                        @Html.TextBoxFor(m => m.SearchReason_Additional_Info, new { @class = "form-control", required = "required" })
+                                        @*<input class="form-control" type="text" id="Exp" required />*@
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    @Html.LabelFor(x => x.selectedConductor)
+                                    @*Conducted By*@
+                                </div>
+                                <div class="col-md-8 form-group" style="">
+                                    @Html.DropDownList("conduct", (IEnumerable<SelectListItem>)ViewBag.UsersList, "--Select--", new { @id = "CondactedBy", @class = "form-control", required = "required" })
+
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    @Html.LabelFor(x => x.selectedWitness)
+                                    @*Witnessed By*@
+                                </div>
+                                <div class="col-md-8 form-group">
+
+                                    @Html.DropDownList("witness", (IEnumerable<SelectListItem>)ViewBag.UsersList, "--Select--", new { @id = "WitnessedBy", @class = "form-control", required = "required" })
+                                </div>
+
+                                <div class="col-md-4">
+                                    @Html.LabelFor(x => x.physicalLocationDescription)
+                                </div>
+                                <div class="col-md-8 form-group" style="">
+                                    <input type="text" class=" form-control" id="Description" required>
+                                </div>
+
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    Document Type
+                                </div>
+                                <div class="col-md-8 form-group">
+
+                                    @Html.DropDownList("docs", (IEnumerable<SelectListItem>)ViewBag.DocumentTypeList, "--Select--", new { @id = "DocType_Id", @class = "form-control", onchange = "ShowHideDiv(), chkatchtbl()" })
+                                </div>
+                                <div id="dvOther" style="display: none">
+                                    <div class="col-md-4">
+                                        Explain Document Type:
+                                    </div>
+                                    <div class="col-md-8 form-group">
+                                        @Html.TextBoxFor(m => m.Additional_Info, new { @class = "form-control", required = "required" })
+                                        @*<input class="form-control" type="text" id="Exp1" required />*@
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                  Documents:
+                                </div>
+                                <div class="col-md-8 form-group" style="">
+
+                                    <input name="addFile" id="fileInput" type="file" multiple required disabled>
+                                </div>
+                                <br />            <br />
+                                <div class="col-md-3 pull-left">
+                                    <table class="table" id="FilesList" style="visibility:hidden">
+                                        <tr>
+                                            <th>
+                                                Attachment(s)
+                                            </th>
+                                            <th>
+                                                Action
+                                            </th>
+                                        </tr>
+                                    </table>
+                                </div>
+
+                            </div>
+
+                            <div class="row pull-right">
+                                <div class="col-md-12">
+                                    @*<a class="btn btn-default" id="Cancel2">Cancel</a>*@
+                                    <a href="#" class="btn btn-primary" id="Insert">Next</a>
+                                    <a href="#" class="btn btn-default" id="Cancel">Skip Bodily Search</a>
+
+                                </div>
+
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @*</div>*@
+
+    <script>
+        $(function () {
+                $("#myForm").validate();
+            });
+
+            function ShowHideDiv() {
+
+                var Document_Type_Id = document.getElementById("DocType_Id");
+                var dvOther = document.getElementById("dvOther");
+                dvOther.style.display = Document_Type_Id.value == "4" ? "block" : "none";
+
+                var SearchReasonId = document.getElementById("SearchReasonId");
+                var dvOtherReason = document.getElementById("dvOtherReason");
+                dvOtherReason.style.display = SearchReasonId.value == "5" ? "block" : "none";
+            }
+
+            var formdata = new FormData(); //FormData object
+            $(document).ready(function () {
+
+                @*var child = @ViewBag.childId;*@
+
+                $("#fileInput").on("change", function () {
+                    var fileInput = document.getElementById('fileInput');
+                    //Iterating through each files selected in fileInput
+                    for (i = 0; i < fileInput.files.length; i++) {
+
+                        var sfilename = fileInput.files[i].name;
+                        let srandomid = Math.random().toString(36).substring(7);
+                        formdata.append(sfilename, fileInput.files[i]);
+                        var markup = "<tr id='" + srandomid + "'><td>" + sfilename + "</td><td><a href='#' onclick='DeleteFile(\"" + srandomid + "\",\"" + sfilename +
+                            "\")'><span class='red'>Remove file</span></a></td></tr>"; // Binding the file name
+                        $("#FilesList tbody").append(markup);
+
+                    }
+                    chkatchtbl();
+                    $('#fileInput').val('');
+                });
+
+                $("#Insert").click(function () {
+                    var $valid = $("#myForm").valid();
+                    if (!$valid) {
+                        return;
+                    }
+                    console.log(formdata);
+                    var admitId = $("#admitId").text();
+                    var admissionid = $("#admit").text();
+                    //alert(admissionid);
+                    formdata.append('uploadername', $('#txtuploader').val());
+                    formdata.append("Bodily_Search_Date", $("#BodySearchDate").val());
+                    formdata.append("Conducted_By", $("#CondactedBy").val());
+                    formdata.append("Document_Type_Id", $("#DocType_Id").val());
+                    formdata.append("OtherDocTypeDescription", $("#Additional_Info").val());
+                    formdata.append("Witnessed_By", $("#WitnessedBy").val());
+                    formdata.append("Search_Reason_Id", $("#SearchReasonId").val());
+                    formdata.append("OtherSeacrhReasonDescription", $("#SearchReason_Additional_Info").val());
+                    if (admissionid > 0) {                        
+                        formdata.append("Admission_Id", admissionid);                       
+                    } else {
+                        formdata.append("Admission_Id", admitId);
+                    }
+                   
+                     @*formdata.append("Person_Id",@ViewBag.childId);*@
+                    formdata.append("Description", $("#Description").val());
+                    $.ajax({
+                       url: '@Url.Action("NewBodilySearch", "Admit")',
+                        type: "POST",
+                        contentType: false, // Not to set any content header
+                        processData: false, // Not to process data
+                        data: formdata,
+                        async: false,
+                        success: function (result) {
+                            $.confirm({
+                                title: 'Illegal Items',
+                                content: 'Did you find any illegal items?',
+                                buttons: {
+                                    Yes: function () {
+                                        if ($("#Admission_Id").val() > 0) {
+                                            
+                                            NewIllegalItem($("#Admission_Id").val());
+                                        } else {
+                                            NewIllegalItem(admitId);
+                                            
+                                        }
+                                        
+                                    },
+                                    No: function () {
+                                        //ConfirmUploadDocuments($("#Admission_Id").val());
+                                        location.reload(true);
+                                    }
+                                }
+                            });
+                        },
+                        error: function (error) {
+                            console.log(error);
+                        }
+                    });
+                });
+                $(".datepicker").datepicker({
+                    dateFormat: "dd M yy",
+                    minDate: new Date(),
+                    changeYear: true,
+                    onClose: function () {
+                        $(this).valid();
+                    }
+                });
+            });
+
+            function DeleteFile(Fileid, FileName) {
+                formdata.delete(FileName)
+                $("#" + Fileid).remove();
+                chkatchtbl();
+            }
+            function chkatchtbl() {
+                //if ($('#FilesList tr').length > 1) {
+                //    $("#FilesList").css("visibility", "visible");
+                //} else {
+                //    $("#FilesList").css("visibility", "hidden");
+                //}
+
+                if (document.getElementById("DocType_Id").value >=1) {
+
+                    $("#fileInput").removeAttr("disabled")
+                    if ($('#FilesList tr').length > 1) {
+                        $("#fileInput").removeAttr("required")
+                        $("#FilesList").css("visibility", "visible");
+                    } else {
+                        $("#fileInput").attr("required", "required")
+                    }
+                } else {
+                    $("#fileInput").attr("disabled", "disabled")
+                    $("#FilesList").css("visibility", "hidden");
+                    if ($('#FilesList tr').length > 1) {
+                        $("#FilesList").css("visibility", "visible");
+                        $("#DocType_Id").attr("required", "required")
+                    }
+                }
+            }
+            //$('#Cancel').click(function () {
+            //    location.reload(true);
+            //});
+    $('#Cancel').click(function () {
+        $.confirm({
+            title: 'Skip Body Search',
+            content: 'Are you sure you want to cancel body search?',
+            buttons: {
+                Yes: function () {
+                    location.reload(true);
+                },
+                No: function () {
+                    //location.reload(true);
+                }
+            }
+        });
+    });
+     function ConfirmUploadDocuments(id) {
+        $.confirm({
+            title: 'Documents Upload',
+            content: 'Would you like to upload document(s)?',
+            buttons: {
+                Yes: function () {
+                    NewUploadDocument(id);
+                },
+                No: function () {
+                    location.reload(true);
+                }
+            }
+        });
+    }
+
+
+     function ConfirmCancellation(id) {
+        $.confirm({
+            title: 'Back to admission',
+            content: 'Would you like to cancel body search process?',
+            buttons: {
+                Yes: function () {
+                  NewAdmission(id);
+                },
+                No: function () {
+                    //location.reload(false);
+                    //location.NewAdmission();
+                }
+            }
+        });
+    }
+
+    function NewIllegalItem(id) {
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Content("~/Admit/AdmitNewIllegalItems")',
+            data: {
+                Id: id
+            },
+            success: function (result) {
+                $('#mainDiv').html(result);
+            }
+        });
+    }
+    function NewUploadDocument(id) {
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Content("~/Admit/AdmitNewUploadDocument")',
+                data: {
+                    Id: id
+                },
+                success: function (result) {
+                    $('#mainDiv').html(result);
+                }
+            });
+    }
+
+     function NewAdmission(id) {
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Content("~/Admit/Admission")',
+                data: {
+
+                    Id: id
+                },
+                success: function (result) {
+                    $('#mainDiv').html(result);
+                }
+            });
+        }
+    </script>
+
+

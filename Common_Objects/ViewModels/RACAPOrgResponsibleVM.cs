@@ -1,0 +1,43 @@
+﻿using Common_Objects.Models;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Common_Objects.ViewModels
+{
+    public class RACAPOrgResponsibleVM
+    {
+        public SocialWorkerModel SocialWorkerModel { get; set; }
+        public UserModel UserModel { get; set; }
+        public EmployeeModel EmployeeModel { get; set; }
+        [Display(Name ="Accreditation Reference#")]
+        public string Accreditation_Ref { get; set; }
+        public DateTime? Accredited_Date { get; set; }
+        public int SocialWorkerId { get; set; }
+        [Display(Name = "Social Worker Name")]
+        public string Social_Worker_Name { get; set; }
+        [Display(Name = "Social Worker")]
+        public string Social_Worker_Surname { get; set; }
+        public int User_Id { get; set; }
+        public int EmployeeId { get; set; }
+        [Display(Name = "Social Worker Telephone")]
+
+        public string SocWorkTelephone { get; set; }
+        [Display(Name = "Social Worker Email")]
+
+        public string SocWorkEmail { get; set; }
+        [Display(Name = "Social Worker Fax")]
+
+        public string SocWorkFax { get; set; }
+        [Display(Name = "Province")]
+
+        public string SocWorkProvince { get; set; }
+        [Display(Name ="Identification Number")]
+        public string IdNumber { get; set; }
+        public string Race { get; set; }
+
+    }
+}

@@ -1,0 +1,32 @@
+﻿<style>
+    .Heading{
+        text-align:center
+    }
+    .back {
+        text-align:right;
+    }
+</style>
+
+<h3 style="color:red" class="Heading">
+    ---Alert---
+</h3>
+<div class="panel panel-primary form-horizontal" style=" width:100% !important">
+    <div class="panel-heading" style="text-align: center; vertical-align: middle !important;">
+        <div class="row">
+            <div class="col-md-11">
+                @TempData["EnteredUser"] already exists on the SDICMS!!
+                </div>
+            </div>
+        </div>
+    </div>
+<div class="row">
+    <div class="col-md-3 form-group back">
+        <a class="bottomNav" onclick="history.go(-1); return false;" href="#">
+            <input type="button" Value="Back" class="btn" id="GoBack" style="background-color:#00C431; color:white; width:100px">
+        </a>
+
+    </div>
+</div>
+
+
+

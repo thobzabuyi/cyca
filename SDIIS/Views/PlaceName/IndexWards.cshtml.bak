@@ -1,0 +1,251 @@
+﻿@model IEnumerable<Common_Objects.Models.NISIS_Ward>
+
+@{
+    ViewBag.Title = "IndexWards";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .btn-delete {
+        background-color: rosybrown;
+    }
+
+    .table {
+        text-align: center;
+    }
+
+    .row {
+        text-align: right;
+    }
+    .vcenter
+    {
+        vertical-align:middle;
+    }
+</style>
+<h3  style="text-align:center">Towns</h3>
+@using (Html.BeginForm("IndexWards", "PlaceName", FormMethod.Get))
+{
+    <div class="panel-body" overflow:hidden">
+        <div class="panel panel-primary form-horizontal" style=" width:100% !important">
+
+            <div class="panel-heading" style="text-align: center; vertical-align: middle !important;">
+                <div class="row">
+                    <div class="col-md-7">
+                        @Html.Label("Search Wards")
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+
+            <div class="col-lg-1">
+            </div>
+            <div class="col-lg-1">
+                @Html.Label("Province:")
+            </div>
+            <div class="col-md-3">
+                @Html.DropDownList("SearchProvince", (IEnumerable<SelectListItem>)ViewBag.ProvinceList, "Select", htmlAttributes: new { @class = "form-control", @id = "ResultOfChoice" })
+            </div>
+            <div class="col-lg-1">
+                @Html.Label("District:")
+            </div>
+            <div class="col-md-3">
+                @*<input type="text" name="SearchDistrict" class="form-control" />*@
+                @Html.DropDownList("SearchDistrict", (IEnumerable<SelectListItem>)ViewBag.DistrictList, "Select", htmlAttributes: new { @class = "form-control", @id = "ResultOfChoice" })
+
+
+            </div>
+
+            <div class="col-lg-1">
+                <br />
+            </div>
+            <div class="col-lg-1">
+                <br />
+            </div>
+        </div>
+        <div class="row">
+
+            <div class="col-lg-1">
+            </div>
+            <div class="col-lg-1 vcenter">
+                @Html.Label("Local Municipality:")
+            </div>
+            <div class="col-md-3">
+                @*<input type="text" name="SearchMunicipality" class="form-control" />*@  
+                @Html.DropDownList("SearchLocal_Municipality", (IEnumerable<SelectListItem>)ViewBag.Local_MunicipalityList, "Select", htmlAttributes: new { @class = "form-control", @id = "ResultOfChoice" })
+
+                          
+            </div>
+            <div class="col-lg-1">
+                @Html.Label("Town:")
+
+
+            </div>
+            <div class="col-md-3">
+                <input type="text" name="SearchTown" class="form-control" />
+
+            </div>
+
+            <div class="col-lg-1">
+                <input type="submit" id="ButtonSave" value="Search" class="btn btn-success" />
+
+            </div>
+            <div class="col-lg-1">
+                <br />
+            </div>
+        </div>
+</div>
+}
+
+<div id='myModal2' class='modal'>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div id='myModalContent2'></div>
+        </div>
+    </div>
+</div> 
+
+<div id='myModal' class='modal'>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div id='myModalContent'></div>
+        </div>
+    </div>
+</div> 
+
+<table class="table">
+    <tr>
+        <th colspan="4"></th>
+        <th align="right">
+            <button type="button" href="javascript:void(0);" class="btn anchorDetail2">
+                Create
+            </button>
+        </th>
+    </tr>
+    <tr>
+
+
+        <th style="text-align:center; width:200px">
+            Province
+        </th>
+        <th style="text-align:center; width:200px">
+            District
+        </th>
+        <th style="text-align:center; width:200px">
+            Local Municipality
+        </th>
+        <th style="text-align:center; width:200px">
+            Town
+        </th>
+        <th style="text-align:center; width:200px"></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+
+            @Html.HiddenFor(modelItem => item.NISIS_Ward_Id)
+
+ 
+            @Html.HiddenFor(modelItem => item.Local_Municipality_Id)
+
+        <td>
+            @Html.DisplayFor(modelItem => item.Local_Municipality.Municipality.Area.District.Province.Description)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Local_Municipality.Municipality.Area.District.Description)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Local_Municipality.Description)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem=>item.Description)
+        </td>
+        
+        <td style="width:200px">
+            <button type="button" href="javascript:void(0);" class="btn anchorDetail" data-id="@item.NISIS_Ward_Id">Edit</button>
+            @if (User.Identity.Name == "12345678")
+            {
+                <button type="button" class="btn btn-delete">
+                    @Html.ActionLink("Delete", "DeleteWard", new { id = item.NISIS_Ward_Id }, new { @class = "btn" })
+                </button>
+            }
+        </td>
+        <td style="width:200px"></td>
+    </tr>
+}
+
+</table>
+
+@section scripts
+{  
+    <script>
+
+    var TeamDetailPostBackURL = '/PlaceName/EditWard';
+    $(function () {
+        $(".anchorDetail").click(function () {
+          
+            var $buttonClicked = $(this);
+            var id = $buttonClicked.attr('data-id');
+            var options = { "backdrop": "static", keyboard: true };
+            $.ajax({
+                type: "GET",
+                url: TeamDetailPostBackURL,
+                contentType: "application/json; charset=utf-8",
+                data: { "Id": id },
+                datatype: "json",
+                success: function (data) {
+                  
+                    $('#myModalContent').html(data);
+                    $('#myModal').modal(options);
+                    $('#myModal').modal('show');
+
+                },
+                error: function () {
+                    alert("Dynamic content load failed.");
+                }
+            });
+        });
+        //$("#closebtn").on('click',function(){
+        //    $('#myModal').modal('hide');
+
+        $("#closbtn").click(function () {
+            $('#myModal').modal('hide');
+        });
+    });
+
+
+    var TeamDetailPostBackURL2 = '/PlaceName/CreateWard';
+    $(function () {
+        $(".anchorDetail2").click(function () {
+        
+            var $buttonClicked = $(this);
+            var id = $buttonClicked.attr('data-id');
+            var options = { "backdrop": "static", keyboard: true };
+            $.ajax({
+                type: "GET",
+                url: TeamDetailPostBackURL2,
+                contentType: "application/json; charset=utf-8",
+                data: { "Id": id },
+                datatype: "json",
+                success: function (data) {
+                   
+                    $('#myModalContent2').html(data);
+                    $('#myModal2').modal(options);
+                    $('#myModal2').modal('show');
+
+                },
+                error: function () {
+                    alert("Dynamic content load failed on create.");
+                }
+            });
+        });
+        //$("#closebtn").on('click',function(){
+        //    $('#myModal').modal('hide');
+
+        $("#closbtn").click(function () {
+            $('#myModal1').modal('hide');
+        });
+    });
+
+    </script>
+}  

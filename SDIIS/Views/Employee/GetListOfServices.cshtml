@@ -1,0 +1,25 @@
+﻿@model IEnumerable<Common_Objects.ViewModels.EmployeeService_RoleVM>
+
+
+<table class="table">
+    <tr>
+
+        <th>
+            Service
+        </th>
+
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.HiddenFor(modelItem => item.EmployeeServiceId)
+                @Html.HiddenFor(modelItem => item.Employee_Id)
+                @Html.DisplayFor(modelItem => item.ServiceDescription)
+                @Html.ActionLink("Delete", "DeleteService", new { @Id = item.EmployeeServiceId, @EmployeeId=item.Employee_Id })
+            </td>
+        </tr>
+    }
+
+</table>

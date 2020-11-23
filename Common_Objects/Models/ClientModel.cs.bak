@@ -1,0 +1,234 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace Common_Objects.Models
+{
+    public class ClientModel
+    {
+
+        #region CreateReferenceNumber
+
+        public string CreateReferenceNumber(string provinceCode, string yearCode, int? Problem_Category_Id)
+        {
+            var dbContext = new SDIIS_DatabaseEntities();
+            string Problem_Category_Name = dbContext.Problem_Categories.Find(Problem_Category_Id).Source;
+            int SeqNumber = (from a in dbContext.int_Client_Module_Registration
+                             orderby a.Client_Module_Id descending
+                             select a.Client_Id).FirstOrDefault();
+            string NewRefNumber = Problem_Category_Name + "/" + provinceCode + "/" + SeqNumber.ToString("000000000").Replace("(", "").Replace(")", "") + "/" + yearCode;
+
+            return NewRefNumber;
+        }
+        #endregion
+        public Client GetSpecificClient(int clientId)
+        {
+            Client client;
+
+            var dbContext = new SDIIS_DatabaseEntities();
+            try
+            {
+                var clients = (from c in dbContext.Clients
+                               where c.Client_Id.Equals(clientId)
+                               select c).ToList();
+
+                //agent = PopulateAdditionalItems(agents, dbContext).FirstOrDefault();
+
+                client = (from c in clients
+                          select c).FirstOrDefault();
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+
+            return client;
+        }
+
+        public List<Client> GetListOfClients(bool showInActive, bool showDeleted)
+        {
+            List<Client> listOfClients;
+
+            var dbContext = new SDIIS_DatabaseEntities();
+            try
+            {
+                var clients = (from c in dbContext.Clients
+                               where c.Is_Active || c.Is_Active.Equals(!showInActive)
+                               where !c.Is_Deleted || c.Is_Deleted.Equals(showDeleted)
+                               select c).ToList();
+
+                //listOfAgents = PopulateAdditionalItems(agents, dbContext);
+
+                listOfClients = (from c in clients
+                                 select c).ToList();
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+
+            return listOfClients;
+        }
+
+        public int GetClientSequenceNumber(string provinceCode, string yearCode)
+        {
+            var dbContext = new SDIIS_DatabaseEntities();
+
+            try
+            {
+                var maxId = (from x in dbContext.Clients.ToList()
+                             where (x.Reference_Number != null && (x.Reference_Number.StartsWith("CPR/" + provinceCode) && x.Reference_Number.EndsWith(yearCode)))
+                             select new
+                             {
+                                 Id = x.Reference_Number.Substring(7, 4).Cast<int>()
+                             }).ToList().OrderByDescending(x => x.Id).FirstOrDefault();
+
+                var newId = maxId == null ? 1 : maxId.Id.First() + 1;
+
+                return newId;
+            }
+            catch (Exception ex)
+            {
+                return -1;
+            }
+        }
+
+        public bool? IsReferenceNumberUnique(string refNumber)
+        {
+            var dbContext = new SDIIS_DatabaseEntities();
+
+            try
+            {
+                var itemsFound = (from x in dbContext.Clients
+                                  where x.Reference_Number.Equals(refNumber)
+                                  select x).Count();
+
+                return itemsFound == 0;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
+        public Client CreateClient(int? personId, DateTime dateCreated, string createdBy, bool isActive, bool isDeleted)
+        {
+            Client newClient;
+
+            using (var dbContext = new SDIIS_DatabaseEntities())
+            {
+                var client = new Client()
+                {
+                    Person_Id = personId,
+                    Date_Created = dateCreated,
+                    Created_By = createdBy,
+                    Is_Active = isActive,
+                    Is_Deleted = isDeleted
+                };
+
+                try
+                {
+                    newClient = dbContext.Clients.Add(client);
+                    dbContext.SaveChanges();
+                }
+                catch (Exception)
+                {
+                    return null;
+                }
+            }
+
+            return newClient;
+        }
+
+        public Client AssignClientReferenceNumber(int clientId, string referenceNumber)
+        {
+            Client editClient;
+
+            var dbContext = new SDIIS_DatabaseEntities();
+
+            try
+            {
+                editClient = (from c in dbContext.Clients
+                              where c.Client_Id.Equals(clientId)
+                              select c).FirstOrDefault();
+
+                if (editClient == null) return null;
+
+                editClient.Reference_Number = referenceNumber;
+
+                dbContext.SaveChanges();
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+
+            return editClient;
+        }
+
+        public Client EditPerson(int clientId, int? personId, string referenceNumber, DateTime dateLastModified, string modifiedBy, bool isActive, bool isDeleted)
+        {
+            Client editClient;
+
+            using (var dbContext = new SDIIS_DatabaseEntities())
+            {
+                try
+                {
+                    editClient = (from c in dbContext.Clients
+                                  where c.Client_Id.Equals(clientId)
+                                  select c).FirstOrDefault();
+
+                    if (editClient == null) return null;
+
+                    editClient.Reference_Number = referenceNumber;
+                    editClient.Person_Id = personId;
+                    editClient.Date_Last_Modified = dateLastModified;
+                    editClient.Modified_By = modifiedBy;
+                    editClient.Is_Active = isActive;
+                    editClient.Is_Deleted = isDeleted;
+
+                    dbContext.SaveChanges();
+                }
+                catch (Exception)
+                {
+                    return null;
+                }
+            }
+
+            return editClient;
+        }
+
+        public Client AddAdoptiveParent(int clientId, int adoptiveParentId)
+        {
+            Client editClient;
+
+            using (var dbContext = new SDIIS_DatabaseEntities())
+            {
+                try
+                {
+                    editClient = (from c in dbContext.Clients
+                                  where c.Client_Id.Equals(clientId)
+                                  select c).FirstOrDefault();
+
+                    if (editClient == null) return null;
+
+                    var addAdoptiveParent = (from a in dbContext.Client_Adoptive_Parents
+                                             where a.Client_Adoptive_Parent_Id.Equals(adoptiveParentId)
+                                             select a).FirstOrDefault();
+
+                    if (addAdoptiveParent == null) return null;
+
+                    editClient.Client_Adoptive_Parents.Add(addAdoptiveParent);
+
+                    dbContext.SaveChanges();
+                }
+                catch (Exception)
+                {
+                    return null;
+                }
+            }
+
+            return editClient;
+        }
+    }
+}

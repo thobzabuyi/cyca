@@ -1,0 +1,1638 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="SDIIS_DatabaseModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="apl_Area">
+          <Key>
+            <PropertyRef Name="Area_Id" />
+          </Key>
+          <Property Name="Area_Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="District_Id" Type="int" Nullable="false" />
+          <Property Name="Description" Type="nvarchar" MaxLength="150" Nullable="false" />
+        </EntityType>
+        <EntityType Name="apl_Country">
+          <Key>
+            <PropertyRef Name="Country_Id" />
+          </Key>
+          <Property Name="Country_Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Description" Type="nvarchar" MaxLength="150" Nullable="false" />
+        </EntityType>
+        <EntityType Name="apl_District">
+          <Key>
+            <PropertyRef Name="District_Id" />
+          </Key>
+          <Property Name="District_Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Province_Id" Type="int" Nullable="false" />
+          <Property Name="Description" Type="nvarchar" MaxLength="150" Nullable="false" />
+        </EntityType>
+        <EntityType Name="apl_Employee">
+          <Key>
+            <PropertyRef Name="Employee_Id" />
+          </Key>
+          <Property Name="Employee_Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="User_Id" Type="int" Nullable="false" />
+          <Property Name="Persal_Number" Type="nvarchar" MaxLength="10" />
+          <Property Name="Head_Of_Department_Id" Type="int" />
+          <Property Name="Supervisor_Id" Type="int" />
+          <Property Name="Phone_Number" Type="nvarchar" MaxLength="15" />
+          <Property Name="Mobile_Phone_Number" Type="nvarchar" MaxLength="15" />
+          <Property Name="Gender_Id" Type="int" />
+          <Property Name="Race_Id" Type="int" />
+          <Property Name="ID_Number" Type="nvarchar" MaxLength="15" />
+          <Property Name="Job_Position_Id" Type="int" />
+          <Property Name="Paypoint_Id" Type="int" />
+          <Property Name="Service_Office_Id" Type="int" />
+          <Property Name="Salary_Level_Id" Type="int" />
+          <Property Name="Is_Shift_Worker" Type="bit" Nullable="false" />
+          <Property Name="Is_Casual_Worker" Type="bit" Nullable="false" />
+          <Property Name="Date_Created" Type="datetime" Nullable="false" />
+          <Property Name="Created_By" Type="nvarchar" MaxLength="150" Nullable="false" />
+          <Property Name="Date_Last_Modified" Type="datetime" />
+          <Property Name="Modified_By" Type="nvarchar" MaxLength="150" />
+          <Property Name="Is_Active" Type="bit" Nullable="false" />
+          <Property Name="Is_Deleted" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="apl_Gender">
+          <Key>
+            <PropertyRef Name="Gender_Id" />
+          </Key>
+          <Property Name="Gender_Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Description" Type="nvarchar" MaxLength="150" Nullable="false" />
+          <Property Name="Source" Type="nvarchar" MaxLength="150" />
+          <Property Name="Definition" Type="nvarchar(max)" />
+        </EntityType>
+        <EntityType Name="apl_Group">
+          <Key>
+            <PropertyRef Name="Group_Id" />
+          </Key>
+          <Property Name="Group_Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Description" Type="nvarchar" MaxLength="150" Nullable="false" />
+          <Property Name="Is_Active" Type="bit" Nullable="false" />
+          <Property Name="Is_Deleted" Type="bit" Nullable="false" />
+          <Property Name="Date_Created" Type="datetime" Nullable="false" />
+          <Property Name="Created_By" Type="nvarchar" MaxLength="150" />
+        </EntityType>
+        <EntityType Name="apl_Job_Position">
+          <Key>
+            <PropertyRef Name="Job_Position_Id" />
+          </Key>
+          <Property Name="Job_Position_Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Description" Type="nvarchar" MaxLength="150" Nullable="false" />
+          <Property Name="Source" Type="nvarchar" MaxLength="150" />
+          <Property Name="Definition" Type="nvarchar(max)" />
+        </EntityType>
+        <EntityType Name="apl_Menu">
+          <Key>
+            <PropertyRef Name="Menu_Id" />
+          </Key>
+          <Property Name="Menu_Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Description" Type="nvarchar" MaxLength="150" Nullable="false" />
+          <Property Name="Is_Active" Type="bit" Nullable="false" />
+          <Property Name="Is_Deleted" Type="bit" Nullable="false" />
+          <Property Name="Date_Created" Type="datetime" Nullable="false" />
+          <Property Name="Created_By" Type="nvarchar" MaxLength="150" />
+        </EntityType>
+        <EntityType Name="apl_Menu_Item">
+          <Key>
+            <PropertyRef Name="Menu_Item_Id" />
+          </Key>
+          <Property Name="Menu_Item_Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Menu_Id" Type="int" Nullable="false" />
+          <Property Name="Menu_Text" Type="nvarchar" MaxLength="150" Nullable="false" />
+          <Property Name="Menu_Tooltip" Type="nvarchar" MaxLength="2000" />
+          <Property Name="Module_Action_Id" Type="int" />
+          <Property Name="Parent_Menu_Item_Id" Type="int" />
+          <Property Name="Sort_Order" Type="int" />
+          <Property Name="Is_Active" Type="bit" Nullable="false" />
+          <Property Name="Is_Deleted" Type="bit" Nullable="false" />
+          <Property Name="Date_Created" Type="datetime" Nullable="false" />
+          <Property Name="Created_By" Type="nvarchar" MaxLength="150" />
+        </EntityType>
+        <EntityType Name="apl_Module">
+          <Key>
+            <PropertyRef Name="Module_Id" />
+          </Key>
+          <Property Name="Module_Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Description" Type="nvarchar" MaxLength="150" Nullable="false" />
+          <Property Name="Base_URL" Type="nvarchar" MaxLength="250" Nullable="false" />
+          <Property Name="Is_Active" Type="bit" Nullable="false" />
+          <Property Name="Is_Deleted" Type="bit" Nullable="false" />
+          <Property Name="Date_Created" Type="datetime" Nullable="false" />
+          <Property Name="Created_By" Type="nvarchar" MaxLength="150" />
+        </EntityType>
+        <EntityType Name="apl_Module_Action">
+          <Key>
+            <PropertyRef Name="Module_Action_Id" />
+          </Key>
+          <Property Name="Module_Action_Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Module_Controller_Id" Type="int" Nullable="false" />
+          <Property Name="Module_Action_Name" Type="nvarchar" MaxLength="150" Nullable="false" />
+        </EntityType>
+        <EntityType Name="apl_Module_Action_Role">
+          <Key>
+            <PropertyRef Name="Module_Action_Id" />
+            <PropertyRef Name="Role_Id" />
+          </Key>
+          <Property Name="Module_Action_Id" Type="int" Nullable="false" />
+          <Property Name="Role_Id" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="apl_Module_Controller">
+          <Key>
+            <PropertyRef Name="Module_Controller_Id" />
+          </Key>
+          <Property Name="Module_Controller_Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Module_Id" Type="int" Nullable="false" />
+          <Property Name="Module_Controller_Name" Type="nvarchar" MaxLength="150" Nullable="false" />
+        </EntityType>
+        <EntityType Name="apl_Paypoint">
+          <Key>
+            <PropertyRef Name="Paypoint_Id" />
+          </Key>
+          <Property Name="Paypoint_Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="District_Id" Type="int" />
+          <Property Name="Description" Type="nvarchar" MaxLength="150" />
+        </EntityType>
+        <EntityType Name="apl_Province">
+          <Key>
+            <PropertyRef Name="Province_Id" />
+          </Key>
+          <Property Name="Province_Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Country_Id" Type="int" Nullable="false" />
+          <Property Name="Description" Type="nvarchar" MaxLength="150" Nullable="false" />
+        </EntityType>
+        <EntityType Name="apl_Race">
+          <Key>
+            <PropertyRef Name="Race_Id" />
+          </Key>
+          <Property Name="Race_Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Description" Type="nvarchar" MaxLength="150" Nullable="false" />
+          <Property Name="Source" Type="nvarchar" MaxLength="150" />
+          <Property Name="Definition" Type="nvarchar(max)" />
+        </EntityType>
+        <EntityType Name="apl_Role">
+          <Key>
+            <PropertyRef Name="Role_Id" />
+          </Key>
+          <Property Name="Role_Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Description" Type="nvarchar" MaxLength="150" />
+          <Property Name="Is_Active" Type="bit" Nullable="false" />
+          <Property Name="Is_Deleted" Type="bit" Nullable="false" />
+          <Property Name="Date_Created" Type="datetime" Nullable="false" />
+        </EntityType>
+        <EntityType Name="apl_Role_Group">
+          <Key>
+            <PropertyRef Name="Group_Id" />
+            <PropertyRef Name="Role_Id" />
+          </Key>
+          <Property Name="Group_Id" Type="int" Nullable="false" />
+          <Property Name="Role_Id" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="apl_Salary_Level">
+          <Key>
+            <PropertyRef Name="Salary_Level_Id" />
+          </Key>
+          <Property Name="Salary_Level_Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Salary_Level_Number" Type="int" Nullable="false" />
+          <Property Name="Description" Type="nvarchar" MaxLength="150" Nullable="false" />
+          <Property Name="Is_Active" Type="bit" Nullable="false" />
+          <Property Name="Is_Deleted" Type="bit" Nullable="false" />
+          <Property Name="Source" Type="nvarchar" MaxLength="150" />
+          <Property Name="Definition" Type="nvarchar(max)" />
+        </EntityType>
+        <EntityType Name="apl_Service_Office">
+          <Key>
+            <PropertyRef Name="Service_Office_Id" />
+          </Key>
+          <Property Name="Service_Office_Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Area_Id" Type="int" />
+          <Property Name="Description" Type="nvarchar" MaxLength="150" />
+          <Property Name="Office_Size" Type="nvarchar" MaxLength="15" />
+          <Property Name="Is_Rental_Office" Type="bit" />
+          <Property Name="Monthly_Rent" Type="decimal" Precision="18" Scale="2" />
+          <Property Name="Vat" Type="decimal" Precision="18" Scale="2" />
+          <Property Name="Escalation_Rate" Type="decimal" Precision="18" Scale="2" />
+          <Property Name="Date_Created" Type="datetime" />
+          <Property Name="Created_By" Type="nvarchar" MaxLength="150" />
+          <Property Name="Date_Last_Modified" Type="datetime" />
+          <Property Name="Modified_By" Type="nvarchar" MaxLength="150" />
+          <Property Name="Is_Active" Type="bit" />
+          <Property Name="Is_Deleted" Type="bit" />
+        </EntityType>
+        <EntityType Name="apl_User">
+          <Key>
+            <PropertyRef Name="User_Id" />
+          </Key>
+          <Property Name="User_Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="First_Name" Type="nvarchar" MaxLength="150" Nullable="false" />
+          <Property Name="Last_Name" Type="nvarchar" MaxLength="150" Nullable="false" />
+          <Property Name="Initials" Type="nvarchar" MaxLength="5" />
+          <Property Name="User_Name" Type="nvarchar" MaxLength="150" Nullable="false" />
+          <Property Name="Password" Type="nvarchar" MaxLength="250" Nullable="false" />
+          <Property Name="Date_Last_Login" Type="datetime" />
+          <Property Name="Date_Created" Type="datetime" />
+          <Property Name="Created_By" Type="nvarchar" MaxLength="150" />
+          <Property Name="Date_Last_Modified" Type="datetime" />
+          <Property Name="Modified_By" Type="nvarchar" MaxLength="150" />
+          <Property Name="Is_Active" Type="bit" Nullable="false" />
+          <Property Name="Is_Deleted" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="apl_User_Group">
+          <Key>
+            <PropertyRef Name="User_Id" />
+            <PropertyRef Name="Group_Id" />
+          </Key>
+          <Property Name="User_Id" Type="int" Nullable="false" />
+          <Property Name="Group_Id" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="apl_User_Role">
+          <Key>
+            <PropertyRef Name="User_Id" />
+            <PropertyRef Name="Role_Id" />
+          </Key>
+          <Property Name="User_Id" Type="int" Nullable="false" />
+          <Property Name="Role_Id" Type="int" Nullable="false" />
+        </EntityType>
+        <Association Name="FK_apl_Area_apl_District">
+          <End Role="apl_District" Type="Self.apl_District" Multiplicity="1" />
+          <End Role="apl_Area" Type="Self.apl_Area" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="apl_District">
+              <PropertyRef Name="District_Id" />
+            </Principal>
+            <Dependent Role="apl_Area">
+              <PropertyRef Name="District_Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_apl_District_apl_Province">
+          <End Role="apl_Province" Type="Self.apl_Province" Multiplicity="1" />
+          <End Role="apl_District" Type="Self.apl_District" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="apl_Province">
+              <PropertyRef Name="Province_Id" />
+            </Principal>
+            <Dependent Role="apl_District">
+              <PropertyRef Name="Province_Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_apl_Employee_apl_Employee">
+          <End Role="apl_Employee" Type="Self.apl_Employee" Multiplicity="0..1" />
+          <End Role="apl_Employee1" Type="Self.apl_Employee" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="apl_Employee">
+              <PropertyRef Name="Employee_Id" />
+            </Principal>
+            <Dependent Role="apl_Employee1">
+              <PropertyRef Name="Head_Of_Department_Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_apl_Employee_apl_Employee1">
+          <End Role="apl_Employee" Type="Self.apl_Employee" Multiplicity="0..1" />
+          <End Role="apl_Employee1" Type="Self.apl_Employee" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="apl_Employee">
+              <PropertyRef Name="Employee_Id" />
+            </Principal>
+            <Dependent Role="apl_Employee1">
+              <PropertyRef Name="Supervisor_Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_apl_Employee_apl_Gender">
+          <End Role="apl_Gender" Type="Self.apl_Gender" Multiplicity="0..1" />
+          <End Role="apl_Employee" Type="Self.apl_Employee" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="apl_Gender">
+              <PropertyRef Name="Gender_Id" />
+            </Principal>
+            <Dependent Role="apl_Employee">
+              <PropertyRef Name="Gender_Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_apl_Employee_apl_JobPosition">
+          <End Role="apl_Job_Position" Type="Self.apl_Job_Position" Multiplicity="0..1" />
+          <End Role="apl_Employee" Type="Self.apl_Employee" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="apl_Job_Position">
+              <PropertyRef Name="Job_Position_Id" />
+            </Principal>
+            <Dependent Role="apl_Employee">
+              <PropertyRef Name="Job_Position_Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_apl_Employee_apl_Paypoint">
+          <End Role="apl_Paypoint" Type="Self.apl_Paypoint" Multiplicity="0..1" />
+          <End Role="apl_Employee" Type="Self.apl_Employee" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="apl_Paypoint">
+              <PropertyRef Name="Paypoint_Id" />
+            </Principal>
+            <Dependent Role="apl_Employee">
+              <PropertyRef Name="Paypoint_Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_apl_Employee_apl_Race">
+          <End Role="apl_Race" Type="Self.apl_Race" Multiplicity="0..1" />
+          <End Role="apl_Employee" Type="Self.apl_Employee" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="apl_Race">
+              <PropertyRef Name="Race_Id" />
+            </Principal>
+            <Dependent Role="apl_Employee">
+              <PropertyRef Name="Race_Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_apl_Employee_apl_SalaryLevel">
+          <End Role="apl_Salary_Level" Type="Self.apl_Salary_Level" Multiplicity="0..1" />
+          <End Role="apl_Employee" Type="Self.apl_Employee" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="apl_Salary_Level">
+              <PropertyRef Name="Salary_Level_Id" />
+            </Principal>
+            <Dependent Role="apl_Employee">
+              <PropertyRef Name="Salary_Level_Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_apl_Employee_apl_ServiceOffice">
+          <End Role="apl_Service_Office" Type="Self.apl_Service_Office" Multiplicity="0..1" />
+          <End Role="apl_Employee" Type="Self.apl_Employee" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="apl_Service_Office">
+              <PropertyRef Name="Service_Office_Id" />
+            </Principal>
+            <Dependent Role="apl_Employee">
+              <PropertyRef Name="Service_Office_Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_apl_Employee_apl_User">
+          <End Role="apl_User" Type="Self.apl_User" Multiplicity="1" />
+          <End Role="apl_Employee" Type="Self.apl_Employee" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="apl_User">
+              <PropertyRef Name="User_Id" />
+            </Principal>
+            <Dependent Role="apl_Employee">
+              <PropertyRef Name="User_Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_apl_EmployeeGroup_apl_Group">
+          <End Role="apl_Group" Type="Self.apl_Group" Multiplicity="1" />
+          <End Role="apl_User_Group" Type="Self.apl_User_Group" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="apl_Group">
+              <PropertyRef Name="Group_Id" />
+            </Principal>
+            <Dependent Role="apl_User_Group">
+              <PropertyRef Name="Group_Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_apl_Paypoint_apl_District">
+          <End Role="apl_District" Type="Self.apl_District" Multiplicity="0..1" />
+          <End Role="apl_Paypoint" Type="Self.apl_Paypoint" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="apl_District">
+              <PropertyRef Name="District_Id" />
+            </Principal>
+            <Dependent Role="apl_Paypoint">
+              <PropertyRef Name="District_Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_apl_Province_apl_Country">
+          <End Role="apl_Country" Type="Self.apl_Country" Multiplicity="1" />
+          <End Role="apl_Province" Type="Self.apl_Province" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="apl_Country">
+              <PropertyRef Name="Country_Id" />
+            </Principal>
+            <Dependent Role="apl_Province">
+              <PropertyRef Name="Country_Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_apl_RoleGroup_apl_Group">
+          <End Role="apl_Group" Type="Self.apl_Group" Multiplicity="1" />
+          <End Role="apl_Role_Group" Type="Self.apl_Role_Group" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="apl_Group">
+              <PropertyRef Name="Group_Id" />
+            </Principal>
+            <Dependent Role="apl_Role_Group">
+              <PropertyRef Name="Group_Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_apl_RoleGroup_apl_Role">
+          <End Role="apl_Role" Type="Self.apl_Role" Multiplicity="1" />
+          <End Role="apl_Role_Group" Type="Self.apl_Role_Group" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="apl_Role">
+              <PropertyRef Name="Role_Id" />
+            </Principal>
+            <Dependent Role="apl_Role_Group">
+              <PropertyRef Name="Role_Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_apl_ServiceOffice_apl_Area">
+          <End Role="apl_Area" Type="Self.apl_Area" Multiplicity="0..1" />
+          <End Role="apl_Service_Office" Type="Self.apl_Service_Office" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="apl_Area">
+              <PropertyRef Name="Area_Id" />
+            </Principal>
+            <Dependent Role="apl_Service_Office">
+              <PropertyRef Name="Area_Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_apl_UserGroup_apl_User">
+          <End Role="apl_User" Type="Self.apl_User" Multiplicity="1" />
+          <End Role="apl_User_Group" Type="Self.apl_User_Group" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="apl_User">
+              <PropertyRef Name="User_Id" />
+            </Principal>
+            <Dependent Role="apl_User_Group">
+              <PropertyRef Name="User_Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_EmployeeRole_Role">
+          <End Role="apl_Role" Type="Self.apl_Role" Multiplicity="1" />
+          <End Role="apl_User_Role" Type="Self.apl_User_Role" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="apl_Role">
+              <PropertyRef Name="Role_Id" />
+            </Principal>
+            <Dependent Role="apl_User_Role">
+              <PropertyRef Name="Role_Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_MenuItem_Menu">
+          <End Role="apl_Menu" Type="Self.apl_Menu" Multiplicity="1" />
+          <End Role="apl_Menu_Item" Type="Self.apl_Menu_Item" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="apl_Menu">
+              <PropertyRef Name="Menu_Id" />
+            </Principal>
+            <Dependent Role="apl_Menu_Item">
+              <PropertyRef Name="Menu_Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_MenuItem_MenuItem">
+          <End Role="apl_Menu_Item" Type="Self.apl_Menu_Item" Multiplicity="0..1" />
+          <End Role="apl_Menu_Item1" Type="Self.apl_Menu_Item" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="apl_Menu_Item">
+              <PropertyRef Name="Menu_Item_Id" />
+            </Principal>
+            <Dependent Role="apl_Menu_Item1">
+              <PropertyRef Name="Parent_Menu_Item_Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_MenuItem_ModuleAction">
+          <End Role="apl_Module_Action" Type="Self.apl_Module_Action" Multiplicity="0..1" />
+          <End Role="apl_Menu_Item" Type="Self.apl_Menu_Item" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="apl_Module_Action">
+              <PropertyRef Name="Module_Action_Id" />
+            </Principal>
+            <Dependent Role="apl_Menu_Item">
+              <PropertyRef Name="Module_Action_Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ModuleAction_ModuleController">
+          <End Role="apl_Module_Controller" Type="Self.apl_Module_Controller" Multiplicity="1" />
+          <End Role="apl_Module_Action" Type="Self.apl_Module_Action" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="apl_Module_Controller">
+              <PropertyRef Name="Module_Controller_Id" />
+            </Principal>
+            <Dependent Role="apl_Module_Action">
+              <PropertyRef Name="Module_Controller_Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ModuleActionRole_ModuleAction">
+          <End Role="apl_Module_Action" Type="Self.apl_Module_Action" Multiplicity="1" />
+          <End Role="apl_Module_Action_Role" Type="Self.apl_Module_Action_Role" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="apl_Module_Action">
+              <PropertyRef Name="Module_Action_Id" />
+            </Principal>
+            <Dependent Role="apl_Module_Action_Role">
+              <PropertyRef Name="Module_Action_Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ModuleActionRole_Role">
+          <End Role="apl_Role" Type="Self.apl_Role" Multiplicity="1" />
+          <End Role="apl_Module_Action_Role" Type="Self.apl_Module_Action_Role" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="apl_Role">
+              <PropertyRef Name="Role_Id" />
+            </Principal>
+            <Dependent Role="apl_Module_Action_Role">
+              <PropertyRef Name="Role_Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ModuleController_Module">
+          <End Role="apl_Module" Type="Self.apl_Module" Multiplicity="1" />
+          <End Role="apl_Module_Controller" Type="Self.apl_Module_Controller" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="apl_Module">
+              <PropertyRef Name="Module_Id" />
+            </Principal>
+            <Dependent Role="apl_Module_Controller">
+              <PropertyRef Name="Module_Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_UserRole_User">
+          <End Role="apl_User" Type="Self.apl_User" Multiplicity="1" />
+          <End Role="apl_User_Role" Type="Self.apl_User_Role" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="apl_User">
+              <PropertyRef Name="User_Id" />
+            </Principal>
+            <Dependent Role="apl_User_Role">
+              <PropertyRef Name="User_Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="SDIIS_DatabaseModelStoreContainer">
+          <EntitySet Name="apl_Area" EntityType="Self.apl_Area" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="apl_Country" EntityType="Self.apl_Country" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="apl_District" EntityType="Self.apl_District" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="apl_Employee" EntityType="Self.apl_Employee" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="apl_Gender" EntityType="Self.apl_Gender" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="apl_Group" EntityType="Self.apl_Group" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="apl_Job_Position" EntityType="Self.apl_Job_Position" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="apl_Menu" EntityType="Self.apl_Menu" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="apl_Menu_Item" EntityType="Self.apl_Menu_Item" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="apl_Module" EntityType="Self.apl_Module" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="apl_Module_Action" EntityType="Self.apl_Module_Action" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="apl_Module_Action_Role" EntityType="Self.apl_Module_Action_Role" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="apl_Module_Controller" EntityType="Self.apl_Module_Controller" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="apl_Paypoint" EntityType="Self.apl_Paypoint" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="apl_Province" EntityType="Self.apl_Province" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="apl_Race" EntityType="Self.apl_Race" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="apl_Role" EntityType="Self.apl_Role" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="apl_Role_Group" EntityType="Self.apl_Role_Group" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="apl_Salary_Level" EntityType="Self.apl_Salary_Level" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="apl_Service_Office" EntityType="Self.apl_Service_Office" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="apl_User" EntityType="Self.apl_User" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="apl_User_Group" EntityType="Self.apl_User_Group" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="apl_User_Role" EntityType="Self.apl_User_Role" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_apl_Area_apl_District" Association="Self.FK_apl_Area_apl_District">
+            <End Role="apl_District" EntitySet="apl_District" />
+            <End Role="apl_Area" EntitySet="apl_Area" />
+          </AssociationSet>
+          <AssociationSet Name="FK_apl_District_apl_Province" Association="Self.FK_apl_District_apl_Province">
+            <End Role="apl_Province" EntitySet="apl_Province" />
+            <End Role="apl_District" EntitySet="apl_District" />
+          </AssociationSet>
+          <AssociationSet Name="FK_apl_Employee_apl_Employee" Association="Self.FK_apl_Employee_apl_Employee">
+            <End Role="apl_Employee" EntitySet="apl_Employee" />
+            <End Role="apl_Employee1" EntitySet="apl_Employee" />
+          </AssociationSet>
+          <AssociationSet Name="FK_apl_Employee_apl_Employee1" Association="Self.FK_apl_Employee_apl_Employee1">
+            <End Role="apl_Employee" EntitySet="apl_Employee" />
+            <End Role="apl_Employee1" EntitySet="apl_Employee" />
+          </AssociationSet>
+          <AssociationSet Name="FK_apl_Employee_apl_Gender" Association="Self.FK_apl_Employee_apl_Gender">
+            <End Role="apl_Gender" EntitySet="apl_Gender" />
+            <End Role="apl_Employee" EntitySet="apl_Employee" />
+          </AssociationSet>
+          <AssociationSet Name="FK_apl_Employee_apl_JobPosition" Association="Self.FK_apl_Employee_apl_JobPosition">
+            <End Role="apl_Job_Position" EntitySet="apl_Job_Position" />
+            <End Role="apl_Employee" EntitySet="apl_Employee" />
+          </AssociationSet>
+          <AssociationSet Name="FK_apl_Employee_apl_Paypoint" Association="Self.FK_apl_Employee_apl_Paypoint">
+            <End Role="apl_Paypoint" EntitySet="apl_Paypoint" />
+            <End Role="apl_Employee" EntitySet="apl_Employee" />
+          </AssociationSet>
+          <AssociationSet Name="FK_apl_Employee_apl_Race" Association="Self.FK_apl_Employee_apl_Race">
+            <End Role="apl_Race" EntitySet="apl_Race" />
+            <End Role="apl_Employee" EntitySet="apl_Employee" />
+          </AssociationSet>
+          <AssociationSet Name="FK_apl_Employee_apl_SalaryLevel" Association="Self.FK_apl_Employee_apl_SalaryLevel">
+            <End Role="apl_Salary_Level" EntitySet="apl_Salary_Level" />
+            <End Role="apl_Employee" EntitySet="apl_Employee" />
+          </AssociationSet>
+          <AssociationSet Name="FK_apl_Employee_apl_ServiceOffice" Association="Self.FK_apl_Employee_apl_ServiceOffice">
+            <End Role="apl_Service_Office" EntitySet="apl_Service_Office" />
+            <End Role="apl_Employee" EntitySet="apl_Employee" />
+          </AssociationSet>
+          <AssociationSet Name="FK_apl_Employee_apl_User" Association="Self.FK_apl_Employee_apl_User">
+            <End Role="apl_User" EntitySet="apl_User" />
+            <End Role="apl_Employee" EntitySet="apl_Employee" />
+          </AssociationSet>
+          <AssociationSet Name="FK_apl_EmployeeGroup_apl_Group" Association="Self.FK_apl_EmployeeGroup_apl_Group">
+            <End Role="apl_Group" EntitySet="apl_Group" />
+            <End Role="apl_User_Group" EntitySet="apl_User_Group" />
+          </AssociationSet>
+          <AssociationSet Name="FK_apl_Paypoint_apl_District" Association="Self.FK_apl_Paypoint_apl_District">
+            <End Role="apl_District" EntitySet="apl_District" />
+            <End Role="apl_Paypoint" EntitySet="apl_Paypoint" />
+          </AssociationSet>
+          <AssociationSet Name="FK_apl_Province_apl_Country" Association="Self.FK_apl_Province_apl_Country">
+            <End Role="apl_Country" EntitySet="apl_Country" />
+            <End Role="apl_Province" EntitySet="apl_Province" />
+          </AssociationSet>
+          <AssociationSet Name="FK_apl_RoleGroup_apl_Group" Association="Self.FK_apl_RoleGroup_apl_Group">
+            <End Role="apl_Group" EntitySet="apl_Group" />
+            <End Role="apl_Role_Group" EntitySet="apl_Role_Group" />
+          </AssociationSet>
+          <AssociationSet Name="FK_apl_RoleGroup_apl_Role" Association="Self.FK_apl_RoleGroup_apl_Role">
+            <End Role="apl_Role" EntitySet="apl_Role" />
+            <End Role="apl_Role_Group" EntitySet="apl_Role_Group" />
+          </AssociationSet>
+          <AssociationSet Name="FK_apl_ServiceOffice_apl_Area" Association="Self.FK_apl_ServiceOffice_apl_Area">
+            <End Role="apl_Area" EntitySet="apl_Area" />
+            <End Role="apl_Service_Office" EntitySet="apl_Service_Office" />
+          </AssociationSet>
+          <AssociationSet Name="FK_apl_UserGroup_apl_User" Association="Self.FK_apl_UserGroup_apl_User">
+            <End Role="apl_User" EntitySet="apl_User" />
+            <End Role="apl_User_Group" EntitySet="apl_User_Group" />
+          </AssociationSet>
+          <AssociationSet Name="FK_EmployeeRole_Role" Association="Self.FK_EmployeeRole_Role">
+            <End Role="apl_Role" EntitySet="apl_Role" />
+            <End Role="apl_User_Role" EntitySet="apl_User_Role" />
+          </AssociationSet>
+          <AssociationSet Name="FK_MenuItem_Menu" Association="Self.FK_MenuItem_Menu">
+            <End Role="apl_Menu" EntitySet="apl_Menu" />
+            <End Role="apl_Menu_Item" EntitySet="apl_Menu_Item" />
+          </AssociationSet>
+          <AssociationSet Name="FK_MenuItem_MenuItem" Association="Self.FK_MenuItem_MenuItem">
+            <End Role="apl_Menu_Item" EntitySet="apl_Menu_Item" />
+            <End Role="apl_Menu_Item1" EntitySet="apl_Menu_Item" />
+          </AssociationSet>
+          <AssociationSet Name="FK_MenuItem_ModuleAction" Association="Self.FK_MenuItem_ModuleAction">
+            <End Role="apl_Module_Action" EntitySet="apl_Module_Action" />
+            <End Role="apl_Menu_Item" EntitySet="apl_Menu_Item" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ModuleAction_ModuleController" Association="Self.FK_ModuleAction_ModuleController">
+            <End Role="apl_Module_Controller" EntitySet="apl_Module_Controller" />
+            <End Role="apl_Module_Action" EntitySet="apl_Module_Action" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ModuleActionRole_ModuleAction" Association="Self.FK_ModuleActionRole_ModuleAction">
+            <End Role="apl_Module_Action" EntitySet="apl_Module_Action" />
+            <End Role="apl_Module_Action_Role" EntitySet="apl_Module_Action_Role" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ModuleActionRole_Role" Association="Self.FK_ModuleActionRole_Role">
+            <End Role="apl_Role" EntitySet="apl_Role" />
+            <End Role="apl_Module_Action_Role" EntitySet="apl_Module_Action_Role" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ModuleController_Module" Association="Self.FK_ModuleController_Module">
+            <End Role="apl_Module" EntitySet="apl_Module" />
+            <End Role="apl_Module_Controller" EntitySet="apl_Module_Controller" />
+          </AssociationSet>
+          <AssociationSet Name="FK_UserRole_User" Association="Self.FK_UserRole_User">
+            <End Role="apl_User" EntitySet="apl_User" />
+            <End Role="apl_User_Role" EntitySet="apl_User_Role" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="SDIIS_DatabaseModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityContainer Name="SDIIS_DatabaseEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Employees" EntityType="SDIIS_DatabaseModel.Employee" />
+          <EntitySet Name="Menus" EntityType="SDIIS_DatabaseModel.Menu" />
+          <EntitySet Name="Menu_Items" EntityType="SDIIS_DatabaseModel.Menu_Item" />
+          <EntitySet Name="Modules" EntityType="SDIIS_DatabaseModel.Module" />
+          <EntitySet Name="Module_Actions" EntityType="SDIIS_DatabaseModel.Module_Action" />
+          <EntitySet Name="Module_Controllers" EntityType="SDIIS_DatabaseModel.Module_Controller" />
+          <AssociationSet Name="FK_MenuItem_Menu" Association="SDIIS_DatabaseModel.FK_MenuItem_Menu">
+            <End Role="apl_Menu" EntitySet="Menus" />
+            <End Role="apl_Menu_Item" EntitySet="Menu_Items" />
+          </AssociationSet>
+          <AssociationSet Name="FK_MenuItem_MenuItem" Association="SDIIS_DatabaseModel.FK_MenuItem_MenuItem">
+            <End Role="apl_Menu_Item" EntitySet="Menu_Items" />
+            <End Role="apl_Menu_Item1" EntitySet="Menu_Items" />
+          </AssociationSet>
+          <AssociationSet Name="FK_MenuItem_ModuleAction" Association="SDIIS_DatabaseModel.FK_MenuItem_ModuleAction">
+            <End Role="apl_Module_Action" EntitySet="Module_Actions" />
+            <End Role="apl_Menu_Item" EntitySet="Menu_Items" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ModuleController_Module" Association="SDIIS_DatabaseModel.FK_ModuleController_Module">
+            <End Role="apl_Module" EntitySet="Modules" />
+            <End Role="apl_Module_Controller" EntitySet="Module_Controllers" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ModuleAction_ModuleController" Association="SDIIS_DatabaseModel.FK_ModuleAction_ModuleController">
+            <End Role="apl_Module_Controller" EntitySet="Module_Controllers" />
+            <End Role="apl_Module_Action" EntitySet="Module_Actions" />
+          </AssociationSet>
+          <EntitySet Name="Groups" EntityType="SDIIS_DatabaseModel.Group" />
+          <EntitySet Name="Roles" EntityType="SDIIS_DatabaseModel.Role" />
+          <EntitySet Name="Users" EntityType="SDIIS_DatabaseModel.User" />
+          <AssociationSet Name="FK_apl_Employee_apl_User" Association="SDIIS_DatabaseModel.FK_apl_Employee_apl_User">
+            <End Role="apl_User" EntitySet="Users" />
+            <End Role="Employee" EntitySet="Employees" />
+          </AssociationSet>
+          <AssociationSet Name="apl_Module_Action_Role" Association="SDIIS_DatabaseModel.apl_Module_Action_Role">
+            <End Role="Module_Action" EntitySet="Module_Actions" />
+            <End Role="apl_Role" EntitySet="Roles" />
+          </AssociationSet>
+          <AssociationSet Name="apl_Role_Group" Association="SDIIS_DatabaseModel.apl_Role_Group">
+            <End Role="apl_Group" EntitySet="Groups" />
+            <End Role="apl_Role" EntitySet="Roles" />
+          </AssociationSet>
+          <AssociationSet Name="apl_User_Group" Association="SDIIS_DatabaseModel.apl_User_Group">
+            <End Role="apl_Group" EntitySet="Groups" />
+            <End Role="apl_User" EntitySet="Users" />
+          </AssociationSet>
+          <AssociationSet Name="apl_User_Role" Association="SDIIS_DatabaseModel.apl_User_Role">
+            <End Role="apl_Role" EntitySet="Roles" />
+            <End Role="apl_User" EntitySet="Users" />
+          </AssociationSet>
+          <EntitySet Name="Genders" EntityType="SDIIS_DatabaseModel.Gender" />
+          <EntitySet Name="Job_Positions" EntityType="SDIIS_DatabaseModel.Job_Position" />
+          <EntitySet Name="Paypoints" EntityType="SDIIS_DatabaseModel.Paypoint" />
+          <EntitySet Name="Races" EntityType="SDIIS_DatabaseModel.Race" />
+          <EntitySet Name="Salary_Levels" EntityType="SDIIS_DatabaseModel.Salary_Level" />
+          <EntitySet Name="Service_Offices" EntityType="SDIIS_DatabaseModel.Service_Office" />
+          <AssociationSet Name="FK_apl_Employee_apl_Gender" Association="SDIIS_DatabaseModel.FK_apl_Employee_apl_Gender">
+            <End Role="apl_Gender" EntitySet="Genders" />
+            <End Role="Employee" EntitySet="Employees" />
+          </AssociationSet>
+          <AssociationSet Name="FK_apl_Employee_apl_JobPosition" Association="SDIIS_DatabaseModel.FK_apl_Employee_apl_JobPosition">
+            <End Role="apl_Job_Position" EntitySet="Job_Positions" />
+            <End Role="Employee" EntitySet="Employees" />
+          </AssociationSet>
+          <AssociationSet Name="FK_apl_Employee_apl_Paypoint" Association="SDIIS_DatabaseModel.FK_apl_Employee_apl_Paypoint">
+            <End Role="apl_Paypoint" EntitySet="Paypoints" />
+            <End Role="Employee" EntitySet="Employees" />
+          </AssociationSet>
+          <AssociationSet Name="FK_apl_Employee_apl_Race" Association="SDIIS_DatabaseModel.FK_apl_Employee_apl_Race">
+            <End Role="apl_Race" EntitySet="Races" />
+            <End Role="Employee" EntitySet="Employees" />
+          </AssociationSet>
+          <AssociationSet Name="FK_apl_Employee_apl_SalaryLevel" Association="SDIIS_DatabaseModel.FK_apl_Employee_apl_SalaryLevel">
+            <End Role="apl_Salary_Level" EntitySet="Salary_Levels" />
+            <End Role="Employee" EntitySet="Employees" />
+          </AssociationSet>
+          <AssociationSet Name="FK_apl_Employee_apl_ServiceOffice" Association="SDIIS_DatabaseModel.FK_apl_Employee_apl_ServiceOffice">
+            <End Role="apl_Service_Office" EntitySet="Service_Offices" />
+            <End Role="Employee" EntitySet="Employees" />
+          </AssociationSet>
+          <EntitySet Name="Areas" EntityType="SDIIS_DatabaseModel.Area" />
+          <EntitySet Name="Countries" EntityType="SDIIS_DatabaseModel.Country" />
+          <EntitySet Name="Districts" EntityType="SDIIS_DatabaseModel.District" />
+          <EntitySet Name="Provinces" EntityType="SDIIS_DatabaseModel.Province" />
+          <AssociationSet Name="FK_apl_Area_apl_District" Association="SDIIS_DatabaseModel.FK_apl_Area_apl_District">
+            <End Role="apl_District" EntitySet="Districts" />
+            <End Role="apl_Area" EntitySet="Areas" />
+          </AssociationSet>
+          <AssociationSet Name="FK_apl_ServiceOffice_apl_Area" Association="SDIIS_DatabaseModel.FK_apl_ServiceOffice_apl_Area">
+            <End Role="apl_Area" EntitySet="Areas" />
+            <End Role="apl_Service_Office" EntitySet="Service_Offices" />
+          </AssociationSet>
+          <AssociationSet Name="FK_apl_Province_apl_Country" Association="SDIIS_DatabaseModel.FK_apl_Province_apl_Country">
+            <End Role="apl_Country" EntitySet="Countries" />
+            <End Role="apl_Province" EntitySet="Provinces" />
+          </AssociationSet>
+          <AssociationSet Name="FK_apl_District_apl_Province" Association="SDIIS_DatabaseModel.FK_apl_District_apl_Province">
+            <End Role="apl_Province" EntitySet="Provinces" />
+            <End Role="apl_District" EntitySet="Districts" />
+          </AssociationSet>
+          <AssociationSet Name="FK_apl_Paypoint_apl_District" Association="SDIIS_DatabaseModel.FK_apl_Paypoint_apl_District">
+            <End Role="apl_District" EntitySet="Districts" />
+            <End Role="apl_Paypoint" EntitySet="Paypoints" />
+          </AssociationSet>
+          <AssociationSet Name="FK_apl_Employee_apl_Employee" Association="SDIIS_DatabaseModel.FK_apl_Employee_apl_Employee">
+            <End Role="Employee" EntitySet="Employees" />
+            <End Role="Employee1" EntitySet="Employees" />
+          </AssociationSet>
+          <AssociationSet Name="FK_apl_Employee_apl_Employee1" Association="SDIIS_DatabaseModel.FK_apl_Employee_apl_Employee1">
+            <End Role="Employee" EntitySet="Employees" />
+            <End Role="Employee1" EntitySet="Employees" />
+          </AssociationSet>
+          </EntityContainer>
+        <EntityType Name="Employee">
+          <Key>
+            <PropertyRef Name="Employee_Id" />
+          </Key>
+          <Property Name="Employee_Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="User_Id" Type="Int32" Nullable="false" />
+          <Property Name="Persal_Number" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="Head_Of_Department_Id" Type="Int32" />
+          <Property Name="Supervisor_Id" Type="Int32" />
+          <Property Name="Phone_Number" Type="String" MaxLength="15" FixedLength="false" Unicode="true" />
+          <Property Name="Mobile_Phone_Number" Type="String" MaxLength="15" FixedLength="false" Unicode="true" />
+          <Property Name="Gender_Id" Type="Int32" />
+          <Property Name="Race_Id" Type="Int32" />
+          <Property Name="ID_Number" Type="String" MaxLength="15" FixedLength="false" Unicode="true" />
+          <Property Name="Job_Position_Id" Type="Int32" />
+          <Property Name="Paypoint_Id" Type="Int32" />
+          <Property Name="Service_Office_Id" Type="Int32" />
+          <Property Name="Salary_Level_Id" Type="Int32" />
+          <Property Name="Is_Shift_Worker" Type="Boolean" Nullable="false" />
+          <Property Name="Is_Casual_Worker" Type="Boolean" Nullable="false" />
+          <Property Name="Date_Created" Type="DateTime" Precision="3" Nullable="false" />
+          <Property Name="Created_By" Type="String" MaxLength="150" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Date_Last_Modified" Type="DateTime" Precision="3" />
+          <Property Name="Modified_By" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="Is_Active" Type="Boolean" Nullable="false" />
+          <Property Name="Is_Deleted" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="User" Relationship="SDIIS_DatabaseModel.FK_apl_Employee_apl_User" FromRole="Employee" ToRole="apl_User" />
+          <NavigationProperty Name="Gender" Relationship="SDIIS_DatabaseModel.FK_apl_Employee_apl_Gender" FromRole="Employee" ToRole="apl_Gender" />
+          <NavigationProperty Name="Job_Position" Relationship="SDIIS_DatabaseModel.FK_apl_Employee_apl_JobPosition" FromRole="Employee" ToRole="apl_Job_Position" />
+          <NavigationProperty Name="Paypoint" Relationship="SDIIS_DatabaseModel.FK_apl_Employee_apl_Paypoint" FromRole="Employee" ToRole="apl_Paypoint" />
+          <NavigationProperty Name="Race" Relationship="SDIIS_DatabaseModel.FK_apl_Employee_apl_Race" FromRole="Employee" ToRole="apl_Race" />
+          <NavigationProperty Name="Salary_Level" Relationship="SDIIS_DatabaseModel.FK_apl_Employee_apl_SalaryLevel" FromRole="Employee" ToRole="apl_Salary_Level" />
+          <NavigationProperty Name="Service_Office" Relationship="SDIIS_DatabaseModel.FK_apl_Employee_apl_ServiceOffice" FromRole="Employee" ToRole="apl_Service_Office" />
+          <NavigationProperty Name="Subordinate_Employees" Relationship="SDIIS_DatabaseModel.FK_apl_Employee_apl_Employee" FromRole="Employee" ToRole="Employee1" />
+          <NavigationProperty Name="Head_of_Department" Relationship="SDIIS_DatabaseModel.FK_apl_Employee_apl_Employee" FromRole="Employee1" ToRole="Employee" />
+          <NavigationProperty Name="Supervised_Employees" Relationship="SDIIS_DatabaseModel.FK_apl_Employee_apl_Employee1" FromRole="Employee" ToRole="Employee1" />
+          <NavigationProperty Name="Supervisor" Relationship="SDIIS_DatabaseModel.FK_apl_Employee_apl_Employee1" FromRole="Employee1" ToRole="Employee" />
+        </EntityType>
+        <EntityType Name="Menu">
+          <Key>
+            <PropertyRef Name="Menu_Id" />
+          </Key>
+          <Property Name="Menu_Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Description" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="Is_Active" Type="Boolean" Nullable="false" />
+          <Property Name="Is_Deleted" Type="Boolean" Nullable="false" />
+          <Property Name="Date_Created" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Created_By" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Menu_Items" Relationship="SDIIS_DatabaseModel.FK_MenuItem_Menu" FromRole="apl_Menu" ToRole="apl_Menu_Item" />
+        </EntityType>
+        <EntityType Name="Menu_Item">
+          <Key>
+            <PropertyRef Name="Menu_Item_Id" />
+          </Key>
+          <Property Name="Menu_Item_Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Menu_Id" Type="Int32" Nullable="false" />
+          <Property Name="Menu_Text" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="Menu_Tooltip" Type="String" MaxLength="2000" FixedLength="false" Unicode="true" />
+          <Property Name="Module_Action_Id" Type="Int32" />
+          <Property Name="Parent_Menu_Item_Id" Type="Int32" />
+          <Property Name="Sort_Order" Type="Int32" />
+          <Property Name="Is_Active" Type="Boolean" Nullable="false" />
+          <Property Name="Is_Deleted" Type="Boolean" Nullable="false" />
+          <Property Name="Date_Created" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Created_By" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Menu" Relationship="SDIIS_DatabaseModel.FK_MenuItem_Menu" FromRole="apl_Menu_Item" ToRole="apl_Menu" />
+          <NavigationProperty Name="Sub_Menu_Items" Relationship="SDIIS_DatabaseModel.FK_MenuItem_MenuItem" FromRole="apl_Menu_Item" ToRole="apl_Menu_Item1" />
+          <NavigationProperty Name="Parent_Menu_Item" Relationship="SDIIS_DatabaseModel.FK_MenuItem_MenuItem" FromRole="apl_Menu_Item1" ToRole="apl_Menu_Item" />
+          <NavigationProperty Name="Module_Action" Relationship="SDIIS_DatabaseModel.FK_MenuItem_ModuleAction" FromRole="apl_Menu_Item" ToRole="apl_Module_Action" />
+        </EntityType>
+        <EntityType Name="Module">
+          <Key>
+            <PropertyRef Name="Module_Id" />
+          </Key>
+          <Property Name="Module_Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Description" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="Base_URL" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="Is_Active" Type="Boolean" Nullable="false" />
+          <Property Name="Is_Deleted" Type="Boolean" Nullable="false" />
+          <Property Name="Date_Created" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Created_By" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Module_Controllers" Relationship="SDIIS_DatabaseModel.FK_ModuleController_Module" FromRole="apl_Module" ToRole="apl_Module_Controller" />
+        </EntityType>
+        <EntityType Name="Module_Action">
+          <Key>
+            <PropertyRef Name="Module_Action_Id" />
+          </Key>
+          <Property Name="Module_Action_Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Module_Controller_Id" Type="Int32" Nullable="false" />
+          <Property Name="Module_Action_Name" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Menu_Items" Relationship="SDIIS_DatabaseModel.FK_MenuItem_ModuleAction" FromRole="apl_Module_Action" ToRole="apl_Menu_Item" />
+          <NavigationProperty Name="Module_Controller" Relationship="SDIIS_DatabaseModel.FK_ModuleAction_ModuleController" FromRole="apl_Module_Action" ToRole="apl_Module_Controller" />
+          <NavigationProperty Name="Roles" Relationship="SDIIS_DatabaseModel.apl_Module_Action_Role" FromRole="Module_Action" ToRole="apl_Role" />
+        </EntityType>
+        <EntityType Name="Module_Controller">
+          <Key>
+            <PropertyRef Name="Module_Controller_Id" />
+          </Key>
+          <Property Name="Module_Controller_Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Module_Id" Type="Int32" Nullable="false" />
+          <Property Name="Module_Controller_Name" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Module" Relationship="SDIIS_DatabaseModel.FK_ModuleController_Module" FromRole="apl_Module_Controller" ToRole="apl_Module" />
+          <NavigationProperty Name="Module_Actions" Relationship="SDIIS_DatabaseModel.FK_ModuleAction_ModuleController" FromRole="apl_Module_Controller" ToRole="apl_Module_Action" />
+        </EntityType>
+        <Association Name="FK_MenuItem_Menu">
+          <End Type="SDIIS_DatabaseModel.Menu" Role="apl_Menu" Multiplicity="1" />
+          <End Type="SDIIS_DatabaseModel.Menu_Item" Role="apl_Menu_Item" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="apl_Menu">
+              <PropertyRef Name="Menu_Id" />
+            </Principal>
+            <Dependent Role="apl_Menu_Item">
+              <PropertyRef Name="Menu_Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_MenuItem_MenuItem">
+          <End Type="SDIIS_DatabaseModel.Menu_Item" Role="apl_Menu_Item" Multiplicity="0..1" />
+          <End Type="SDIIS_DatabaseModel.Menu_Item" Role="apl_Menu_Item1" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="apl_Menu_Item">
+              <PropertyRef Name="Menu_Item_Id" />
+            </Principal>
+            <Dependent Role="apl_Menu_Item1">
+              <PropertyRef Name="Parent_Menu_Item_Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_MenuItem_ModuleAction">
+          <End Type="SDIIS_DatabaseModel.Module_Action" Role="apl_Module_Action" Multiplicity="0..1" />
+          <End Type="SDIIS_DatabaseModel.Menu_Item" Role="apl_Menu_Item" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="apl_Module_Action">
+              <PropertyRef Name="Module_Action_Id" />
+            </Principal>
+            <Dependent Role="apl_Menu_Item">
+              <PropertyRef Name="Module_Action_Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ModuleController_Module">
+          <End Type="SDIIS_DatabaseModel.Module" Role="apl_Module" Multiplicity="1" />
+          <End Type="SDIIS_DatabaseModel.Module_Controller" Role="apl_Module_Controller" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="apl_Module">
+              <PropertyRef Name="Module_Id" />
+            </Principal>
+            <Dependent Role="apl_Module_Controller">
+              <PropertyRef Name="Module_Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ModuleAction_ModuleController">
+          <End Type="SDIIS_DatabaseModel.Module_Controller" Role="apl_Module_Controller" Multiplicity="1" />
+          <End Type="SDIIS_DatabaseModel.Module_Action" Role="apl_Module_Action" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="apl_Module_Controller">
+              <PropertyRef Name="Module_Controller_Id" />
+            </Principal>
+            <Dependent Role="apl_Module_Action">
+              <PropertyRef Name="Module_Controller_Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="Group">
+          <Key>
+            <PropertyRef Name="Group_Id" />
+          </Key>
+          <Property Name="Group_Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Description" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="Is_Active" Type="Boolean" Nullable="false" />
+          <Property Name="Is_Deleted" Type="Boolean" Nullable="false" />
+          <Property Name="Date_Created" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Created_By" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Roles" Relationship="SDIIS_DatabaseModel.apl_Role_Group" FromRole="apl_Group" ToRole="apl_Role" />
+          <NavigationProperty Name="Users" Relationship="SDIIS_DatabaseModel.apl_User_Group" FromRole="apl_Group" ToRole="apl_User" />
+        </EntityType>
+        <EntityType Name="Role">
+          <Key>
+            <PropertyRef Name="Role_Id" />
+          </Key>
+          <Property Name="Role_Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Description" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="Is_Active" Type="Boolean" Nullable="false" />
+          <Property Name="Is_Deleted" Type="Boolean" Nullable="false" />
+          <Property Name="Date_Created" Type="DateTime" Nullable="false" Precision="3" />
+          <NavigationProperty Name="Module_Actions" Relationship="SDIIS_DatabaseModel.apl_Module_Action_Role" FromRole="apl_Role" ToRole="Module_Action" />
+          <NavigationProperty Name="Groups" Relationship="SDIIS_DatabaseModel.apl_Role_Group" FromRole="apl_Role" ToRole="apl_Group" />
+          <NavigationProperty Name="Users" Relationship="SDIIS_DatabaseModel.apl_User_Role" FromRole="apl_Role" ToRole="apl_User" />
+        </EntityType>
+        <EntityType Name="User">
+          <Key>
+            <PropertyRef Name="User_Id" />
+          </Key>
+          <Property Name="User_Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="First_Name" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="Last_Name" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="Initials" Type="String" MaxLength="5" FixedLength="false" Unicode="true" />
+          <Property Name="User_Name" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="Password" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="Date_Last_Login" Type="DateTime" Precision="3" />
+          <Property Name="Date_Created" Type="DateTime" Precision="3" />
+          <Property Name="Created_By" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="Date_Last_Modified" Type="DateTime" Precision="3" />
+          <Property Name="Modified_By" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="Is_Active" Type="Boolean" Nullable="false" />
+          <Property Name="Is_Deleted" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="Employees" Relationship="SDIIS_DatabaseModel.FK_apl_Employee_apl_User" FromRole="apl_User" ToRole="Employee" />
+          <NavigationProperty Name="Groups" Relationship="SDIIS_DatabaseModel.apl_User_Group" FromRole="apl_User" ToRole="apl_Group" />
+          <NavigationProperty Name="Roles" Relationship="SDIIS_DatabaseModel.apl_User_Role" FromRole="apl_User" ToRole="apl_Role" />
+        </EntityType>
+        <Association Name="FK_apl_Employee_apl_User">
+          <End Type="SDIIS_DatabaseModel.User" Role="apl_User" Multiplicity="1" />
+          <End Type="SDIIS_DatabaseModel.Employee" Role="Employee" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="apl_User">
+              <PropertyRef Name="User_Id" />
+            </Principal>
+            <Dependent Role="Employee">
+              <PropertyRef Name="User_Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="apl_Module_Action_Role">
+          <End Type="SDIIS_DatabaseModel.Module_Action" Role="Module_Action" Multiplicity="*" />
+          <End Type="SDIIS_DatabaseModel.Role" Role="apl_Role" Multiplicity="*" />
+        </Association>
+        <Association Name="apl_Role_Group">
+          <End Type="SDIIS_DatabaseModel.Group" Role="apl_Group" Multiplicity="*" />
+          <End Type="SDIIS_DatabaseModel.Role" Role="apl_Role" Multiplicity="*" />
+        </Association>
+        <Association Name="apl_User_Group">
+          <End Type="SDIIS_DatabaseModel.Group" Role="apl_Group" Multiplicity="*" />
+          <End Type="SDIIS_DatabaseModel.User" Role="apl_User" Multiplicity="*" />
+        </Association>
+        <Association Name="apl_User_Role">
+          <End Type="SDIIS_DatabaseModel.Role" Role="apl_Role" Multiplicity="*" />
+          <End Type="SDIIS_DatabaseModel.User" Role="apl_User" Multiplicity="*" />
+        </Association>
+        <EntityType Name="Gender">
+          <Key>
+            <PropertyRef Name="Gender_Id" />
+          </Key>
+          <Property Name="Gender_Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Description" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="Source" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="Definition" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Employees" Relationship="SDIIS_DatabaseModel.FK_apl_Employee_apl_Gender" FromRole="apl_Gender" ToRole="Employee" />
+        </EntityType>
+        <EntityType Name="Job_Position">
+          <Key>
+            <PropertyRef Name="Job_Position_Id" />
+          </Key>
+          <Property Name="Job_Position_Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Description" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="Source" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="Definition" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Employees" Relationship="SDIIS_DatabaseModel.FK_apl_Employee_apl_JobPosition" FromRole="apl_Job_Position" ToRole="Employee" />
+        </EntityType>
+        <EntityType Name="Paypoint">
+          <Key>
+            <PropertyRef Name="Paypoint_Id" />
+          </Key>
+          <Property Name="Paypoint_Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="District_Id" Type="Int32" />
+          <Property Name="Description" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Employees" Relationship="SDIIS_DatabaseModel.FK_apl_Employee_apl_Paypoint" FromRole="apl_Paypoint" ToRole="Employee" />
+          <NavigationProperty Name="District" Relationship="SDIIS_DatabaseModel.FK_apl_Paypoint_apl_District" FromRole="apl_Paypoint" ToRole="apl_District" />
+        </EntityType>
+        <EntityType Name="Race">
+          <Key>
+            <PropertyRef Name="Race_Id" />
+          </Key>
+          <Property Name="Race_Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Description" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="Source" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="Definition" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Employees" Relationship="SDIIS_DatabaseModel.FK_apl_Employee_apl_Race" FromRole="apl_Race" ToRole="Employee" />
+        </EntityType>
+        <EntityType Name="Salary_Level">
+          <Key>
+            <PropertyRef Name="Salary_Level_Id" />
+          </Key>
+          <Property Name="Salary_Level_Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Salary_Level_Number" Type="Int32" Nullable="false" />
+          <Property Name="Description" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="Is_Active" Type="Boolean" Nullable="false" />
+          <Property Name="Is_Deleted" Type="Boolean" Nullable="false" />
+          <Property Name="Source" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="Definition" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Employees" Relationship="SDIIS_DatabaseModel.FK_apl_Employee_apl_SalaryLevel" FromRole="apl_Salary_Level" ToRole="Employee" />
+        </EntityType>
+        <EntityType Name="Service_Office">
+          <Key>
+            <PropertyRef Name="Service_Office_Id" />
+          </Key>
+          <Property Name="Service_Office_Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Area_Id" Type="Int32" />
+          <Property Name="Description" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="Office_Size" Type="String" MaxLength="15" FixedLength="false" Unicode="true" />
+          <Property Name="Is_Rental_Office" Type="Boolean" />
+          <Property Name="Monthly_Rent" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="Vat" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="Escalation_Rate" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="Date_Created" Type="DateTime" Precision="3" />
+          <Property Name="Created_By" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="Date_Last_Modified" Type="DateTime" Precision="3" />
+          <Property Name="Modified_By" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="Is_Active" Type="Boolean" />
+          <Property Name="Is_Deleted" Type="Boolean" />
+          <NavigationProperty Name="Employees" Relationship="SDIIS_DatabaseModel.FK_apl_Employee_apl_ServiceOffice" FromRole="apl_Service_Office" ToRole="Employee" />
+          <NavigationProperty Name="Area" Relationship="SDIIS_DatabaseModel.FK_apl_ServiceOffice_apl_Area" FromRole="apl_Service_Office" ToRole="apl_Area" />
+        </EntityType>
+        <Association Name="FK_apl_Employee_apl_Gender">
+          <End Type="SDIIS_DatabaseModel.Gender" Role="apl_Gender" Multiplicity="0..1" />
+          <End Type="SDIIS_DatabaseModel.Employee" Role="Employee" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="apl_Gender">
+              <PropertyRef Name="Gender_Id" />
+            </Principal>
+            <Dependent Role="Employee">
+              <PropertyRef Name="Gender_Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_apl_Employee_apl_JobPosition">
+          <End Type="SDIIS_DatabaseModel.Job_Position" Role="apl_Job_Position" Multiplicity="0..1" />
+          <End Type="SDIIS_DatabaseModel.Employee" Role="Employee" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="apl_Job_Position">
+              <PropertyRef Name="Job_Position_Id" />
+            </Principal>
+            <Dependent Role="Employee">
+              <PropertyRef Name="Job_Position_Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_apl_Employee_apl_Paypoint">
+          <End Type="SDIIS_DatabaseModel.Paypoint" Role="apl_Paypoint" Multiplicity="0..1" />
+          <End Type="SDIIS_DatabaseModel.Employee" Role="Employee" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="apl_Paypoint">
+              <PropertyRef Name="Paypoint_Id" />
+            </Principal>
+            <Dependent Role="Employee">
+              <PropertyRef Name="Paypoint_Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_apl_Employee_apl_Race">
+          <End Type="SDIIS_DatabaseModel.Race" Role="apl_Race" Multiplicity="0..1" />
+          <End Type="SDIIS_DatabaseModel.Employee" Role="Employee" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="apl_Race">
+              <PropertyRef Name="Race_Id" />
+            </Principal>
+            <Dependent Role="Employee">
+              <PropertyRef Name="Race_Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_apl_Employee_apl_SalaryLevel">
+          <End Type="SDIIS_DatabaseModel.Salary_Level" Role="apl_Salary_Level" Multiplicity="0..1" />
+          <End Type="SDIIS_DatabaseModel.Employee" Role="Employee" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="apl_Salary_Level">
+              <PropertyRef Name="Salary_Level_Id" />
+            </Principal>
+            <Dependent Role="Employee">
+              <PropertyRef Name="Salary_Level_Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_apl_Employee_apl_ServiceOffice">
+          <End Type="SDIIS_DatabaseModel.Service_Office" Role="apl_Service_Office" Multiplicity="0..1" />
+          <End Type="SDIIS_DatabaseModel.Employee" Role="Employee" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="apl_Service_Office">
+              <PropertyRef Name="Service_Office_Id" />
+            </Principal>
+            <Dependent Role="Employee">
+              <PropertyRef Name="Service_Office_Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="Area">
+          <Key>
+            <PropertyRef Name="Area_Id" />
+          </Key>
+          <Property Name="Area_Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="District_Id" Type="Int32" Nullable="false" />
+          <Property Name="Description" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="District" Relationship="SDIIS_DatabaseModel.FK_apl_Area_apl_District" FromRole="apl_Area" ToRole="apl_District" />
+          <NavigationProperty Name="Service_Offices" Relationship="SDIIS_DatabaseModel.FK_apl_ServiceOffice_apl_Area" FromRole="apl_Area" ToRole="apl_Service_Office" />
+        </EntityType>
+        <EntityType Name="Country">
+          <Key>
+            <PropertyRef Name="Country_Id" />
+          </Key>
+          <Property Name="Country_Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Description" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Provinces" Relationship="SDIIS_DatabaseModel.FK_apl_Province_apl_Country" FromRole="apl_Country" ToRole="apl_Province" />
+        </EntityType>
+        <EntityType Name="District">
+          <Key>
+            <PropertyRef Name="District_Id" />
+          </Key>
+          <Property Name="District_Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Province_Id" Type="Int32" Nullable="false" />
+          <Property Name="Description" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Areas" Relationship="SDIIS_DatabaseModel.FK_apl_Area_apl_District" FromRole="apl_District" ToRole="apl_Area" />
+          <NavigationProperty Name="Province" Relationship="SDIIS_DatabaseModel.FK_apl_District_apl_Province" FromRole="apl_District" ToRole="apl_Province" />
+          <NavigationProperty Name="Paypoints" Relationship="SDIIS_DatabaseModel.FK_apl_Paypoint_apl_District" FromRole="apl_District" ToRole="apl_Paypoint" />
+        </EntityType>
+        <EntityType Name="Province">
+          <Key>
+            <PropertyRef Name="Province_Id" />
+          </Key>
+          <Property Name="Province_Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Country_Id" Type="Int32" Nullable="false" />
+          <Property Name="Description" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Country" Relationship="SDIIS_DatabaseModel.FK_apl_Province_apl_Country" FromRole="apl_Province" ToRole="apl_Country" />
+          <NavigationProperty Name="Districts" Relationship="SDIIS_DatabaseModel.FK_apl_District_apl_Province" FromRole="apl_Province" ToRole="apl_District" />
+        </EntityType>
+        <Association Name="FK_apl_Area_apl_District">
+          <End Type="SDIIS_DatabaseModel.District" Role="apl_District" Multiplicity="1" />
+          <End Type="SDIIS_DatabaseModel.Area" Role="apl_Area" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="apl_District">
+              <PropertyRef Name="District_Id" />
+            </Principal>
+            <Dependent Role="apl_Area">
+              <PropertyRef Name="District_Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_apl_ServiceOffice_apl_Area">
+          <End Type="SDIIS_DatabaseModel.Area" Role="apl_Area" Multiplicity="0..1" />
+          <End Type="SDIIS_DatabaseModel.Service_Office" Role="apl_Service_Office" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="apl_Area">
+              <PropertyRef Name="Area_Id" />
+            </Principal>
+            <Dependent Role="apl_Service_Office">
+              <PropertyRef Name="Area_Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_apl_Province_apl_Country">
+          <End Type="SDIIS_DatabaseModel.Country" Role="apl_Country" Multiplicity="1" />
+          <End Type="SDIIS_DatabaseModel.Province" Role="apl_Province" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="apl_Country">
+              <PropertyRef Name="Country_Id" />
+            </Principal>
+            <Dependent Role="apl_Province">
+              <PropertyRef Name="Country_Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_apl_District_apl_Province">
+          <End Type="SDIIS_DatabaseModel.Province" Role="apl_Province" Multiplicity="1" />
+          <End Type="SDIIS_DatabaseModel.District" Role="apl_District" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="apl_Province">
+              <PropertyRef Name="Province_Id" />
+            </Principal>
+            <Dependent Role="apl_District">
+              <PropertyRef Name="Province_Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_apl_Paypoint_apl_District">
+          <End Type="SDIIS_DatabaseModel.District" Role="apl_District" Multiplicity="0..1" />
+          <End Type="SDIIS_DatabaseModel.Paypoint" Role="apl_Paypoint" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="apl_District">
+              <PropertyRef Name="District_Id" />
+            </Principal>
+            <Dependent Role="apl_Paypoint">
+              <PropertyRef Name="District_Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_apl_Employee_apl_Employee">
+          <End Type="SDIIS_DatabaseModel.Employee" Role="Employee" Multiplicity="0..1" />
+          <End Type="SDIIS_DatabaseModel.Employee" Role="Employee1" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Employee">
+              <PropertyRef Name="Employee_Id" />
+            </Principal>
+            <Dependent Role="Employee1">
+              <PropertyRef Name="Head_Of_Department_Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_apl_Employee_apl_Employee1">
+          <End Type="SDIIS_DatabaseModel.Employee" Role="Employee" Multiplicity="0..1" />
+          <End Type="SDIIS_DatabaseModel.Employee" Role="Employee1" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Employee">
+              <PropertyRef Name="Employee_Id" />
+            </Principal>
+            <Dependent Role="Employee1">
+              <PropertyRef Name="Supervisor_Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="SDIIS_DatabaseModelStoreContainer" CdmEntityContainer="SDIIS_DatabaseEntities">
+          <EntitySetMapping Name="Employees">
+            <EntityTypeMapping TypeName="SDIIS_DatabaseModel.Employee">
+              <MappingFragment StoreEntitySet="apl_Employee">
+                <ScalarProperty Name="Is_Deleted" ColumnName="Is_Deleted" />
+                <ScalarProperty Name="Is_Active" ColumnName="Is_Active" />
+                <ScalarProperty Name="Modified_By" ColumnName="Modified_By" />
+                <ScalarProperty Name="Date_Last_Modified" ColumnName="Date_Last_Modified" />
+                <ScalarProperty Name="Created_By" ColumnName="Created_By" />
+                <ScalarProperty Name="Date_Created" ColumnName="Date_Created" />
+                <ScalarProperty Name="Is_Casual_Worker" ColumnName="Is_Casual_Worker" />
+                <ScalarProperty Name="Is_Shift_Worker" ColumnName="Is_Shift_Worker" />
+                <ScalarProperty Name="Salary_Level_Id" ColumnName="Salary_Level_Id" />
+                <ScalarProperty Name="Service_Office_Id" ColumnName="Service_Office_Id" />
+                <ScalarProperty Name="Paypoint_Id" ColumnName="Paypoint_Id" />
+                <ScalarProperty Name="Job_Position_Id" ColumnName="Job_Position_Id" />
+                <ScalarProperty Name="ID_Number" ColumnName="ID_Number" />
+                <ScalarProperty Name="Race_Id" ColumnName="Race_Id" />
+                <ScalarProperty Name="Gender_Id" ColumnName="Gender_Id" />
+                <ScalarProperty Name="Mobile_Phone_Number" ColumnName="Mobile_Phone_Number" />
+                <ScalarProperty Name="Phone_Number" ColumnName="Phone_Number" />
+                <ScalarProperty Name="Supervisor_Id" ColumnName="Supervisor_Id" />
+                <ScalarProperty Name="Head_Of_Department_Id" ColumnName="Head_Of_Department_Id" />
+                <ScalarProperty Name="Persal_Number" ColumnName="Persal_Number" />
+                <ScalarProperty Name="User_Id" ColumnName="User_Id" />
+                <ScalarProperty Name="Employee_Id" ColumnName="Employee_Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Menus">
+            <EntityTypeMapping TypeName="SDIIS_DatabaseModel.Menu">
+              <MappingFragment StoreEntitySet="apl_Menu">
+                <ScalarProperty Name="Created_By" ColumnName="Created_By" />
+                <ScalarProperty Name="Date_Created" ColumnName="Date_Created" />
+                <ScalarProperty Name="Is_Deleted" ColumnName="Is_Deleted" />
+                <ScalarProperty Name="Is_Active" ColumnName="Is_Active" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Menu_Id" ColumnName="Menu_Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Menu_Items">
+            <EntityTypeMapping TypeName="SDIIS_DatabaseModel.Menu_Item">
+              <MappingFragment StoreEntitySet="apl_Menu_Item">
+                <ScalarProperty Name="Sort_Order" ColumnName="Sort_Order" />
+                <ScalarProperty Name="Created_By" ColumnName="Created_By" />
+                <ScalarProperty Name="Date_Created" ColumnName="Date_Created" />
+                <ScalarProperty Name="Is_Deleted" ColumnName="Is_Deleted" />
+                <ScalarProperty Name="Is_Active" ColumnName="Is_Active" />
+                <ScalarProperty Name="Parent_Menu_Item_Id" ColumnName="Parent_Menu_Item_Id" />
+                <ScalarProperty Name="Module_Action_Id" ColumnName="Module_Action_Id" />
+                <ScalarProperty Name="Menu_Tooltip" ColumnName="Menu_Tooltip" />
+                <ScalarProperty Name="Menu_Text" ColumnName="Menu_Text" />
+                <ScalarProperty Name="Menu_Id" ColumnName="Menu_Id" />
+                <ScalarProperty Name="Menu_Item_Id" ColumnName="Menu_Item_Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Modules">
+            <EntityTypeMapping TypeName="SDIIS_DatabaseModel.Module">
+              <MappingFragment StoreEntitySet="apl_Module">
+                <ScalarProperty Name="Created_By" ColumnName="Created_By" />
+                <ScalarProperty Name="Date_Created" ColumnName="Date_Created" />
+                <ScalarProperty Name="Is_Deleted" ColumnName="Is_Deleted" />
+                <ScalarProperty Name="Is_Active" ColumnName="Is_Active" />
+                <ScalarProperty Name="Base_URL" ColumnName="Base_URL" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Module_Id" ColumnName="Module_Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Module_Actions">
+            <EntityTypeMapping TypeName="SDIIS_DatabaseModel.Module_Action">
+              <MappingFragment StoreEntitySet="apl_Module_Action">
+                <ScalarProperty Name="Module_Action_Name" ColumnName="Module_Action_Name" />
+                <ScalarProperty Name="Module_Controller_Id" ColumnName="Module_Controller_Id" />
+                <ScalarProperty Name="Module_Action_Id" ColumnName="Module_Action_Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Module_Controllers">
+            <EntityTypeMapping TypeName="SDIIS_DatabaseModel.Module_Controller">
+              <MappingFragment StoreEntitySet="apl_Module_Controller">
+                <ScalarProperty Name="Module_Controller_Name" ColumnName="Module_Controller_Name" />
+                <ScalarProperty Name="Module_Id" ColumnName="Module_Id" />
+                <ScalarProperty Name="Module_Controller_Id" ColumnName="Module_Controller_Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Groups">
+            <EntityTypeMapping TypeName="SDIIS_DatabaseModel.Group">
+              <MappingFragment StoreEntitySet="apl_Group">
+                <ScalarProperty Name="Created_By" ColumnName="Created_By" />
+                <ScalarProperty Name="Date_Created" ColumnName="Date_Created" />
+                <ScalarProperty Name="Is_Deleted" ColumnName="Is_Deleted" />
+                <ScalarProperty Name="Is_Active" ColumnName="Is_Active" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Group_Id" ColumnName="Group_Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Roles">
+            <EntityTypeMapping TypeName="SDIIS_DatabaseModel.Role">
+              <MappingFragment StoreEntitySet="apl_Role">
+                <ScalarProperty Name="Date_Created" ColumnName="Date_Created" />
+                <ScalarProperty Name="Is_Deleted" ColumnName="Is_Deleted" />
+                <ScalarProperty Name="Is_Active" ColumnName="Is_Active" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Role_Id" ColumnName="Role_Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Users">
+            <EntityTypeMapping TypeName="SDIIS_DatabaseModel.User">
+              <MappingFragment StoreEntitySet="apl_User">
+                <ScalarProperty Name="Is_Deleted" ColumnName="Is_Deleted" />
+                <ScalarProperty Name="Is_Active" ColumnName="Is_Active" />
+                <ScalarProperty Name="Modified_By" ColumnName="Modified_By" />
+                <ScalarProperty Name="Date_Last_Modified" ColumnName="Date_Last_Modified" />
+                <ScalarProperty Name="Created_By" ColumnName="Created_By" />
+                <ScalarProperty Name="Date_Created" ColumnName="Date_Created" />
+                <ScalarProperty Name="Date_Last_Login" ColumnName="Date_Last_Login" />
+                <ScalarProperty Name="Password" ColumnName="Password" />
+                <ScalarProperty Name="User_Name" ColumnName="User_Name" />
+                <ScalarProperty Name="Initials" ColumnName="Initials" />
+                <ScalarProperty Name="Last_Name" ColumnName="Last_Name" />
+                <ScalarProperty Name="First_Name" ColumnName="First_Name" />
+                <ScalarProperty Name="User_Id" ColumnName="User_Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <AssociationSetMapping Name="apl_Module_Action_Role" TypeName="SDIIS_DatabaseModel.apl_Module_Action_Role" StoreEntitySet="apl_Module_Action_Role">
+            <EndProperty Name="apl_Role">
+              <ScalarProperty Name="Role_Id" ColumnName="Role_Id" />
+            </EndProperty>
+            <EndProperty Name="Module_Action">
+              <ScalarProperty Name="Module_Action_Id" ColumnName="Module_Action_Id" />
+            </EndProperty>
+          </AssociationSetMapping>
+          <AssociationSetMapping Name="apl_Role_Group" TypeName="SDIIS_DatabaseModel.apl_Role_Group" StoreEntitySet="apl_Role_Group">
+            <EndProperty Name="apl_Role">
+              <ScalarProperty Name="Role_Id" ColumnName="Role_Id" />
+            </EndProperty>
+            <EndProperty Name="apl_Group">
+              <ScalarProperty Name="Group_Id" ColumnName="Group_Id" />
+            </EndProperty>
+          </AssociationSetMapping>
+          <AssociationSetMapping Name="apl_User_Group" TypeName="SDIIS_DatabaseModel.apl_User_Group" StoreEntitySet="apl_User_Group">
+            <EndProperty Name="apl_User">
+              <ScalarProperty Name="User_Id" ColumnName="User_Id" />
+            </EndProperty>
+            <EndProperty Name="apl_Group">
+              <ScalarProperty Name="Group_Id" ColumnName="Group_Id" />
+            </EndProperty>
+          </AssociationSetMapping>
+          <AssociationSetMapping Name="apl_User_Role" TypeName="SDIIS_DatabaseModel.apl_User_Role" StoreEntitySet="apl_User_Role">
+            <EndProperty Name="apl_User">
+              <ScalarProperty Name="User_Id" ColumnName="User_Id" />
+            </EndProperty>
+            <EndProperty Name="apl_Role">
+              <ScalarProperty Name="Role_Id" ColumnName="Role_Id" />
+            </EndProperty>
+          </AssociationSetMapping>
+          <EntitySetMapping Name="Genders">
+            <EntityTypeMapping TypeName="SDIIS_DatabaseModel.Gender">
+              <MappingFragment StoreEntitySet="apl_Gender">
+                <ScalarProperty Name="Definition" ColumnName="Definition" />
+                <ScalarProperty Name="Source" ColumnName="Source" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Gender_Id" ColumnName="Gender_Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Job_Positions">
+            <EntityTypeMapping TypeName="SDIIS_DatabaseModel.Job_Position">
+              <MappingFragment StoreEntitySet="apl_Job_Position">
+                <ScalarProperty Name="Definition" ColumnName="Definition" />
+                <ScalarProperty Name="Source" ColumnName="Source" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Job_Position_Id" ColumnName="Job_Position_Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Paypoints">
+            <EntityTypeMapping TypeName="SDIIS_DatabaseModel.Paypoint">
+              <MappingFragment StoreEntitySet="apl_Paypoint">
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="District_Id" ColumnName="District_Id" />
+                <ScalarProperty Name="Paypoint_Id" ColumnName="Paypoint_Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Races">
+            <EntityTypeMapping TypeName="SDIIS_DatabaseModel.Race">
+              <MappingFragment StoreEntitySet="apl_Race">
+                <ScalarProperty Name="Definition" ColumnName="Definition" />
+                <ScalarProperty Name="Source" ColumnName="Source" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Race_Id" ColumnName="Race_Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Salary_Levels">
+            <EntityTypeMapping TypeName="SDIIS_DatabaseModel.Salary_Level">
+              <MappingFragment StoreEntitySet="apl_Salary_Level">
+                <ScalarProperty Name="Definition" ColumnName="Definition" />
+                <ScalarProperty Name="Source" ColumnName="Source" />
+                <ScalarProperty Name="Is_Deleted" ColumnName="Is_Deleted" />
+                <ScalarProperty Name="Is_Active" ColumnName="Is_Active" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Salary_Level_Number" ColumnName="Salary_Level_Number" />
+                <ScalarProperty Name="Salary_Level_Id" ColumnName="Salary_Level_Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Service_Offices">
+            <EntityTypeMapping TypeName="SDIIS_DatabaseModel.Service_Office">
+              <MappingFragment StoreEntitySet="apl_Service_Office">
+                <ScalarProperty Name="Is_Deleted" ColumnName="Is_Deleted" />
+                <ScalarProperty Name="Is_Active" ColumnName="Is_Active" />
+                <ScalarProperty Name="Modified_By" ColumnName="Modified_By" />
+                <ScalarProperty Name="Date_Last_Modified" ColumnName="Date_Last_Modified" />
+                <ScalarProperty Name="Created_By" ColumnName="Created_By" />
+                <ScalarProperty Name="Date_Created" ColumnName="Date_Created" />
+                <ScalarProperty Name="Escalation_Rate" ColumnName="Escalation_Rate" />
+                <ScalarProperty Name="Vat" ColumnName="Vat" />
+                <ScalarProperty Name="Monthly_Rent" ColumnName="Monthly_Rent" />
+                <ScalarProperty Name="Is_Rental_Office" ColumnName="Is_Rental_Office" />
+                <ScalarProperty Name="Office_Size" ColumnName="Office_Size" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Area_Id" ColumnName="Area_Id" />
+                <ScalarProperty Name="Service_Office_Id" ColumnName="Service_Office_Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Areas">
+            <EntityTypeMapping TypeName="SDIIS_DatabaseModel.Area">
+              <MappingFragment StoreEntitySet="apl_Area">
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="District_Id" ColumnName="District_Id" />
+                <ScalarProperty Name="Area_Id" ColumnName="Area_Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Countries">
+            <EntityTypeMapping TypeName="SDIIS_DatabaseModel.Country">
+              <MappingFragment StoreEntitySet="apl_Country">
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Country_Id" ColumnName="Country_Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Districts">
+            <EntityTypeMapping TypeName="SDIIS_DatabaseModel.District">
+              <MappingFragment StoreEntitySet="apl_District">
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Province_Id" ColumnName="Province_Id" />
+                <ScalarProperty Name="District_Id" ColumnName="District_Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Provinces">
+            <EntityTypeMapping TypeName="SDIIS_DatabaseModel.Province">
+              <MappingFragment StoreEntitySet="apl_Province">
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Country_Id" ColumnName="Country_Id" />
+                <ScalarProperty Name="Province_Id" ColumnName="Province_Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

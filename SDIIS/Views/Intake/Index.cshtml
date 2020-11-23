@@ -1,0 +1,316 @@
+﻿@model Common_Objects.ViewModels.IntakeSearchViewModel
+@using GridMvc.Html
+
+@{
+    ViewBag.Title = "Intake Page";
+}
+
+<h3>@ViewBag.Message</h3>
+
+<style type="text/css">
+    .EditPersonWidth {
+        width: 100px;
+    }
+
+    .CreateAssessmentWidth {
+        width: 131px;
+    }
+
+    .EditAssessmentWidth {
+        width: 115px;
+    }
+</style>
+
+@using (Ajax.BeginForm("Index", "Intake", new AjaxOptions { UpdateTargetId = "intakePanel" }, new { @id = "intakeIndexForm" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div id="intakePanel" class="panel panel-primary form-horizontal" style="width:100% !important">
+
+        <div class="panel-heading" style="text-align: center; vertical-align: middle !important;">
+            <div class="row">
+                <div class="col-md-11">
+                    @Html.Label("Intake")
+                </div>
+                <div class="col-md-1">
+                    @Html.ActionLink("Create", "Create", null, new { @class = "btn btn-info pull-right" })
+                </div>
+            </div>
+        </div>
+
+        <div class="panel-body" style="overflow:hidden">
+
+            <div class="row">
+                <div class="col-md-3">
+                    Client Ref No
+                </div>
+                <div class="col-md-3 form-group">
+                    @Html.TextBoxFor(model => model.Search_Client_Ref_No, new { @Id = "Search_Client_Ref_No", @class = "form-control" })
+                </div>
+                <div class="col-md-3">
+                    Identification Number
+                </div>
+                <div class="col-md-3 form-group">
+                    @Html.TextBoxFor(model => model.Search_Client_ID_No, new { @id = "Search_Client_Id_No", @class = "form-control" })
+                </div>
+                <div class="col-md-3">
+                    First Name
+                </div>
+                <div class="col-md-3 form-group">
+                    @Html.TextBoxFor(model => model.Search_First_Name, new { @id = "Search_First_Name", @class = "form-control" })
+                </div>
+                <div class="col-md-3">
+                    Last Name
+                </div>
+                <div class="col-md-3 form-group">
+                    @Html.TextBoxFor(model => model.Search_Last_Name, new { @id = "Search_Last_Name", @class = "form-control" })
+                </div>
+                <div class="col-md-3">
+                    Date of Birth
+                </div>
+                <div class="col-md-3 form-group">
+                    <div class="input-group">
+                        @Html.TextBoxFor(model => model.Search_Date_Of_Birth, new { @id = "Search_Date_Of_Birth", @class = "form-control jqueryui-marker-datepicker" })
+                        <label for="Search_Date_Of_Birth" class="input-group-addon btn">
+                            <span class="glyphicon glyphicon-calendar"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <input type="submit" id="ButtonFilter" value="Search" class="btn btn-success" />
+            <br /><br />
+            <div class="row">
+                <div class="col-md-12" id="clientsListGridContainer">
+                    @*@{
+                            var clientsGrid = new WebGrid(source: Model.Clients_Assessments_List, canSort: false, rowsPerPage: 5, ajaxUpdateContainerId: "clientsListGridContainer");
+
+                            @clientsGrid.GetHtml(
+                                tableStyle: "NestedMainGrid",
+                                headerStyle: "webgrid-header",
+                                footerStyle: "webgrid-footer",
+                                alternatingRowStyle: "webgrid-alternating-row",
+                                selectedRowStyle: "webgrid-selected-row",
+                                rowStyle: "webgrid-row-style",
+                                htmlAttributes: new { id = "clientsListGrid", @class = "NestedMainGrid", width = "100%" },
+                                columns: clientsGrid.Columns(
+                                    clientsGrid.Column("FirstName", "First Name"),
+                                    clientsGrid.Column("LastName", "Last Name"),
+                                    clientsGrid.Column("IDNumber", "ID Number"),
+                                    clientsGrid.Column("AssessmentCount", "No of Assessments"),
+                                    clientsGrid.Column(header: "", style: "EditPersonWidth", format: (item) =>
+                                    {
+                                        var link = Html.ActionLink("Edit Person", "Edit", "Intake", new { id = item.PersonId }, new { @class = "btn btn-success" });
+                                        return link;
+                                    }),
+                                    clientsGrid.Column(header: "", style: "CreateAssessmentWidth", format: (item) =>
+                                    {
+                                        var link = Html.ActionLink("Create Assessment", "CreateNewAssessment", "Intake", new { id = item.PersonId }, new { @class = "btn btn-success" });
+                                        return link;
+                                    }),
+                                    clientsGrid.Column(format: (item) =>
+                                    {
+                                        var subGrid = new WebGrid(source: item.NestedItems, canSort: false);
+                                        return subGrid.GetHtml(
+                                            tableStyle: "NestedSubGrid",
+                                            htmlAttributes: new { id = "assessmentsListGrid", @class = "NestedSubGrid", width = "100%" },
+                                            columns: subGrid.Columns(
+                                                subGrid.Column("AssessmentDate", "Assessment Date", format: (dateItem) => string.Format("{0:dd MMM yyyy}", dateItem.AssessmentDate)),
+                                                subGrid.Column(header: "", style: "EditAssessmentWidth", format: (subItem) =>
+                                                {
+                                                    var link = Html.ActionLink("Edit Assessment", "EditAssessment", "Intake", new { id = subItem.AssessmentId }, new { @class = "btn btn-success" });
+                                                    return link;
+                                                })
+                                            )
+                                        );
+                                    })
+                                )
+                            )
+                        }*@
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="panel panel-primary">
+
+        <div class="panel-heading" style="text-align: center; vertical-align: middle !important">
+            <div class="row">
+                <div class="col-md-11">
+                    @Html.Label("Inbox Items")
+                </div>
+                <div class="col-md-1">
+                    &nbsp;
+                </div>
+            </div>
+        </div>
+
+        <div class="panel-body" style="overflow:hidden">
+
+            <div class="row">
+                <div class="col-md-12" id="inboxItemsGrid">
+                    @{
+                        var inboxGrid = new WebGrid(source: Model.Inbox_List, canSort: false, rowsPerPage: 5, ajaxUpdateContainerId: "inboxItemsGrid");
+
+                        @inboxGrid.GetHtml(tableStyle: "webgrid-table",
+                                headerStyle: "webgrid-header",
+                                alternatingRowStyle: "webgrid-alternating-row",
+                                selectedRowStyle: "webgrid-selected-row",
+                                rowStyle: "webgrid-row-style",
+                                htmlAttributes: new { id = "inboxItemGrid", width = "100%" },
+                                columns: inboxGrid.Columns(
+                                inboxGrid.Column("clientName", "Client"),
+                                inboxGrid.Column("clientDateOfBirth", "Date of Birth"),
+                                inboxGrid.Column("assessmentDate", "Assessment Date", format: (assessmentDateItem) => string.Format("{0:dd MMM yyyy}", assessmentDateItem.assessmentDate)),
+                                inboxGrid.Column("assessedBy", "Assessed By"),
+                                inboxGrid.Column(header: "", style: "EditPersonWidth", format: (item) =>
+                                {
+                                    var link = Html.ActionLink("Accept", "AcceptInboxItem", "Intake", new { id = item.assessmentId }, new { @class = "btn btn-success" });
+                                    return link;
+                                })
+                            )
+                        )
+                    }
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+                        }
+
+@section scripts {
+    <script type="text/javascript">
+        $(function () {
+
+            // Set up AJAX paging
+            var intakeSearchViewModel = {
+                showOnlyMyRecords: true,
+                Search_First_Name: $('#Search_First_Name').val(),
+                Search_Last_Name: $('#Search_Last_Name').val(),
+                Search_Client_Ref_No: $('#Search_Client_Ref_No').val().trim(),
+                Search_Client_ID_No: $('#Search_Client_Id_No').val().trim(),
+                Search_Date_Of_Birth: $('#Search_Date_Of_Birth').val(),
+                pageNumber: null
+            };
+
+            PopulateGrid(intakeSearchViewModel);
+
+            // Capture Filter submit event
+            $("body").on('submit', '#intakeIndexForm', function (e) {
+                e.preventDefault();
+                FilterGrid();
+            });
+
+            // Initialize items marked as datepickers
+            $("#Search_Date_Of_Birth").datepicker({
+                dateFormat: "dd M yy",
+                changeYear: true,
+                maxDate: 0,
+                yearRange: "-60:+0"
+            });
+        });
+
+        function PopulateGrid(data) {
+            $.getJSON($.url('/Intake/ClientGridAjaxPaging'), data, function (html) {
+                $("#clientsListGrid").remove();
+                $("#clientsListGridContainer").append(html.Data);
+
+                InitializeGrid();
+
+                // create the footer
+                var footer = createFooter(html.Count, html.Page);
+
+                $("#clientsListGrid tfoot a").on("click", function (e) {
+                    e.preventDefault();
+
+                    var populateData = {
+                        showOnlyMyRecords: data.showOnlyMyRecords,
+                        pageNumber: $(this).text()
+                    };
+
+                    PopulateGrid(populateData);
+                });
+            });
+        }
+
+        function FilterGrid() {
+            // Build Search Object
+            var intakeSearchViewModel = {
+                showOnlyMyRecords: false,
+                Search_First_Name: $('#Search_First_Name').val(),
+                Search_Last_Name: $('#Search_Last_Name').val(),
+                Search_Client_Ref_No: $('#Search_Client_Ref_No').val().trim(),
+                Search_Client_ID_No: $('#Search_Client_Id_No').val().trim(),
+                Search_Date_Of_Birth: $('#Search_Date_Of_Birth').val(),
+                pageNumber: null
+            };
+
+            PopulateGrid(intakeSearchViewModel);
+        }
+
+        function InitializeGrid() {
+
+            var size = $("#clientsListGrid > thead > tr > th").length; // get total column
+
+            $("#clientsListGrid > thead > tr > th").last().remove(); // remove last column
+            $("#clientsListGrid > thead > tr").prepend("<th></th>"); // add one column at first for collapsible column
+            $("#clientsListGrid > tbody > tr").each(function (i, el) {
+                $(this).prepend(
+                        $("<td></td>")
+                        .addClass("expand")
+                        .addClass("hoverEff")
+                        .attr('title', "click for show/hide")
+                    );
+
+                //Now get sub table from last column and add this to the next new added row
+                var table = $("table", this).parent().html();
+                //add new row with this subtable
+                $(this).after("<tr><td></td><td style='padding:5px; margin:0px;' colspan='" + (size - 1) + "'>" + table + "</td></tr>");
+                $("table", this).parent().remove();
+                // ADD CLICK EVENT FOR MAKE COLLAPSIBLE
+            });
+
+            //$(".hoverEff", this).live("click", function () {
+            $('#clientsListGrid').on("click", ".hoverEff", function () {
+                $(this).parent().closest("tr").next().slideToggle(100);
+                $(this).toggleClass("expand collapse");
+            });
+
+            //by default make all subgrid in collapse mode
+            $("#clientsListGrid > tbody > tr td.expand").each(function (i, el) {
+                // $(this).toggleClass("expand collapse");
+                $(this).parent().closest("tr").next().slideToggle(100);
+            });
+        }
+
+        function createFooter(d, p) {
+            var rowsPerPage = 5;
+            var footer = "<tfoot>";
+            footer += "<tr class='webgrid-footer'>";
+            if (d == 0) {
+                footer += "<td colspan='7'>No Records Found!";
+            }
+            else {
+                footer += "<td colspan='7'>Page: ";
+                for (var i = 1; i < (d + 1) ; i++) {
+                    if (i == p) {
+                        footer = footer + i + " ";
+                    }
+                    else {
+                        footer = footer + "<a data-swhglnk='true' href=#>" + i + "</a>&nbsp;";
+                    }
+
+                }
+            }
+            footer += "</td>";
+            footer += "</tr>";
+            footer = footer + "</tfoot>";
+            $("#clientsListGrid thead").after(footer);
+            $("#assessmentsListGrid .webgrid-footer").remove();
+            return footer;
+        }
+
+    </script>
+}

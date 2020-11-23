@@ -1,0 +1,972 @@
+﻿@model Common_Objects.Models.IntakeDataViewModel
+
+@*@model CYCA_Module_V2.Common_Objects.CYCA_GangAndTattoosViewModel*@
+@using Common_Objects.ViewModels
+@using CYCA_Module_V2.Common_Objects
+
+
+@{
+    ViewBag.Title = "View Child Details";
+}
+<style>
+    a[disabled] {
+        text-decoration:none!important;
+    }
+</style>
+
+
+
+<br>
+<div class="col-md-12" style="bottom:5px">
+    <div class="col-md-2 leftPanel">
+        <div class="portlet light profile-sidebar-portlet bordered">
+            <div class="text-center">
+                <strong class="text-center" style="color:#158cba; font-size: 12.5px">@ViewBag.FacilityName</strong>
+            </div>
+            <br>
+            <div class="profile-userpic">
+                @if (Model.ImgUrl != null)
+                {
+                    <img src="@Model.ImgUrl" class="img-responsive" alt="">
+                }
+                else
+                {
+                    <img src="~/images/unknown.png" class="img-responsive" alt="">
+                }
+                
+            </div>
+            <div class="profile-usertitle">
+                <div class="profile-usertitle-name"> @Model.Person.First_Name @Model.Person.Last_Name </div>
+                <div class="profile-usertitle-job"> @Model.Person.Age year old @Model.Person.Gender_Description </div>
+
+            </div>
+            <div class="profile-userbuttons">
+
+            </div>
+            <div class="profile-usermenu" style="display:none">
+                <ul class="nav">
+                    <li class="active personal">
+                        <a onclick="ShowPersonal()">
+                            <i class="icon-home"></i> Personal Information
+                        </a>
+                    </li>
+                    @if (Model.CanAdmit)
+                    {
+                        <li class="admissions">
+                            <a onclick="ShowAdmissions(@Model.Person.Person_Id)">
+                                <i class="icon-settings"></i> Admit
+                            </a>
+                        </li>
+                    }
+                    @*@if (Model.CanDischarge)
+                {
+                    <li class="admissions">
+                        <a onclick="ShowDischarge(@Model.Person.Person_Id)">
+                            <i class="icon-settings"></i> Discharge
+                        </a>
+                    </li>
+                }*@
+
+                    @if (Model.CanDischarge)
+                    {
+                        <li class="discharges">
+                            <a onclick="ShowDischarges(@Model.Person.Person_Id)">
+                                <i class="icon-settings"></i> Discharge
+                            </a>
+                        </li>
+                        <li class="appointments">
+                            <a onclick="ShowAppointments(@Model.Person.Person_Id)">
+                                <i class="icon-settings"></i> Appointments
+                            </a>
+                        </li>
+                    }
+                    @*<li>
+                    <a href="#">
+                        <i class="icon-info"></i> Discharge
+                    </a>
+                </li>*@
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-10 rightPanel" style="position: unset">
+        <div class="portlet light bordered" style="overflow:auto">
+            <div class="portlet-body">
+                <div id="rootwizard" style="padding-left: 1.1em; padding-right:1.1em;display:none">
+                    <ul id="TopTab">
+                        @*<li href="#">
+                            <span class="btn btn-primary pull-left" style="margin-right:18px; padding:10px" value="Back" onclick="goBack(-1)">&laquo;Back</span>
+                        </li>*@
+
+                        <li><a href="#tab1" data-toggle="tab">Personal Details</a></li>
+                        <li><a href="#tab2" data-toggle="tab">Contact Details</a></li>
+                        <li><a href="#tab3" data-toggle="tab">Biometrics</a></li>
+                        <li><a href="#tab4" data-toggle="tab">Admission History</a></li>
+                        <li><a href="#tab8" data-toggle="tab">Body Searches</a></li>
+                        <li><a href="#tab5" data-toggle="tab">Inventory</a></li>
+                        <li><a href="#tab6" data-toggle="tab">Care Plan(s)</a></li>
+                        <li><a href="#tab7" data-toggle="tab">Medical Assessment(s)</a></li>
+                        <li><a href="#tab9" data-toggle="tab">Reportable Incidents</a></li>
+                        <li><a href="#tab10" data-toggle="tab">Gang And Tattoos</a></li>
+                        <li><a href="#tab11" data-toggle="tab">Physical Appearance & Extra Mural Activity</a></li>
+                        <li><a href="#tab12" data-toggle="tab">Discharge History</a></li>
+                        <li><a href="#tab13" data-toggle="tab" style="display: none">Render Tattoos</a></li>
+                    </ul>
+                    <hr />
+                    <div class="tab-content">
+                      <div class="tab-pane" id="tab1">
+                        <div class="row">
+                          <div class="col-md-3">
+                            @Html.LabelFor(x => x.Person.First_Name, new { @class = "control-label" })
+                          </div>
+                          <div class="col-md-3 form-group">
+                            @Html.TextBoxFor(model => model.Person.First_Name, new { @class = "form-control", required = "required" })
+                          </div>
+                          <div class="col-md-3">
+                            @Html.LabelFor(x => x.Person.Last_Name, new { @class = "control-label" })
+                          </div>
+                          <div class="col-md-3 form-group">
+                            @Html.TextBoxFor(model => model.Person.Last_Name, new { @class = "form-control", @required = "required" })
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-md-3">
+                            @Html.LabelFor(x => x.Person.Known_As, new { @class = "control-label" })
+                          </div>
+                          <div class="col-md-3 form-group">
+                            @Html.TextBoxFor(model => model.Person.Known_As, new { @class = "form-control" })
+                          </div>
+                          <div class="col-md-3">
+                            @Html.LabelFor(x => x.Person.Citizenship_List, new { @class = "control-label" })
+                          </div>
+                          <div class="col-md-3 form-group">
+                            @Html.DropDownListFor(n => n.Person.Citizenship_Id, Model.Person.Citizenship_List, "- Please select -", new { @id = "DropdownCitizenship", @class = "form-control" })
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-md-3">
+                            @Html.LabelFor(x => x.Person.Identification_Type_List, new { @class = "control-label" })
+                          </div>
+                          <div class="col-md-3 form-group">
+                            @Html.DropDownListFor(n => n.Person.Identification_Type_Id, Model.Person.Identification_Type_List, new { @id = "DropdownIdentificationType", @class = "form-control" })
+                          </div>
+                          <div class="col-md-3">
+                            @Html.LabelFor(x => x.Person.Identification_Number, new { @id = "LabelIdentificationNumber", @class = "control-label" })
+                          </div>
+                          <div class="col-md-3 form-group">
+                            @Html.TextBoxFor(model => model.Person.Identification_Number, new { @id = "Identification_Number", @class = "form-control" })
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-md-3">
+                            @Html.LabelFor(x => x.Person.Date_Of_Birth, new { @id = "LabelDateOfBirth", @class = "control-label" })
+                          </div>
+                          <div class="col-md-3 form-group">
+                            <div class="input-group">
+                              @Html.TextBoxFor(x => x.Person.Date_Of_Birth, new { @id = "Date_of_Birth", @class = "form-control jqueryui-marker-datepicker", @required = "required" })
+                              <label for="Date_of_Birth" class="input-group-addon btn">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                              </label>
+                            </div>
+                          </div>
+                          <div class="col-md-3">
+                            @Html.LabelFor(x => x.Person.Age, new { @class = "control-label" })
+                          </div>
+                          <div class="col-md-1 form-group">
+                            @Html.TextBoxFor(model => model.Person.Age, new { @id = "TextboxAge", @class = "form-control" })
+                          </div>
+                          <div class="col-md-2 form-group">
+                            @Html.CheckBoxFor(x => x.Person.Is_Estimated_Age, new { @id = "IsEstimatedAge", @onclick = "return false" })
+                            @Html.LabelFor(x => x.Person.Is_Estimated_Age, new { @class = "control-label" })
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-md-3">
+                            @Html.LabelFor(x => x.Person.Gender_List, new { @class = "control-label" })
+                          </div>
+                          <div class="col-md-3 form-group">
+                            @Html.DropDownListFor(n => n.Person.Gender_Id, Model.Person.Gender_List, "- Please select -", new { @id = "DropdownGender", @class = "form-control" })
+                          </div>
+                          <div class="col-md-3">
+                            @Html.LabelFor(x => x.Person.Nationality_List, new { @class = "control-label" })
+                          </div>
+                          <div class="col-md-3 form-group">
+                            @Html.DropDownListFor(n => n.Person.Nationality_Id, Model.Person.Nationality_List, "- Please select -", new { @id = "DropdownNationality", @class = "form-control" })
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-md-3">
+                            @Html.LabelFor(x => x.Person.Marital_Status_List, new { @class = "control-label" })
+                          </div>
+                          <div class="col-md-3 form-group">
+                            @Html.DropDownListFor(n => n.Person.Marital_Status_Id, Model.Person.Marital_Status_List, "- Please select -", new { @id = "DropdownMaritalStatus", @class = "form-control" })
+                          </div>
+
+                          <div class="col-md-3">
+                            @Html.LabelFor(x => x.Person.Population_Group_List, new { @class = "control-label" })
+                          </div>
+                          <div class="col-md-3 form-group">
+                            @Html.DropDownListFor(n => n.Person.Population_Group_Id, Model.Person.Population_Group_List, "- Please select -", new { @id = "DropdownPopulationGroup", @class = "form-control" })
+                          </div>
+                        </div>
+                        <div class="row">
+
+                          <div class="col-md-3">
+                            @Html.LabelFor(x => x.Person.Language_Type_List, new { @class = "control-label" })
+                          </div>
+                          <div class="col-md-3 form-group">
+                            @Html.DropDownListFor(n => n.Person.Language_Id, Model.Person.Language_Type_List, "- Please select -", new { @id = "DropdownLanguage", @class = "form-control" })
+                          </div>
+
+                          <div class="col-md-3">
+                            @Html.LabelFor(x => x.Person.SexualOrientation_List, new { @class = "control-label" })
+                          </div>
+                          <div class="col-md-3 form-group">
+                            @Html.DropDownListFor(n => n.Person.Sexual_Orientation_Id, Model.Person.SexualOrientation_List, "- Please select -", new { @id = "DropdownSexualOrientation", @class = "form-control" })
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-md-3">
+                            @Html.LabelFor(x => x.Person.Religion_List, new { @class = "control-label" })
+                          </div>
+                          <div class="col-md-3 form-group">
+                            @Html.DropDownListFor(n => n.Person.Religion_Id, Model.Person.Religion_List, "- Please select -", new { @id = "DropdownReligion", @class = "form-control" })
+                          </div>
+                          <div class="col-md-3">
+                            @Html.LabelFor(x => x.Person.Disability_List, new { @class = "control-label" })
+                          </div>
+                          <div class="col-md-3 form-group">
+                            @*@Html.DropDownListFor(n => n.Person.Disability_Type_Id, Model.Person.Disability_List, "- Please select -", new { @id = "DropdownDisability", @class = "form-control" })*@
+                            @*@Html.DropDownListFor(n => n.Person.SelectedDisabilityId, Model.Person.Disability_List, "- Please select -", new { @id = "DropdownModule", @class = "form-control chosen-select", @multiple = "multiple" })*@
+                            @Html.DropDownList("SelectedDisabilities", (IEnumerable<SelectListItem>)ViewBag.AvailableDisabilityType, "- Please select -", new { @class = "form-control chosen-select", @multiple = "multiple" })
+
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-md-3">
+                            @*@Html.LabelFor(x => x.Person.Religion_List, new { @class = "control-label" })*@
+                          </div>
+                          <div class="col-md-3 form-group">
+                            @*@Html.DropDownListFor(n => n.Person.Religion_Id, Model.Person.Religion_List, "- Please select -", new { @id = "DropdownReligion", @class = "form-control" })*@
+                          </div>
+                          <div class="col-md-3">
+                            @*@Html.LabelFor(x => x.Person.Disability_List, new { @class = "control-label" })*@
+                            Disability Type
+                          </div>
+                          <div class="col-md-3 form-group">
+                            @Html.DropDownList("SelectedDisabilitiesType", (IEnumerable<SelectListItem>)ViewBag.AvailableDisabilitySubType, "- Please select -", new { @class = "form-control chosen-select", @multiple = "multiple" })
+                          </div>
+                        </div>
+                      </div>
+                      <div class="tab-pane" id="tab2">
+                        <div class="row">
+                          <div class="col-md-3">
+                            @Html.LabelFor(x => x.Person.Phone_Number, new { @class = "control-label" })
+                          </div>
+                          <div class="col-md-3 form-group">
+                            @Html.TextBoxFor(model => model.Person.Phone_Number, new { @class = "form-control" })
+                          </div>
+                          <div class="col-md-3">
+                            @Html.LabelFor(x => x.Person.Mobile_Phone_Number, new { @class = "control-label" })
+                          </div>
+                          <div class="col-md-3 form-group">
+                            @Html.TextBoxFor(model => model.Person.Mobile_Phone_Number, new { @class = "form-control" })
+
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-md-3">
+                            @Html.LabelFor(x => x.Person.Email_Address, new { @class = "control-label" })
+                          </div>
+                          <div class="col-md-3 form-group">
+                            @Html.TextBoxFor(model => model.Person.Email_Address, new { @class = "form-control" })
+                          </div>
+                          <div class="col-md-3">
+                            @Html.LabelFor(x => x.Person.Preferred_Contact_Type_List, new { @class = "control-label" })
+                          </div>
+                          <div class="col-md-3 form-group">
+                            @Html.DropDownListFor(n => n.Person.Preferred_Contact_Type_Id, Model.Person.Preferred_Contact_Type_List, "- Please select -", new { @id = "DropdownModule", @class = "form-control" })
+                          </div>
+                        </div>
+                        <hr />
+                        <div class="row">
+                          <div class="col-md-6">
+                            @Html.Label("Physical Address", new { @class = "control-label" })
+                          </div>
+                          <div class="col-md-6 form-group">
+                            @Html.Label("Postal Address Address", new { @class = "control-label" })
+                          </div>
+                        </div>
+                        <div class="col-md-6">
+                          <div class="row">
+                            <div class="col-md-6">
+                              @Html.LabelFor(x => x.PhysicalAddress.Address_Line_1, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-6 form-group">
+                              @Html.TextBoxFor(model => model.PhysicalAddress.Address_Line_1, new { @class = "form-control" })
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="col-md-6">
+                              @Html.LabelFor(x => x.PhysicalAddress.Address_Line_2, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-6 form-group">
+                              @Html.TextBoxFor(model => model.PhysicalAddress.Address_Line_2, new { @class = "form-control" })
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="col-md-6">
+                              @Html.LabelFor(x => x.PhysicalAddress.Province_List, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-6 form-group">
+                              @Html.DropDownListFor(n => n.PhysicalAddress.Selected_Province_Id, Model.PhysicalAddress.Province_List, "- Please select -", new { @id = "EnquiredProvinceId", @class = "form-control" })
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="col-md-6">
+                              @Html.LabelFor(x => x.PhysicalAddress.District_Municipality_List, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-6 form-group">
+                              @Html.DropDownListFor(n => n.PhysicalAddress.Selected_Municipality_Id, Model.PhysicalAddress.District_Municipality_List, "- Please select -", new { @id = "EnquiredMagistratesId", @class = "form-control" })
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="col-md-6">
+                              @Html.LabelFor(x => x.PhysicalAddress.Local_Municipality_List, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-6 form-group">
+                              @Html.DropDownListFor(n => n.PhysicalAddress.Selected_Local_Municipality_Id, Model.PhysicalAddress.Local_Municipality_List, "- Please select -", new { @id = "DropdownPhysicalAddressLocalMunicipality", @class = "form-control" })
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="col-md-6">
+                              @Html.LabelFor(x => x.PhysicalAddress.Town_List, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-6 form-group">
+
+                              @Html.DropDownListFor(n => n.PhysicalAddress.Town_Id, Model.PhysicalAddress.Town_List, "- Please select -", new { @id = "EnquiredTownId", @class = "form-control" })
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="col-md-6">
+                              @Html.LabelFor(x => x.PhysicalAddress.Postal_Code, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-6 form-group">
+                              @Html.TextBoxFor(model => model.PhysicalAddress.Postal_Code, new { @class = "form-control" })
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-md-6">
+                          <div class="row">
+                            <div class="col-md-6">
+                              @Html.LabelFor(x => x.PostalAddress.Address_Line_1, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-6 form-group">
+                              @Html.TextBoxFor(model => model.PostalAddress.Address_Line_1, new { @class = "form-control" })
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="col-md-6">
+                              @Html.LabelFor(x => x.PostalAddress.Address_Line_2, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-6 form-group">
+                              @Html.TextBoxFor(model => model.PostalAddress.Address_Line_2, new { @class = "form-control" })
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="col-md-6">
+                              @Html.LabelFor(x => x.PostalAddress.Province_List, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-6 form-group">
+                              @Html.DropDownListFor(n => n.PostalAddress.Selected_Province_Id, Model.PostalAddress.Province_List, "- Please select -", new { @id = "EnquiredProvinceId_1", @class = "form-control" })
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="col-md-6">
+                              @*change municipality_list to Local*@
+                              @Html.LabelFor(x => x.PostalAddress.District_Municipality_List, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-6 form-group">
+                              @Html.DropDownListFor(n => n.PostalAddress.Selected_Municipality_Id, Model.PostalAddress.District_Municipality_List, "- Please select -", new { @id = "EnquiredMagistratesId_1", @class = "form-control" })
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="col-md-6">
+                              @Html.LabelFor(x => x.PostalAddress.Local_Municipality_List, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-6 form-group">
+                              @Html.DropDownListFor(n => n.PostalAddress.Selected_Local_Municipality_Id, Model.PostalAddress.Local_Municipality_List, "- Please select -", new { @id = "DropdownPostalAddressLocalMunicipality", @class = "form-control" })
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="col-md-6">
+                              @Html.LabelFor(x => x.PostalAddress.Town_List, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-6 form-group">
+
+                              @Html.DropDownListFor(n => n.PostalAddress.Town_Id, Model.PostalAddress.Town_List, "- Please select -", new { @id = "EnquiredTownId_1", @class = "form-control" })
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="col-md-6">
+                              @Html.LabelFor(x => x.PostalAddress.Postal_Code, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-6 form-group">
+                              @Html.TextBoxFor(model => model.PostalAddress.Postal_Code, new { @class = "form-control" })
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div id="tab3" class="tab-pane"></div>
+                      <div class="tab-pane" id="tab11">
+                        @*@Html.Partial("_PersonalInventory")*@
+
+                      </div>
+                      <div class="tab-pane" id="tab4">
+
+
+                      </div>
+                      <div class="tab-pane" id="tab5">
+
+
+                      </div>
+                      <div class="tab-pane" id="tab6">
+
+
+                      </div>
+                      <div class="tab-pane" id="tab7">
+
+
+                      </div>
+                      <div class="tab-pane" id="tab8">
+
+
+                      </div>
+                      <div class="tab-pane" id="tab9">
+
+                      </div>
+
+                      <div class="tab-pane" id="tab10">
+                        
+                      </div>
+                      <div class="tab-pane" id="tab12">
+
+                      </div>
+                      <div class="tab-pane" id="tab13">
+                          
+                      </div>
+                      <br />
+                      <br />
+
+                        @*<div class="some-style">
+                                @Html.Partial("_GangAndTattoosHistory")
+                            </div>*@
+
+                    </div>
+                    </div>
+
+            </div>
+            <div id="otherContent" style="display:none">
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+@section scriptslower
+{
+    <link href="~/Content/fullcalendar-2.6.0/main.css" rel="stylesheet" />
+    <script src="~/Content/fullcalendar-2.6.0/main.js"></script>
+    @*<link href="~/Content/fullcalendar-scheduler-1.2.0/scheduler.css" rel="stylesheet" />
+    <script src="~/Content/fullcalendar-scheduler-1.2.0/scheduler.js"></script>
+    <link href="~/Content/Jquery-Cron/jquery-cron.css" rel="stylesheet" />
+    <script src="~/Content/Jquery-Cron/jquery-cron.js"></script>*@
+<script>
+        const tabTypes = {
+            Biometric: 0,
+            CarePlan: 1,
+            Inventory: 2,
+            Admissions: 3,
+            ReportableIncidents: 4,
+            MedicalAssessment: 5,
+            History: 6,
+            BodySearch: 7,
+            ExtraMuralActivity: 8,
+            GangAndTattoos: 9,
+            RenderTattoos: 10,
+            DischargeHistory: 11
+
+            //GangAndTattoosHistory: 10
+        };
+        var currentTab = 0;
+        var currentPersonId = 0;
+        var currentTarget = "";
+        var currentFormType = 0;
+        var currentPersonId = @Model.Person.Person_Id;
+        var currentGender = '@Model.Person.Gender_Description';
+        var canAdmit = '@Model.CanAdmit';
+        var sameFacility = '@Model.SameFacility';
+        var currentUserFacility = '@ViewBag.FacilityName';
+      $(document).ready(function () {
+          //BlockUI();
+            //var request = {signalReset:true,fingerprintSet:1,codeName:"10",name:"FPCaptureRq"};
+            //console.log($.connection);
+            //var HubProxy = $.connection.FingerprintServerHub;
+            //console.log(HubProxy);
+            //HubProxy.client.ServerResponse = function (data) {
+            //    console.log(data);
+            //};
+            //try {
+            //    $.connection.hub.start()
+            //        .done(function () { console.log('Now connected, connection ID=' + $.connection.hub.id); })
+            //        .fail(function () { console.log('Could not Connect!'); });
+            //} catch (err) {
+            //    console.log(err);
+            //}
+            //$.connection.hub.disconnected(function () {
+            //    setTimeout(function () {
+            //        $.connection.hub.start();
+            //    }, 5000); // Restart connection after 5 seconds.
+            //});
+
+
+            $('#tab1 input').attr('readonly', 'readonly');
+            $('#tab1 select').attr('readonly', 'readonly');
+            $('#tab1 select').attr('disabled', 'disabled');
+            $('#tab1 textarea').attr('readonly', 'readonly');
+            $('#tab1 textarea').attr('disabled', 'disabled');
+            $('#tab2 input').attr('readonly', 'readonly');
+            $('#tab2 select').attr('readonly', 'readonly');
+            $('#tab2 select').attr('disabled', 'disabled');
+            $('#tab2 textarea').attr('readonly', 'readonly');
+            $('#tab2 textarea').attr('disabled', 'disabled');
+
+            // Initialize Bootstrap Wizard
+            $('#rootwizard').bootstrapWizard({
+                'tabClass': 'nav nav-pills',
+            });
+            $('#otherContent').bootstrapWizard({
+                'tabClass': 'nav nav-pills',
+            });
+            $('#rootwizard').show();
+          $('.profile-usermenu').show();
+
+        });
+
+        var currentFormId = 0;
+        var model;
+        function ShowDynamicForm(id, formId) {
+            var url = "/DynamicForm/GetDynamicForm?DynamicFormTypeId=" + id;
+            $.ajax({
+                type: "GET",
+                url: url,
+                success: function (data) {
+                    model = data;
+                    SetupDynamicForm();
+                    Survey
+                        .StylesManager
+                        .applyTheme();
+                    var survey = new Survey.Model(data.Definition);
+                    $("#"+formId).Survey({
+                        model: survey,
+                        onComplete: function (result, options) {
+                            sendDataToServer(result, formId);
+                        }
+                    });
+                    survey.render(formId);
+                    SetupDynamicPage(formId);
+                    if (id == 5 || id == 6) {
+                        var a = $('<input type="button" value="Cancel" class="sv_cancel_btn">');
+                       // var b = $('<a href="#" class="btn btn-default pull-left" style="margin-left:auto" id="close" value="Back" onclick="goBack()">Cancel</a>');
+                       // $(a).appendTo(".sv_nav");
+                    }
+                }, error: function () { alert('something bad happened'); }
+            });
+
+        }
+        function SetupDynamicForm() {
+            var defaultThemeColors = Survey
+                        .StylesManager
+                        .ThemeColors["default"];
+                    defaultThemeColors["$main-color"] = "#158CBA";
+                    defaultThemeColors["$main-hover-color"] = "#158CBA";
+                    defaultThemeColors["$text-color"] = "#4a4a4a";
+                    defaultThemeColors["$header-color"] = "#FFF!important";
+                    defaultThemeColors["$header-background-color"] = "#FFF";
+                    // defaultThemeColors["$body-container-background-color"] = "#f8f8f8";
+                    Survey
+                        .StylesManager
+                        .applyTheme();
+        }
+        function NewAdmit(id) {
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Content("~/Admit/AdmitNewPerson")',
+                data: {
+                    Id: id
+                },
+                success: function (result) {
+                    $('#otherContent').html(result);
+                    $('#rootwizard').hide();
+                    $('#otherContent').show();
+                }
+            });
+        }
+        //Events
+        //Profile Tab
+        $('#TopTab a').on('click', function (e) {
+                var sendPost = false;
+                var tabType = "";
+                var formType = -1;
+               // var
+          console.log(e.target.text);
+                switch (e.target.text) {
+                    case "Biometrics":
+                        sendPost = true;
+                        tabType = tabTypes.Biometric;
+                        break;
+                    case "Care Plan(s)":
+                        sendPost = true;
+                        tabType = tabTypes.CarePlan;
+                        formType = 2;
+                        break;
+                    case "Inventory":
+                        sendPost = true;
+                        tabType = tabTypes.Inventory;
+                        formType = 3
+                        break;
+                    case "Admission History":
+                        sendPost = true;
+                        tabType = tabTypes.Admissions;
+                        break;
+                    case "Reportable Incidents":
+                        sendPost = true;
+                        tabType = tabTypes.ReportableIncidents;
+                        formType = 4;
+                        break;
+                    case "Medical Assessment(s)":
+                        sendPost = true;
+                        tabType = tabTypes.MedicalAssessment;
+                        formType = 1;
+                        break;
+                    case "History":
+                        sendPost = true;
+                        tabType = tabTypes.History;
+                        break;
+                    case "Body Searches":
+                        sendPost = true;
+                        tabType = tabTypes.BodySearch;
+                        break;
+                  case "Gang And Tattoos":
+                        sendPost = true;
+                    tabType = tabTypes.GangAndTattoos;
+                        formType = 5;
+                        break;
+
+                    case "Render Tattoos":
+                        sendPost = true;
+                        tabType = tabTypes.RenderTattoos;
+                        formType = 6;
+                        break;
+                    case "Physical Appearance & Extra Mural Activity":
+                        sendPost = true;
+                        tabType = tabTypes.ExtraMuralActivity;
+                    break;
+                  case "Discharge History":
+                    sendPost = true;
+                    tabType = tabTypes.DischargeHistory;
+
+                    break;
+
+                };
+          if (sendPost) {
+                    currentTab = tabType;
+                    currentPersonId = @Model.Person.Person_Id;
+                    currentTarget = e.target.hash;
+                    currentFormType = formType;
+                    AjaxShowTabs(@Model.Person.Person_Id,tabType,formType,e.target.hash);
+                }
+        });
+        //Admissions Tab
+        $('#OtherTab a').on('click', function (e) {
+                var sendPost = false;
+                var tabType = "";
+                var formType = -1;
+               // var
+                switch (e.target.text) {
+                    case "History":
+                        sendPost = true;
+                        tabType = tabTypes.History;
+                        break;
+                };
+                if (sendPost) {
+                    currentTab = tabType;
+                    currentPersonId = @Model.Person.Person_Id;
+                    currentTarget = e.target.hash;
+                    currentFormType = formType;
+                    AjaxShowTabs(@Model.Person.Person_Id,tabType,formType,e.target.hash);
+                }
+        });
+        $('#rootwizard').on('click', '#ButtonVerify', function () {
+            //Call Server Methods
+            FingerPrintServerProxy.invoke('fPCaptureRq',request).done(function () {
+                console.log('Invocation of fPCaptureRq succeeded');
+            }).fail(function (error) {
+                console.log('Invocation of fPCaptureRq failed. Error: ' + error);
+            });
+        });
+        //Functions
+        function AjaxShowTabs(personId, tabType, formType, target) {
+            console.log(target);
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Content("~/Client/ShowTabs")',
+                data: {
+                    id: personId,
+                    type: tabType,
+                    formType: formType
+                },
+              success: function (result) {
+                  $(target).html(result);
+                }
+            });
+        }
+        function ShowDynamicFormReadOnly(id, formId, answerId) {
+            var url = "/DynamicForm/GetDynamicFormAndAnswer?DynamicFormTypeId=" + id+"&DynamicFormDataId="+answerId;
+            $.ajax({
+                type: "GET",
+                url: url,
+                success: function (data) {
+                    console.log(data);
+                    model = data;
+                    SetupDynamicForm();
+                    var survey = new Survey.Model(data.Definition);
+                    var json = JSON.parse(data.Answer);
+                    console.log(json);
+                    survey.data = json;
+                    survey.mode = 'display';
+                    $("#"+formId).Survey({
+                        model: survey,
+                        onComplete: function (result, options) {
+                            sendDataToServer(result, formId);
+                        }
+                    });
+                    survey.render(formId);
+                    SetupDynamicPage(formId);
+                }, error: function () { alert('something bad happened'); }
+            });
+      }
+
+
+        function ShowDynamicFormEditOnly(id, formId, answerId) {
+            var url = "/DynamicForm/GetDynamicFormAndAnswer?DynamicFormTypeId=" + id+"&DynamicFormDataId="+answerId;
+            $.ajax({
+                type: "GET",
+                url: url,
+              success: function (data) {
+
+                    console.log(data);
+                    model = data;
+                    SetupDynamicForm();
+                    Survey
+                        .StylesManager
+                        .applyTheme();
+                    var survey = new Survey.Model(data.Definition);
+                    var json = JSON.parse(data.Answer);
+                    survey.data = json;
+                    $("#"+formId).Survey({
+                        model: survey,
+                        onComplete: function (result, options) {
+                            sendDataToServer(result, formId);
+                        }
+                    });
+                    //$('#'+formId).SurveyWindow({model: survey, isExpanded: false});
+                    survey.render(formId);
+                SetupDynamicPage(formId);
+                var elements = document.getElementsByClassName("css: question.koCss().fileSign");
+
+                var myFunction = function (e) {
+                  e.preventDefault();
+                  console.log("do this method instead");
+                var links =   this.querySelectorAll("a");
+                  var attribute = links[0].getAttribute('href');
+                  const type = attribute.split(';')[0].split(':')[1];
+                 openFile(attribute, type);
+
+                //  alert(attribute);
+              };
+
+              for (var i = 0; i < elements.length; i++) {
+                elements[i].addEventListener('click', myFunction, true);
+                console.log(elements[i].childNodes.length);
+              }
+
+                }, error: function () { alert('something bad happened'); }
+            });
+      }
+
+      function base64toBlob(base64Data, contentType) {
+
+        var byteString = atob(base64Data.split(',')[1]);
+        var ab = new ArrayBuffer(byteString.length);
+        var ia = new Uint8Array(ab);
+
+        for (var i = 0; i < byteString.length; i++) {
+          ia[i] = byteString.charCodeAt(i);
+        }
+
+        return new Blob([ab], { type: contentType });
+      }
+      function openFile(file, type) {
+        var blob = base64toBlob(file, type);
+        window.open(window.URL.createObjectURL(blob));
+      }
+        function sendDataToServer(survey, id) {
+            var url = "/DynamicForm/SaveDynamicForm";
+            var resultAsString = JSON.stringify(survey.data);
+            model.Answer = resultAsString;
+            model.ChildId = @Model.Person.Person_Id;
+
+            $.ajax({
+                type: "POST",
+                url: url,
+                data: model,
+                success: function (data) {
+                    console.log(data);
+                    console.log(currentPersonId + ' ' + currentTab + ' ' + currentFormType + ' ' + id);
+                    $('#'+id).hide();
+
+                    AjaxShowTabs(currentPersonId, currentTab, currentFormType, currentTarget);
+
+                }, error: function () { alert('something bad happened'); }
+            });
+        }
+        function SetupDynamicPage(id) {
+            $('#' + id).show();
+            $('#' + id + "Grid").hide();
+        }
+        function ShowPersonal() {
+            $('#rootwizard').show();
+            $('#otherContent').hide();
+            $(".personal").addClass("active");
+            $(".admissions").removeClass("active");
+            $(".appointments").removeClass("active");
+            $(".discharges").removeClass("active");
+
+
+        }
+        function ShowAdmissions(id) {
+            $('#rootwizard').hide();
+            $('#otherContent').show();
+            $(".admissions").addClass("active");
+            $(".personal").removeClass("active");
+            $(".personal").addClass("disablePersonal");
+            $(".admissions").addClass("disablePersonal");
+            $(".appointments").removeClass("active");
+
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Content("~/Admit/AdmitNewPerson")',
+                data: {
+                    id: id,
+                    display: "Admit"
+                },
+                success: function (result) {
+                    $('#otherContent').html(result);
+                }
+            });
+        }
+        function ShowAppointments(id) {
+            $('#rootwizard').hide();
+            $('#otherContent').show();
+            $(".appointments").addClass("active");
+            $(".personal").removeClass("active");
+            $(".admissions").removeClass("active");
+            $(".discharges").removeClass("active");
+
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Content("~/Appointments/GetAppointments")',
+                data: {
+                    id: id
+                },
+                success: function (result) {
+                    $('#otherContent').html(result);
+                }
+            });
+        }
+        function ShowDischarges(id) {
+            $('#rootwizard').hide();
+            $('#otherContent').show();
+            $(".discharges").addClass("active");
+            $(".personal").removeClass("active");
+            $(".appointments").removeClass("active");
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Content("~/Admit/Discharge")',
+                data: {
+                    id: id
+                },
+                success: function (result) {
+                    $('#otherContent').html(result);
+                }
+            });
+        }
+        function DisableEnableButtons(control) {
+            if (canAdmit=='True') {
+                $(control).prop('disabled', false);
+            } else {
+
+                $(control).prop('disabled', true);
+            }
+        }
+        function EnableDisableClass() {
+            if (canAdmit == 'False') {
+                if (sameFacility == 'False') {
+                    $('.enabledisable').prop('disabled', true);
+                    $('.enabledisable').attr("disabled", "disabled");
+                    $('.enabledisableReadmit').prop('disabled', true);
+                    $('.enabledisableReadmit').attr("disabled", "disabled");
+                } else {
+                    $('.enabledisable').prop('disabled', false);
+                    $('.enabledisableReadmit').prop('disabled', false);
+                }
+            } else {
+                $('.enabledisable').prop('disabled', true);
+                $('.enabledisable').attr("disabled", "disabled");
+            }
+        }
+    function BlockUI() {
+        $.blockUI({
+            css: {
+                border: 'none',
+                padding: '15px',
+                backgroundColor: '#000',
+                '-webkit-border-radius': '10px',
+                '-moz-border-radius': '10px',
+                opacity: .5,
+                color: '#fff'
+            }
+        });
+    }
+</script>
+}
+
+@*<script type="text/javascript">
+        function goBack() {
+            window.history.back()
+        }
+    </script>*@
+
+<script type="text/javascript">
+    function goBack() {
+        if (window.history.go != null) {
+            window.history.go(-1);
+        } else {
+            window.history.go();
+        }
+
+    }
+</script>

@@ -1,0 +1,86 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace Common_Objects.Models
+{
+    public class DistrictModel
+    {
+
+
+        public District GetSpecificDistrict(int districtId)
+        {
+            District district;
+
+            var dbContext = new SDIIS_DatabaseEntities();
+            try
+            {
+                var districtList = (from r in dbContext.Districts
+                                    where r.District_Id.Equals(districtId)
+                                    select r).ToList();
+
+                district = (from r in districtList
+                            select r).FirstOrDefault();
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+
+            return district;
+        }
+
+        public List<District> GetListOfDistricts()
+        {
+            List<District> districts;
+
+            using (var dbContext = new SDIIS_DatabaseEntities())
+            {
+                try
+                {
+                    var districtList = (from r in dbContext.Districts
+                                        orderby r.Description
+                                        select r).ToList();
+
+                    districts = (from r in districtList
+                                 select r).ToList();
+                }
+                catch (Exception)
+                {
+                    return null;
+                }
+            }
+
+            return districts;
+        }
+
+        public List<Municipality> GetListOfDistricts(int provinceId)
+        {
+            List<Municipality> municipality;
+
+           
+            using (var dbContext = new SDIIS_DatabaseEntities())
+            {
+                try
+                {
+                    var municipalityList = (from u in dbContext.Municipalities
+                                            join v in dbContext.Areas on u.Area_Id equals v.Area_Id
+                                            join w in dbContext.Districts on v.District_Id equals w.District_Id
+                                            where w.Province_Id== provinceId
+                                            orderby u.Description
+                                            select u).ToList();
+
+                    municipality = (from w in municipalityList
+                                 select w).ToList();
+                }
+                catch (Exception)
+                {
+                    return null;
+                }
+            }
+
+            return municipality;
+        }
+
+    }
+}

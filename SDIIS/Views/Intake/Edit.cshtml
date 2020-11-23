@@ -1,0 +1,1024 @@
+﻿@model Common_Objects.Models.IntakeDataViewModel
+
+@{
+    ViewBag.Title = "Edit Person Details";
+}
+
+<h3>@ViewBag.Message</h3>
+
+@using (Ajax.BeginForm("Edit", "Intake", new AjaxOptions() { UpdateTargetId = "personDetails" }, new { @id = "personDetailsForm" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="panel panel-primary" id="personDetails">
+
+        <div class="panel-heading" style="text-align: center">
+            Edit Person Details
+            @Html.HiddenFor(x => x.Person.Person_Id)
+            @Html.HiddenFor(x => x.ReceptionRegister.Reception_Register_Id)
+            @Html.HiddenFor(x => x.PhysicalAddress.Address_Id)
+            @Html.HiddenFor(x => x.PostalAddress.Address_Id)
+        </div>
+
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-md-3">
+                    @Html.LabelFor(x => x.ReceptionRegister.Reason_For_Visit, new { @class = "control-label" })
+                </div>
+                <div class="col-md-3 form-group">
+                    @Html.TextBoxFor(model => model.ReceptionRegister.Reason_For_Visit, new { @class = "form-control" })
+                </div>
+                <div class="col-md-3">
+                    @Html.LabelFor(x => x.ReceptionRegister.Reception_Vist_Type_List, new { @class = "control-label" })
+                </div>
+                <div class="col-md-3 form-group">
+                    @Html.DropDownListFor(n => n.ReceptionRegister.Reception_Visit_Type_Id, Model.ReceptionRegister.Reception_Vist_Type_List, "- Please select -", new { @id = "DropdownModule", @class = "form-control" })
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-3">
+                    @Html.LabelFor(x => x.ReceptionRegister.Visit_Date, new { @class = "control-label" })
+                </div>
+                <div class="col-md-3 form-group">
+                    <div class="input-group">
+                        @Html.TextBoxFor(x => x.ReceptionRegister.Visit_Date, new { @id = "Visit_Date", @class = "form-control jqueryui-marker-datepicker" })
+                        <label for="Visit_Date" class="input-group-addon btn">
+                            <span class="glyphicon glyphicon-calendar"></span>
+                        </label>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    @Html.LabelFor(x => x.ReceptionRegister.Reception_Action_Taken_List, new { @class = "control-label" })
+                </div>
+                <div class="col-md-3 form-group">
+                    @Html.DropDownListFor(n => n.ReceptionRegister.Reception_Action_Taken_Id, Model.ReceptionRegister.Reception_Action_Taken_List, "- Please select -", new { @id = "DropdownModule", @class = "form-control" })
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="panel panel-primary">
+
+        <div class="panel-heading" style="text-align: center">
+            Person Details
+        </div>
+
+        <div class="panel-body">
+
+            <div id="rootwizard">
+                <ul>
+                    <li><a href="#tab1" data-toggle="tab">Personal Details</a></li>
+                    <li><a href="#tab2" data-toggle="tab">Contact Details</a></li>
+                    <li><a href="#tab3" data-toggle="tab">Piva</a></li>
+                </ul>
+                <hr />
+                <div class="tab-content">
+                    <div class="tab-pane" id="tab1">
+                        <div class="row">
+                            <div class="col-md-3">
+                                @Html.LabelFor(x => x.Person.First_Name, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-3 form-group">
+                                @Html.TextBoxFor(model => model.Person.First_Name, new { @class = "form-control", required = "required" })
+                            </div>
+                            <div class="col-md-3">
+                                @Html.LabelFor(x => x.Person.Last_Name, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-3 form-group">
+                                @Html.TextBoxFor(model => model.Person.Last_Name, new { @class = "form-control", @required = "required" })
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                @Html.LabelFor(x => x.Person.Known_As, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-3 form-group">
+                                @Html.TextBoxFor(model => model.Person.Known_As, new { @class = "form-control" })
+                            </div>
+                            <div class="col-md-3">
+                                @Html.LabelFor(x => x.Person.Citizenship_List, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-3 form-group">
+                                @Html.DropDownListFor(n => n.Person.Citizenship_Id, Model.Person.Citizenship_List, "- Please select -", new { @id = "DropdownCitizenship", @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                @Html.LabelFor(x => x.Person.Identification_Type_List, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-3 form-group">
+                                @Html.DropDownListFor(n => n.Person.Identification_Type_Id, Model.Person.Identification_Type_List, new { @id = "DropdownIdentificationType", @class = "form-control" })
+                            </div>
+                            <div class="col-md-3">
+                                @Html.LabelFor(x => x.Person.Identification_Number, new { @id = "LabelIdentificationNumber", @class = "control-label" })
+                            </div>
+                            <div class="col-md-3 form-group">
+                                @Html.TextBoxFor(model => model.Person.Identification_Number, new { @id = "Identification_Number", @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                @Html.LabelFor(x => x.Person.Date_Of_Birth, new { @id = "LabelDateOfBirth", @class = "control-label" })
+                            </div>
+                            <div class="col-md-3 form-group">
+                                <div class="input-group">
+                                    @Html.TextBoxFor(x => x.Person.Date_Of_Birth, new { @id = "Date_of_Birth", @class = "form-control jqueryui-marker-datepicker", @required = "required" })
+                                    <label for="Date_of_Birth" class="input-group-addon btn">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                @Html.LabelFor(x => x.Person.Age, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-1 form-group">
+                                @Html.TextBoxFor(model => model.Person.Age, new { @id = "TextboxAge", @class = "form-control" })
+                            </div>
+                            <div class="col-md-2 form-group">
+                                @Html.CheckBoxFor(x => x.Person.Is_Estimated_Age, new { @id = "IsEstimatedAge" })
+                                @Html.LabelFor(x => x.Person.Is_Estimated_Age, new { @class = "control-label" })
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                @Html.LabelFor(x => x.Person.Gender_List, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-3 form-group">
+                                @Html.DropDownListFor(n => n.Person.Gender_Id, Model.Person.Gender_List, "- Please select -", new { @id = "DropdownGender", @class = "form-control" })
+                            </div>
+                            <div class="col-md-3">
+                                @Html.LabelFor(x => x.Person.Nationality_List, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-3 form-group">
+                                @Html.DropDownListFor(n => n.Person.Nationality_Id, Model.Person.Nationality_List, "- Please select -", new { @id = "DropdownNationality", @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                @Html.LabelFor(x => x.Person.Marital_Status_List, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-3 form-group">
+                                @Html.DropDownListFor(n => n.Person.Marital_Status_Id, Model.Person.Marital_Status_List, "- Please select -", new { @id = "DropdownMaritalStatus", @class = "form-control" })
+                            </div>
+
+                            <div class="col-md-3">
+                                @Html.LabelFor(x => x.Person.Population_Group_List, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-3 form-group">
+                                @Html.DropDownListFor(n => n.Person.Population_Group_Id, Model.Person.Population_Group_List, "- Please select -", new { @id = "DropdownPopulationGroup", @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="row">
+
+                            <div class="col-md-3">
+                                @Html.LabelFor(x => x.Person.Language_Type_List, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-3 form-group">
+                                @Html.DropDownListFor(n => n.Person.Language_Id, Model.Person.Language_Type_List, "- Please select -", new { @id = "DropdownLanguage", @class = "form-control" })
+                            </div>
+
+                            <div class="col-md-3">
+                                @Html.LabelFor(x => x.Person.SexualOrientation_List, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-3 form-group">
+                                @Html.DropDownListFor(n => n.Person.Sexual_Orientation_Id, Model.Person.SexualOrientation_List, "- Please select -", new { @id = "DropdownSexualOrientation", @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                @Html.LabelFor(x => x.Person.Religion_List, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-3 form-group">
+                                @Html.DropDownListFor(n => n.Person.Religion_Id, Model.Person.Religion_List, "- Please select -", new { @id = "DropdownReligion", @class = "form-control" })
+                            </div>
+                            <div class="col-md-3">
+                                @Html.LabelFor(x => x.Person.Disability_List, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-3 form-group">
+                                @*@Html.DropDownListFor(n => n.Person.Disability_Type_Id, Model.Person.Disability_List, "- Please select -", new { @id = "DropdownDisability", @class = "form-control" })*@
+                                @*@Html.DropDownListFor(n => n.Person.SelectedDisabilityId, Model.Person.Disability_List, "- Please select -", new { @id = "DropdownModule", @class = "form-control chosen-select", @multiple = "multiple" })*@
+                                @Html.DropDownList("SelectedDisabilities", (IEnumerable<SelectListItem>)ViewBag.AvailableDisabilityType, "- Please select -", new { @class = "form-control chosen-select", @multiple = "multiple" })
+
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                @*@Html.LabelFor(x => x.Person.Religion_List, new { @class = "control-label" })*@
+                            </div>
+                            <div class="col-md-3 form-group">
+                                @*@Html.DropDownListFor(n => n.Person.Religion_Id, Model.Person.Religion_List, "- Please select -", new { @id = "DropdownReligion", @class = "form-control" })*@
+                            </div>
+                            <div class="col-md-3">
+                                @*@Html.LabelFor(x => x.Person.Disability_List, new { @class = "control-label" })*@
+                                Disability Type
+                            </div>
+                            <div class="col-md-3 form-group">
+                                @*@Html.DropDownListFor(n => n.Person.Disability_Type_Id, Model.Person.Disability_List, "- Please select -", new { @id = "DropdownDisability", @class = "form-control" })*@
+                                @*@Html.DropDownListFor(n => n.Person.SelectedDisabilityId, Model.Person.Disability_List, "- Please select -", new { @id = "DropdownModule", @class = "form-control chosen-select", @multiple = "multiple" })*@
+                                @Html.DropDownList("SelectedDisabilitiesType", (IEnumerable<SelectListItem>)ViewBag.AvailableDisabilitySubType, "- Please select -", new { @class = "form-control chosen-select", @multiple = "multiple" })
+
+
+                            </div>
+                        </div>
+                        @*<div class="row">
+                                <div class="col-md-3">
+                                </div>
+                                <div class="col-md-3 form-group">
+                                </div>
+                                <div class="col-md-3">
+                                </div>
+                                <div class="col-md-3 form-group">
+                                    @Html.Action("GetListOfDisabilities", "Intake", new { id = Model.Person.Person_Id })
+
+                                </div>
+                            </div>*@
+                    </div>
+                    <div class="tab-pane" id="tab2">
+                        <div class="row">
+                            <div class="col-md-3">
+                                @Html.LabelFor(x => x.Person.Phone_Number, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-3 form-group">
+                                @Html.TextBoxFor(model => model.Person.Phone_Number, new { @class = "form-control" })
+                            </div>
+                            <div class="col-md-3">
+                                @Html.LabelFor(x => x.Person.Mobile_Phone_Number, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-3 form-group">
+                                @Html.TextBoxFor(model => model.Person.Mobile_Phone_Number, new { @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                @Html.LabelFor(x => x.Person.Email_Address, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-3 form-group">
+                                @Html.TextBoxFor(model => model.Person.Email_Address, new { @class = "form-control" })
+                            </div>
+                            <div class="col-md-3">
+                                @Html.LabelFor(x => x.Person.Preferred_Contact_Type_List, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-3 form-group">
+                                @Html.DropDownListFor(n => n.Person.Preferred_Contact_Type_Id, Model.Person.Preferred_Contact_Type_List, "- Please select -", new { @id = "DropdownModule", @class = "form-control" })
+                            </div>
+                        </div>
+                        <hr />
+                        <div class="row">
+                            <div class="col-md-6">
+                                @Html.Label("Physical Address", new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-6 form-group">
+                                @Html.Label("Postal Address Address", new { @class = "control-label" })
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    @Html.LabelFor(x => x.PhysicalAddress.Address_Line_1, new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    @Html.TextBoxFor(model => model.PhysicalAddress.Address_Line_1, new { @class = "form-control" })
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    @Html.LabelFor(x => x.PhysicalAddress.Address_Line_2, new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    @Html.TextBoxFor(model => model.PhysicalAddress.Address_Line_2, new { @class = "form-control" })
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    @Html.LabelFor(x => x.PhysicalAddress.Province_List, new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    @Html.DropDownListFor(n => n.PhysicalAddress.Selected_Province_Id, Model.PhysicalAddress.Province_List, "- Please select -", new { @id = "EnquiredProvinceId", @class = "form-control" })
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    @Html.LabelFor(x => x.PhysicalAddress.District_Municipality_List, new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    @Html.DropDownListFor(n => n.PhysicalAddress.Selected_Municipality_Id, Model.PhysicalAddress.District_Municipality_List, "- Please select -", new { @id = "EnquiredMagistratesId", @class = "form-control" })
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    @Html.LabelFor(x => x.PhysicalAddress.Local_Municipality_List, new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    @Html.DropDownListFor(n => n.PhysicalAddress.Selected_Local_Municipality_Id, Model.PhysicalAddress.Local_Municipality_List, "- Please select -", new { @id = "DropdownPhysicalAddressLocalMunicipality", @class = "form-control" })
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    @Html.LabelFor(x => x.PhysicalAddress.Town_List, new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-6 form-group">
+
+                                    @Html.DropDownListFor(n => n.PhysicalAddress.Town_Id, Model.PhysicalAddress.Town_List, "- Please select -", new { @id = "EnquiredTownId", @class = "form-control" })
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    @Html.LabelFor(x => x.PhysicalAddress.Postal_Code, new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    @Html.TextBoxFor(model => model.PhysicalAddress.Postal_Code, new { @class = "form-control" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    @Html.LabelFor(x => x.PostalAddress.Address_Line_1, new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    @Html.TextBoxFor(model => model.PostalAddress.Address_Line_1, new { @class = "form-control" })
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    @Html.LabelFor(x => x.PostalAddress.Address_Line_2, new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    @Html.TextBoxFor(model => model.PostalAddress.Address_Line_2, new { @class = "form-control" })
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    @Html.LabelFor(x => x.PostalAddress.Province_List, new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    @Html.DropDownListFor(n => n.PostalAddress.Selected_Province_Id, Model.PostalAddress.Province_List, "- Please select -", new { @id = "EnquiredProvinceId_1", @class = "form-control" })
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    @*change municipality_list to Local*@
+                                    @Html.LabelFor(x => x.PostalAddress.District_Municipality_List, new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    @Html.DropDownListFor(n => n.PostalAddress.Selected_Municipality_Id, Model.PostalAddress.District_Municipality_List, "- Please select -", new { @id = "EnquiredMagistratesId_1", @class = "form-control" })
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    @Html.LabelFor(x => x.PostalAddress.Local_Municipality_List, new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    @Html.DropDownListFor(n => n.PostalAddress.Selected_Local_Municipality_Id, Model.PostalAddress.Local_Municipality_List, "- Please select -", new { @id = "DropdownPostalAddressLocalMunicipality", @class = "form-control" })
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    @Html.LabelFor(x => x.PostalAddress.Town_List, new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-6 form-group">
+
+                                    @Html.DropDownListFor(n => n.PostalAddress.Town_Id, Model.PostalAddress.Town_List, "- Please select -", new { @id = "EnquiredTownId_1", @class = "form-control" })
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    @Html.LabelFor(x => x.PostalAddress.Postal_Code, new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    @Html.TextBoxFor(model => model.PostalAddress.Postal_Code, new { @class = "form-control" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="tab3">
+
+                        @if (Model.Person.Is_Piva_Validated)
+                        {
+                            <label>Identification has been successfully verified via PIVA - Transaction Id @Model.Person.Piva_Transaction_Id</label>
+                        }
+                        else
+                        {
+                            <div class="row">
+                                <div class="col-md-9 col-md-offset-3 form-group">
+                                    <span id="online" class="label label-success" style="display:none">Piva System is Online</span>
+                                    <span id="offline" class="label label-danger">Piva System is Offline - Please make sure the PIVA Service is running</span>
+                                </div>
+                            </div>
+
+                            <div id="stepOne" style="display:none">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <label for="txtIdNr" class="control-label">ID Number</label>
+                                    </div>
+                                    <div class="col-md-3 form-group">
+                                        <input class="form-control" type="text" id="txtIdNr" placeholder="ID Number" />
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-3 col-md-offset-3 form-group">
+                                        <input class="btn btn-default" type="button" id="btnStep1" value="Validate ID" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="stepTwo" style="display:none">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <label for="stepTwoAddl" class="control-label">First Fingerprint</label>
+                                    </div>
+                                    <div class="col-md-3 form-group">
+                                        <select id="stepTwoAddl" class="form-control">
+                                            <option value="Unknown">Unknown</option>
+                                            <option value="RightThumb">RightThumb</option>
+                                            <option value="RightIndex">RightIndex</option>
+                                            <option value="RightFore">RightFore</option>
+                                            <option value="RightRing">RightRing</option>
+                                            <option value="RightLittle">RightLittle</option>
+                                            <option selected value="LeftThumb">LeftThumb</option>
+                                            <option value="LeftIndex">LeftIndex</option>
+                                            <option value="LeftFore">LeftFore</option>
+                                            <option value="LeftRing">LeftRing</option>
+                                            <option value="LeftLittle">LeftLittle</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label for="stepTwoBddl" class="control-label">Second Fingerprint</label>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <select id="stepTwoBddl" class="form-control">
+                                            <option value="Unknown">Unknown</option>
+                                            <option selected value="RightThumb">RightThumb</option>
+                                            <option value="RightIndex">RightIndex</option>
+                                            <option value="RightFore">RightFore</option>
+                                            <option value="RightRing">RightRing</option>
+                                            <option value="RightLittle">RightLittle</option>
+                                            <option value="LeftThumb">LeftThumb</option>
+                                            <option value="LeftIndex">LeftIndex</option>
+                                            <option value="LeftFore">LeftFore</option>
+                                            <option value="LeftRing">LeftRing</option>
+                                            <option value="LeftLittle">LeftLittle</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-3 col-md-offset-3">
+                                        <input class="btn btn-default" type="button" id="bntStep2A" value="Capture 1st Fingerprint" /><br />
+                                    </div>
+                                    <div class="col-md-3 col-md-offset-3">
+                                        <input class="btn btn-default" type="button" id="bntStep2B" value="Capture 2nd Fingerprint" />
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-3 col-md-offset-3 form-group">
+                                        <div id="stepTwoAImage2" style="display:inline">
+                                            <img id="imgStep2A2" style="display:inline;height:300px" class="img-rounded" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 col-md-offset-3 form-group">
+                                        <div id="stepTwoBImage" style="display:none">
+                                            <img id="imgStep2B" style="display:none;height:300px" class="img-rounded" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-3 col-md-offset-3 form-group">
+                                        <input class="btn btn-default" type="button" id="btnStep3" value="Verify ID" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="stepFour">
+                                <div class="row stepFour">
+                                    <div class="col-md-9 col-md-offset-3">
+                                        <h3 id="PivHeader"></h3>
+                                        <span id="PivVerified" class="col-md-6"></span>
+                                        <span id="PivFaceImageNr" class="col-md-6"><img id="PivFaceImageNrImg" style="height:300px" class="img-thumb" /></span>
+                                        <span id="PivGivenNames" class="col-md-6"></span>
+                                        <span id="PivSurname" class="col-md-6"></span>
+                                        <span id="PivFingerCode1" class="col-md-6"></span>
+                                        <span id="PivFingerCode2" class="col-md-6"></span>
+                                        <span id="PivFingerNr1" class="col-md-6"></span>
+                                        <span id="PivFingerNr2" class="col-md-6"></span>
+                                        <!--<span id="PivResult" class="col-md-6"></span>-->
+                                        <span id="PivTelNumber" class="col-md-6"></span>
+                                        <span id="PivTransId" class="col-md-6"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="respMessageCont">
+                                <div class="row">
+                                    <div class="col-md-9 col-md-offset-3">
+                                        <label class="control-label" id="respMessage"></label>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                    <ul class="pager wizard">
+                        <li class="previous first" style="display:none;"><a href="#">First</a></li>
+                        <li class="previous"><a href="#">Previous</a></li>
+                        <li class="next last" style="display:none;"><a href="#">Last</a></li>
+                        <li class="next"><a href="#">Next</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+
+        <div class="panel-footer">
+            <input type="submit" id="ButtonSave" value="Save" class="btn btn-success" />
+            @Html.ActionLink("Cancel", "Index", null, new { @class = "btn btn-danger" })
+        </div>
+
+    </div>
+}
+
+@section scripts {
+    <script type="text/javascript">
+        $(function () {
+
+            $("#Date_of_Birth").datepicker({
+                dateFormat: "dd M yy",
+                changeYear: true,
+                maxDate: 0,
+                yearRange: "-60:+0"
+            });
+
+            $("#Visit_Date").datepicker({
+                dateFormat: "dd M yy",
+                changeYear: true,
+                maxDate: 0,
+                yearRange: "-60:+0"
+            });
+        });
+    </script>
+    <script src="~/Scripts/IDValidation/IDValidationMethods.js"></script>
+    <script src="~/Scripts/ClientDetails/methods.js"></script>
+    <script src="~/Scripts/jquery.signalR-2.2.1.min.js"></script>
+    <script src="http://localhost:8080/signalr/hubs"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $(".chosen-select").chosen();
+        });
+        $(function () {
+            //Set the hubs URL for the connection
+            $.connection.hub.url = "http://localhost:8080/signalr";
+            // Declare a proxy to reference the hub.
+            var piva = $.connection.pivaHub;
+            var lastButtonClicked = '';
+            //Callback method used by all the button clicks
+            piva.client.pivaResponse = function (result) {
+                console.log(result);
+                var hasError = true;
+                if (result.ErrorCode == '0') {
+                    hasError = false;
+                }
+                //Response Message Name
+                switch (result.Name) {
+                    case "PivaValidateIdRs":
+                        //Show next forms
+                        initUI(1, hasError, result);
+                        break;
+                    case "PivaCaptureFpRs":
+                        initUI(2, hasError, result);
+                        break;
+                    case "PivaReturnFpRs":
+                        initUI(3, hasError, result);
+                        break;
+                    case "PivaVerifyIdRs":
+                        initUI(4, hasError, result);
+                        //Populate information
+                        if (result.ErrorCode == 0) {
+                            switch (result.PivResult) {
+                                case "Red":
+                                    $('#stepFour').addClass("bg-danger");
+                                    break;
+                                case "Green":
+                                    $('#stepFour').addClass("bg-success");
+                                    break;
+                                case "Amber":
+                                    $('#stepFour').addClass("bg-warning");
+                                    break;
+                            }
+                            if (result.PivVerified == true) {
+                                $('#PivHeader').html('Verification Result:<strong>Verified</strong>');
+                            } else {
+                                $('#PivHeader').html('Verification Result:<strong>Not Verified</strong>');
+                            }
+                            $('#PivVerified').html('Verified:' + result.PivVerified);
+                            //FaceImageRequest
+                            if (result.PivFaceImageNr > 0) {
+                                var data = { pivFaceImageNr: result.PivFaceImageNr }
+                                piva.server.pivaReturnFaceRq(data)
+                                    .done(function () {
+                                    })
+                                    .fail(function (error) {
+                                        notifyError(error);
+                                    });
+                            } else {
+                                $('#PivFaceImageNr').html('No Face Image To Display<img id="PivFaceImageNrImg" class="img-rounded"/>');
+                            }
+                            $('#PivGivenNames').html('Given Names:' + result.PivGivenNames);
+                            $('#PivSurname').html('Surname:' + result.PivSurname);
+                            $('#PivFingerCode1').html('FingerCode1:' + result.PivFingerCode1);
+                            $('#PivFingerCode2').html('FingerCode2:' + result.PivFingerCode2);
+                            $('#PivFingerNr1').html('FingerNr1:' + result.PivFingerNr1);
+                            $('#PivFingerNr2').html('FingerNr2:' + result.PivFingerNr2);
+                            $('#PivTelNumber').html('Call Center Number:' + result.PivTelNumber);
+                            $('#PivTransId').html('Transaction Id:' + result.PivTransId);
+                        }
+                        break;
+                    case "PivaReturnFaceRs":
+                        $('#PivFaceImageNrImg').attr('src', 'data:image/png;base64,' + result.Image);
+                        break;
+                }
+                if (hasError) {
+                    notifyError(result.ErrorMessage);
+                } else {
+                    notifyMessage('');
+                }
+
+            }
+            //Initiliase
+            init();
+            $.connection.hub.error(function (error) {
+                notifyError(error);
+            });
+            $.connection.hub.connectionSlow(function () {
+                notifyError('There is a slow connection, please restart the Service');
+                hideAll();
+            });
+            $.connection.hub.disconnected(function () {
+                hideAll();
+                $('#online').hide();
+                $('#offline').show();
+                setTimeout(function () {
+                    init();
+                }, 5000); // Re-start connection after 5 seconds
+            });
+            $.connection.hub.reconnecting(function () {
+                //notifyError('Cannot connect to service, trying to reconnect');
+                $('#online').hide();
+                $('#offline').show();
+                hideAll();
+            });
+            $.connection.hub.reconnected(function () {
+                $('#online').show();
+                $('#stepOne').show();
+                $('#offline').hide();
+                notifyMessage('');
+            });
+            function init() {
+                $.connection.hub.start().done(function () {
+                    $('#online').show();
+                    $('#stepOne').show();
+                    $('#offline').hide();
+                    notifyMessage('');
+                    //ValidateID
+                    $('#btnStep1').click(function () {
+                        var Id = $('#txtIdNr').val();
+                        var data = { IdNr: Id };
+                        piva.server.pivaValidateIdRq(data)
+                            .done(function () {
+                            })
+                            .fail(function (error) {
+                                notifyError(error);
+                            });
+                    });
+                    //CaptureFingerPrint1
+                    $("#main").delegate('#bntStep2A', 'click', function () {
+                        var fingerCode = $('#stepTwoAddl').val();
+                        var data = { fingerCode: fingerCode, fpSequenceNr: 1 };
+                        piva.server.pivaCaptureFpRq(data)
+                            .done(function () {
+                            })
+                            .fail(function (error) {
+                                notifyError(error);
+                            });
+                    });
+                    //DisplayFingerPrint1
+                    $("#main").delegate('#bntStep2AImage', 'click', function () {
+                        lastButtonClicked = 'bntStep2AImage';
+
+                        var data = { fpImageNr: 1 };
+                        piva.server.pivaReturnFpRq(data)
+                            .done(function () {
+                            })
+                            .fail(function (error) {
+                                notifyError(error);
+
+
+                            });
+                    });
+                    //CaptureFingerPrint2
+                    $("#main").delegate('#bntStep2B', 'click', function () {
+                        var fingerCode = $('#stepTwoBddl').val();
+                        var data = { fingerCode: fingerCode, fpSequenceNr: 2 };
+                        piva.server.pivaCaptureFpRq(data)
+                            .done(function () {
+                            })
+                            .fail(function (error) {
+                                notifyError(error);
+
+                            });
+                    });
+                    //DisplayFingerPrint2
+                    $("#main").delegate('#bntStep2BImage', 'click', function () {
+                        lastButtonClicked = 'bntStep2BImage';
+                        var data = { fpImageNr: 2 };
+                        piva.server.pivaReturnFpRq(data)
+                            .done(function () {
+                            })
+                            .fail(function (error) {
+                                notifyError(error);
+
+                            });
+                    });
+                    //Verify
+                    $("#main").delegate('#btnStep3', 'click', function () {
+                        var data = { '': '' };
+                        piva.server.pivaVerifyIdRq(data)
+                            .done(function () {
+                            })
+                            .fail(function (error) {
+                                notifyError(error);
+
+                            });
+                    });
+                });
+            }
+            function hideAll() {
+                $('#stepOne').hide();
+                $('#stepTwo').hide();
+                $('#stepThree').hide();
+                $('#stepFour').hide();
+                $('#bntStep2AImage').hide();
+                $('#bntStep2BImage').hide();
+                $('#imgStep2A').hide();
+                $('#imgStep2B').hide();
+                $('#imgStep2A').attr('src', '');
+                $('#imgStep2B').attr('src', '');
+                $('#PivFaceImageNrImg').attr('src', '');
+                $('#PivHeader').html('');
+            }
+            function notifyError(error) {
+                $('#respMessageCont').addClass('has-error');
+                $('#respMessageCont').removeClass('has-success');
+                $('#respMessage').html(error);
+            }
+            function notifyMessage(message) {
+                $('#respMessageCont').removeClass('has-error');
+                $('#respMessageCont').addClass('has-success');
+                $('#respMessage').html(message);
+            }
+            function initUI(step, hasError, result) {
+                $('#stepTwo').hide();
+                $('#stepThree').hide();
+                switch (step) {
+                    case 1:
+                        hideAll();
+                        $('#stepOne').show();
+
+                        if (!hasError) {
+                            $('#stepTwo').show();
+                        }
+                        break;
+                    case 2:
+                        //Show correct components on screen
+                        $('#stepThree').hide();
+                        $('#stepFour').hide();
+                        $('#stepTwo').show();
+                        $('#stepTwoAImage').show();
+                        $('#stepTwoBImage').show();
+
+                        if (result.FpImageNr == 1) {
+                            lastButtonClicked = 1;
+                            displayImage(1);
+                        }
+                        if (result.FpImageNr == 2) {
+                            lastButtonClicked = 2;
+                            displayImage(2);
+                        }
+                        if (!hasError && result.CanSubmitPIV == true) {
+                            $('#stepThree').show();
+                        }
+                        break;
+                    case 3:
+                        //Show correct components on screen
+                        $('#stepTwo').show();
+                        $('#stepFour').hide();
+                        if (result.CanSubmitPIV == true) {
+                            $('#stepThree').show();
+                        }
+                        //Populate Left Box
+                        if (lastButtonClicked == 1) {
+                            $('#stepTwoAImage').show();
+                            $('#imgStep2A').attr('src', 'data:image/png;base64,' + result.Image);
+                            $('#imgStep2A').show();
+                        } else {
+                            $('#stepTwoBImage').show();
+                            $('#imgStep2B').attr('src', 'data:image/png;base64,' + result.Image);
+                            $('#imgStep2B').show();
+                        }
+                        break;
+                    case 4:
+                        $('#stepTwo').show();
+                        $('#step2AImage').show();
+                        $('#step2BImage').show();
+                        $('#stepThree').show();
+                        if (!hasError) {
+                            //Show correct components on screen
+
+                            $('#stepFour').show();
+                            //Remove previous bg classes
+                            $('#stepFour').removeClass("bg-danger");
+                            $('#stepFour').removeClass("bg-success");
+                            $('#stepFour').removeClass("bg-warning");
+                        }
+                        break;
+                }
+            }
+            function displayImage(fpImageNr) {
+                var data = { fpImageNr: fpImageNr };
+                piva.server.pivaReturnFpRq(data)
+                    .done(function () {
+                    })
+                    .fail(function (error) {
+                        notifyError(error);
+                    });
+            }
+        });
+
+    </script>
+
+    <script type="text/javascript">
+        //Physical address cascade
+        $(function () {
+            //Filter for physical District List :TC
+            $("#EnquiredProvinceId").change(function () {
+                var dropdownPhysicalMunicipality = $('#EnquiredMagistratesId');//District loading
+                dropdownPhysicalMunicipality.html('');
+                dropdownPhysicalMunicipality.append($('<option></option>').val("").html("- Please Select -"));
+
+                var dropdownCPhysicalLocalMunicipality = $('#DropdownPhysicalAddressLocalMunicipality');//Local Municipality
+                dropdownCPhysicalLocalMunicipality.html('');
+                dropdownCPhysicalLocalMunicipality.append($('<option></option>').val("").html("- Please Select -"));
+
+                var dropdownPhysicalTown = $('#EnquiredTownId');//Town Loading
+                dropdownPhysicalTown.html('');
+                dropdownPhysicalTown.append($('<option></option>').val("").html("- Please Select -"));
+
+                var selectedItem = $(this).val();
+                $.ajax({
+                    url: $.url('/Intake/FilterFromProvinceAjax'),
+                    data: { "provinceId": selectedItem },
+                    type: "GET",
+                    success: function (response, status, xhr) {
+                        $.each(response, function (id, option) {
+                            dropdownPhysicalMunicipality.append($('<option></option>').val(option.id).html(option.name));
+                        });
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        alert('Error populating district dropdown');
+                    }
+                });
+
+            });
+
+            //Filter for physical Local Municipality : TC
+            $("#EnquiredMagistratesId").change(function () {
+                var dropdownCPhysicalLocalMunicipality = $('#DropdownPhysicalAddressLocalMunicipality');
+
+                dropdownCPhysicalLocalMunicipality.html('');
+                dropdownCPhysicalLocalMunicipality.append($('<option></option>').val("").html("- Please Select -"));
+
+                var selectedItem = $(this).val();
+                $.ajax({
+                    url: $.url('/Intake/FilterFromMunicipalityAjax'),
+                    data: { "municipalityId": selectedItem },
+                    type: "GET",
+                    success: function (response, status, xhr) {
+                        $.each(response, function (id, option) {
+                            console.log(option.name);
+                            dropdownCPhysicalLocalMunicipality.append($('<option></option>').val(option.id).html(option.name));
+                        });
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        alert('Error populating local municipality dropdown');
+                    }
+                });
+            });
+
+
+            //Filter for physical town : TC
+            $("#DropdownPhysicalAddressLocalMunicipality").change(function () {
+                var dropdownPhysicalTown = $('#EnquiredTownId');
+
+                var dropdownPhysicalTown = $('#EnquiredTownId');
+                dropdownPhysicalTown.html('');
+                dropdownPhysicalTown.append($('<option></option>').val("").html("- Please Select -"));
+
+                var selectedItem = $(this).val();
+                $.ajax({
+                    url: $.url('/Intake/FilterFromLocalMunicipalityAjax'),
+                    data: { "localMunicipalityId": selectedItem },
+                    type: "GET",
+                    success: function (response, status, xhr) {
+                        $.each(response, function (id, option) {
+                            console.log(option.name);
+                            dropdownPhysicalTown.append($('<option></option>').val(option.id).html(option.name));
+                        });
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        alert('Error populating towns dropdown');
+                    }
+                });
+            });
+
+        });
+    </script>
+
+    <script type="text/javascript">
+        //Postal address cascade
+        $(function () {
+            //Filter for postal District List :TC
+            $("#EnquiredProvinceId_1").change(function () {
+                var dropdownPostalMunicipality = $('#EnquiredMagistratesId_1');//Distric loading
+                dropdownPostalMunicipality.html('');
+                dropdownPostalMunicipality.append($('<option></option>').val("").html("- Please Select -"));
+
+                var dropdownPostalLocalMunicipality = $('#DropdownPostalAddressLocalMunicipality');//Local Munipality Loading
+                dropdownPostalLocalMunicipality.html('');
+                dropdownPostalLocalMunicipality.append($('<option></option>').val("").html("- Please Select -"));
+
+                var dropdownPostalTown = $('#EnquiredTownId_1');//Town Loading
+                dropdownPostalTown.html('');
+                dropdownPostalTown.append($('<option></option>').val("").html("- Please Select -"));
+
+                var selectedItem = $(this).val();
+                $.ajax({
+                    url: $.url('/Intake/FilterFromProvinceAjax'),
+                    data: { "provinceId": selectedItem },
+                    type: "GET",
+                    success: function (response, status, xhr) {
+                        $.each(response, function (id, option) {
+                            dropdownPostalMunicipality.append($('<option></option>').val(option.id).html(option.name));
+                        });
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        alert('Error populating district dropdown');
+                    }
+                });
+
+            });
+            //Filter for postal Local Municipality : TC
+            $("#EnquiredMagistratesId_1").change(function () {
+                var dropdownPostalLocalMunicipality = $('#DropdownPostalAddressLocalMunicipality');//Local Munipality Loading
+                dropdownPostalLocalMunicipality.html('');
+                dropdownPostalLocalMunicipality.append($('<option></option>').val("").html("- Please Select -"));
+
+                var selectedItem = $(this).val();
+                $.ajax({
+                    url: $.url('/Intake/FilterFromMunicipalityAjax'),
+                    data: { "municipalityId": selectedItem },
+                    type: "GET",
+                    success: function (response, status, xhr) {
+                        $.each(response, function (id, option) {
+                            console.log(option.name);
+                            dropdownPostalLocalMunicipality.append($('<option></option>').val(option.id).html(option.name));
+                        });
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        alert('Error populating local municipality dropdown');
+                    }
+                });
+            });
+
+            //Filter for postal town : TC
+            $("#DropdownPostalAddressLocalMunicipality").change(function () {
+                var dropdownPostalTown = $('#EnquiredTownId_1');
+                dropdownPostalTown.html('');
+                dropdownPostalTown.append($('<option></option>').val("").html("- Please Select -"));
+
+                var selectedItem = $(this).val();
+                $.ajax({
+                    url: $.url('/Intake/FilterFromLocalMunicipalityAjax'),
+                    data: { "localMunicipalityId": selectedItem },
+                    type: "GET",
+                    success: function (response, status, xhr) {
+                        $.each(response, function (id, option) {
+                            console.log(option.name);
+                            dropdownPostalTown.append($('<option></option>').val(option.id).html(option.name));
+                        });
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        alert('Error populating town dropdown');
+                    }
+                });
+            });
+
+        });
+    </script>
+}

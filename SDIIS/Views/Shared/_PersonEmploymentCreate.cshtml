@@ -1,0 +1,175 @@
+﻿@model Common_Objects.Models.Person_Employment
+
+
+@using (Html.BeginForm("Save", "Home", FormMethod.Post, new { role = "form", id = "employmentFormCreate" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="panel-body">
+
+        <div class="row">
+
+            @Html.HiddenFor(x => x.Person_Id)
+
+            <div class="col-md-6">
+                <div class="row">
+                    <div class="col-md-6 form-group">
+                        @Html.LabelFor(x => x.Nature_Of_Employment_List, new { @class = "control-label" })
+                    </div>
+                    <div class="col-md-6">
+                        @Html.DropDownListFor(n => n.Nature_Of_Employment_Id, Model.Nature_Of_Employment_List, "- Please select -", new { @id = "NatureOfEmployment_Id", @class = "form-control" })
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="row">
+                    <div class="col-md-6 form-group">
+                        @*@Html.LabelFor(x => x.NameOfEmployer, new { @class = "control-label" })*@
+                        Name Of Employer
+                    </div>
+                    <div class="col-md-6">
+                        @Html.TextBoxFor(model => model.NameOfEmployer, new { @class = "form-control" })
+                    </div>
+                </div>
+            </div>
+
+
+
+        </div>
+        <div class="row">
+
+            <div class="col-md-6">
+                <div class="row">
+                    <div class="col-md-6 form-group">
+                        @Html.LabelFor(x => x.Occupation, new { @class = "control-label" })
+                    </div>
+                    <div class="col-md-6">
+                        @Html.TextBoxFor(model => model.Occupation, new { @class = "form-control" })
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="row">
+                    <div class="col-md-6 form-group">
+                        @Html.LabelFor(x => x.Income_Range_List, new { @class = "control-label" })
+                    </div>
+                    <div class="col-md-6">
+                        @Html.DropDownListFor(n => n.Income_Range_Id, Model.Income_Range_List, "- Please select -", new { @id = "Income_Range_Id", @class = "form-control" })
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+
+    <div class="panel-footer">
+        <input type="submit" id="ButtonSave" value="Save" class="btn btn-success" />
+        <input type="button" id="ButtonEmploymentCancel" value="Cancel" class="btn btn-danger modal-close-btn" />
+    </div>
+}
+
+<script src="~/Scripts/PersonEmployment/pemp.js"></script>
+@*<script>
+
+        //Create New Employment Item
+        function CreateEmploymentDetails() {
+            var personId = $('#Person_Id').val();
+
+            var personEmployment = {
+                Person_Id: $('#Person_Id').val(),
+                NameOfEmployer: $('#NameOfEmployer').val(),
+                Nature_Of_Employment_Id: $('#NatureOfEmployment_Id').val(),
+                Occupation: $('#Occupation').val().trim(),
+                Income_Range_Id: $('#Income_Range_Id').val()
+            };
+
+            // Add Validation Token
+            personEmployment.__RequestVerificationToken = $('input[name=__RequestVerificationToken]').val();
+
+            // Save Education Details
+            $.ajax({
+                url: $.url('/Employment/Create'),
+                type: 'POST',
+                data: personEmployment,
+                dataType: 'json',
+                success: function (data) {
+                    if (data.status) {
+                        $('#modal-container').modal('hide');
+                        $('#NameOfEmployer').val('');
+                        $('#NatureOfEmployment_Id').val('');
+                        $('#Occupation').val('');
+                        $('#Income_Range_Id').val('');
+                    }
+
+                    LoadEmploymentItems(personId);
+                },
+                error: function () {
+                    $('#msg').html('<div class="failed">Error! Please try again.</div>');
+                }
+            });
+        }
+
+
+        // Edit Employment Item
+        function EditEmploymentDetails() {
+            var personId = $('#Person_Id').val();
+
+            var personEmployment = {
+                Person_Employment_Id: $('#Person_Employment_Id').val(),
+                Person_Id: $('#Person_Id').val(),
+                NameOfEmployer: $('#NameOfEmployer').val(),
+                Nature_Of_Employment_Id: $('#NatureOfEmployment_Id').val(),
+                Occupation: $('#Occupation').val().trim(),
+                Income_Range_Id: $('#Income_Range_Id').val()
+            };
+
+            //Add validation token
+            personEmployment.__RequestVerificationToken = $('input[name=__RequestVerificationToken]').val();
+
+            //Save Education Details
+            $.ajax({
+                url: $.url('/Employment/Edit'),
+                type: 'POST',
+                data: personEmployment,
+                dataType: 'json',
+                success: function (data) {
+                    if (data.status) {
+                        $('#modal-container').modal('hide');
+                        $('#NameOfEmployer').val('');
+                        $('#NatureOfEmployment_Id').val('');
+                        $('#Occupation').val('');
+                        $('#Income_Range_Id').val('');
+                    }
+
+                    LoadEmploymentItems(personId);
+                },
+                error: function () {
+                    $('#msg').html('<div class="failed">Error! Please try again.</div>');
+                }
+            });
+
+
+        function LoadEmploymentItems(person_Id) {
+            $.ajax({
+                url: $.url('/Employment/GetEmploymentItemsByAjax'),
+                data: { "id": person_Id },
+                datatype: "json",
+                type: "post",
+                contenttype: 'application/json; charset=utf-8',
+                async: true,
+                success: function (data) {
+                    $("#employmentItemsGrid").html(data);
+                },
+                error: function (xhr) {
+                    alert('error Employment Items');
+                }
+            });
+        }
+
+    </script>*@

@@ -1,0 +1,132 @@
+﻿<div class="row" id="AdmissionList">
+    <div class="text-center">
+        <h4> <strong style="color:#158cba"> Children admitted to CYCA centres</strong></h4>
+        <h6>Quater 4: 01 January 2020 to 31 March 2020</h6>
+    </div>
+    <div class="col-md-12">
+        <div class="col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-heading text-center">
+                    <strong style="color:#158cba"> Summary View</strong>
+                </div>
+                <div class="panel-body">
+                    <div class="table-responsive">
+                        @*<table class="table table-striped table-bordered table-hover" id="admissionList">
+                            <thead>
+                                <tr>
+                                    <th>January</th>
+                                    <th>February</th>
+                                    <th>March</th>
+                                </tr>
+
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td></td>
+                                    <th>Male</th>
+                                    <th>Female</th>
+                                    <th>Male</th>
+                                    <th>Female</th>
+                                    <th>Male</th>
+                                    <th>Female</th>
+                                </tr>
+                            </tbody>*@
+
+                            @*<thead>
+                <tr>
+                    <th>Centers</th>
+                    <th>Male</th>
+                    <th>Female</th>
+                </tr>
+            </thead>*@
+
+                            @*<tbody id="SetAdmissiontList"></tbody>
+                        </table>*@
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th colspan="2">Object</th>
+                                    <th colspan="2">Openings</th>
+                                    <th colspan="3">Internal Dimensions</th>
+                                    <th colspan="3">Weight</th>
+                                    <th>Volume</th>
+                                </tr>
+                                <tr>
+                                    <th>sub header</th>
+                                    <th>sub header</th>
+                                    <th>sub header</th>
+                                    <th>sub header</th>
+                                    <th>sub header</th>
+                                    <th>sub header</th>
+                                    <th>sub header</th>
+                                    <th>sub header</th>
+                                    <th>sub header</th>
+                                    <th>sub header</th>
+                                    <th>sub header</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <th>row header</th>
+                                    <td> </td>
+                                    <td> </td>
+                                    <td> </td>
+                                    <td> </td>
+                                    <td> </td>
+                                    <td> </td>
+                                    <td> </td>
+                                    <td> </td>
+                                    <td> </td>
+                                    <td> </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-heading text-center">
+                    <strong style="color:#158cba"> Number of Children Admitted</strong>
+                </div>
+                <div class="panel-body">
+
+                    <div>
+                        <img src="@Url.Action("AdmissionChartDisplay","ReportChart")" alt="Alternate Text" />
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-12">
+        <div class="col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-heading text-center">
+                    <strong style="color:#158cba"> Detailed View</strong>
+                </div>
+                <div class="panel-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered table-hover" id="admissionList">
+                            <thead>
+                                <tr>
+                                    <th>Province</th>
+                                    <th>Region</th>
+                                    <th>Center</th>
+                                    <th>Admission Date</th>
+                                    <th>Child Gender</th>
+                                    <th>Child Name</th>
+                                    <th>Admission Reason</th>
+
+                                </tr>
+                            </thead>
+                            <tbody id="SetAdmissiontList"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

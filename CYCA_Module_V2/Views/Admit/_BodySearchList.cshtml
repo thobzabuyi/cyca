@@ -1,0 +1,1254 @@
+﻿@using CYCA_Module_V2.Common_Objects;
+@model CYCAAdmissionBodilySearchPartiallViewModel
+<div class="row" id="BodilySearchRecords">
+    <div class="col-md-12">
+        <div class="panel panel-default">
+            <button class="btn btn-primary" id="accordion" data-parent="#accordion" href="#actionModal" onclick="showNew(@ViewBag.childId)"><i class="fa fa-plus"></i> Add Body Search</button>
+            <div class="panel-heading text-center">
+                <strong style="color:#158cba"> Body Search History</strong>
+            </div>
+            <div class="panel-body">
+                <div class="table-responsive">
+                    <table class="table table-striped table-bordered table-hover" id="admissionList">
+                        <thead>
+                            <tr>
+                                <th>Body Search Date & Time</th>
+                                <th>Reason for body Search</th>
+                                @*<th>Witnessed By</th>*@
+                                <th>Description</th>
+                                <th>Attachments</th>
+                                <th>&nbsp;</th>
+                                <th>&nbsp;</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (CYCA_Module_V2.Common_Objects.CYCAAdmissionBodySearchViewModel m in Model.CYCAAdmissionBodySearchViewModels.OrderByDescending(m => m.BodySearchId))
+                            {
+                            <tr>
+                                <td>@m.BodySearchDate</td>
+                                <td>@m.ReasonForSearch</td>
+                                @*<td>@m.WitnessedBy</td>*@
+                                <td>@m.Description</td>
+                                <td style="text-align: center;">
+                                    @for (int i = 0; i < m.Files.Count; i++)
+                                    {
+                                        <div class="input-group">
+                                            <i class="fa fa-1x fa-paperclip text-navy"></i>
+                                            <a class="download-file1" href="@Url.Action("DownloadSearchFile", "Admit", new { id = m.Files[i].Document_Id })" target="_blank">
+                                                @m.Files[i].Document_Name
+                                            </a>
+                                        </div>
+                                    }
+                                </td>
+                                
+                                <td><a href="#" onclick="showView(@m.BodySearchId)">View</a></td>
+                                <td>                                    
+                                    <a href="#" onclick="showEdit(@m.BodySearchId)">Edit</a>
+                                </td>
+                            </tr>
+                            }                
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="AddBodilySearch"></div>
+<div class="row col-md-12 col-sm-12" id="EditBodilySearch">
+    <div class="col-md-12 col-sm-12">
+        <div class="panel panel-default">
+            <div class="panel-heading text-center">
+                <strong style="color:#158cba">Edit Body Search</strong>
+            </div>
+            <div class="panel-body">
+
+                <form id="myForm1">
+                    <div class="row">
+
+                        <div class="col-md-4">
+                            @Html.HiddenFor(m => m.Person_Id, new { @id = "id1" })
+                            @Html.HiddenFor(m => m.Admission_Id, new { @id = "Admission_Id1" })
+                            @Html.HiddenFor(m => m.BodySearchId, new { @id = "BodySearchId1" })
+                            @Html.HiddenFor(m => m.DocumentId, new { @id = "DocumentId1" })
+                            Reason For Bodily Search
+                        </div>
+                        <div class="col-md-8 form-group" style="">
+
+                            @*@Html.DropDownList("Reason", (IEnumerable<SelectListItem>)ViewBag.SearchReasonList, "--Select--", new { @id = "SearchReasonId1", @class = "form-control" })*@
+                            @Html.DropDownListFor(m => m.Search_Reason_Id, ViewBag.SearchReasonList as SelectList, "--Select--", new { @id = "Search_Reason_Id", @class = "form-control", onchange = "ShowHideDiv()" })
+
+                        </div>
+                        <div id="dvOtherReasonEdit" style="display: none">
+                            <div class="col-md-4">
+                                Describe other Search Reason:
+                            </div>
+                            <div class="col-md-8 form-group">
+
+                                <input class="form-control" type="text" required />
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            Conducted By
+                        </div>
+                        <div class="col-md-8 form-group" style="">
+                            @*@Html.DropDownList("conduct", (IEnumerable<SelectListItem>)ViewBag.UsersList, "--Select--", new { @id = "CondactedBy1", @class = "form-control" })*@
+                            @Html.DropDownListFor(m => m.Conducted_By, ViewBag.UsersList as SelectList, "--Select--", new { @id = "Conducted_By", @class = "form-control" })
+
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            Witnessed By
+                        </div>
+                        <div class="col-md-8 form-group">
+
+                            @*@Html.DropDownList("witness", (IEnumerable<SelectListItem>)ViewBag.UsersList, "--Select--", new { @id = "WitnessedBy1", @class = "form-control" })*@
+                            @Html.DropDownListFor(m => m.Witnessed_By, ViewBag.UsersList as SelectList, "--Select--", new { @id = "Witnessed_By", @class = "form-control" })
+                        </div>
+
+                        <div class="col-md-4">
+                            Description Of Location
+                        </div>
+                        <div class="col-md-8 form-group" style="">
+                            @*<input type="text" class=" form-control" id="Description" required>*@
+                            @Html.TextAreaFor(m => m.Description, new { @id = "Description1", @class = "form-control" })
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            Document Type
+                        </div>
+                        <div class="col-md-8 form-group">
+
+                            @*@Html.DropDownList("docs", (IEnumerable<SelectListItem>)ViewBag.DocumentTypeList, "--Select--", new { @id = "Document_Type_Id1", @class = "form-control", required = "required", onchange = "ShowHideDiv()" })*@
+                            @Html.DropDownListFor(m => m.Document_Type_Id, ViewBag.DocumentTypeList as SelectList, "--Select--", new { @id = "Document_Type_Id1", @class = "form-control", onchange = "ShowHideDiv(), chkatchtbl()" })
+                        </div>
+                        <div id="dvOtherEdit" style="display: none">
+                            <div class="col-md-4">
+                                Explain Document Type:
+                            </div>
+                            <div class="col-md-8 form-group">
+                                <input class="form-control" type="text" id="ExpEdit" required />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label>Documents</label>
+                        </div>
+                        <div class="col-md-8 form-group" style="">
+                            <input name="EditFile" id="fileInputEdit" type="file" multiple>
+                        </div>
+                        <br /><br />                       
+                        <div>
+                            @foreach (CYCA_Module_V2.Common_Objects.CYCAAdmissionBodySearchViewModel m in Model.CYCAAdmissionBodySearchViewModels)
+                            {
+                                if (m.Files.Count > 0 && m.BodySearchId == (int)TempData["Message"])
+
+                                {
+                                    <div class="col-md-4" style="padding-right: 100px">
+                                        <table class="table">
+                                            <tr><u>Existing Files:</u></tr>
+                                            <tr>
+                                                <th>
+                                                    Attachment(s)
+                                                </th>
+                                                <th>
+                                                    Action
+                                                </th>
+                                            </tr>
+                                            <tr>
+                                                @for (int i = 0; i < m.Files.Count; i++)
+                                                 {
+                                                    <tr>
+                                                        <td>
+                                                            <div class="input-group">
+                                                                <i class="fa fa-1x fa-paperclip text-navy"></i>
+                                                                <a class="download-file1" href="@Url.Action("DownloadSearchFile", "Admit", new { id = m.Files[i].Document_Id })" target="_blank">
+                                                                    @m.Files[i].Document_Name
+                                                                </a>
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <a href='#' onclick='DeleteFile()'><span class='red'><i class="fa fa-trash"></i>Remove</span></a>
+                                                        </td>
+                                                    </tr>
+                                                 }
+                                        </table>
+                                    </div>
+                                }
+                             }
+                             <div class="col-md-4">
+                                <table class="table" id="FilesListEdit" style="visibility:hidden">
+                                    <tr><th><u>New Files:</u></th></tr>
+                                    <tr>
+                                        <th>
+                                            Attachment(s)
+                                        </th>
+                                        <th>
+                                            Action
+                                        </th>
+                                    </tr>
+                                </table>
+                             </div>
+                        </div>
+                    </div>
+                    <div class="col-md-10">
+
+                    </div>
+                    <div class="col-md-2 form-group">
+                        <a href="#" class="btn btn-info" style="background-color:#158cba; border-color: #158cba;" id="EditBodySearch">Save</a>
+                        <a href="#" class="btn btn-default" id="cancelEdit">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row col-md-12 col-sm-12" id="ViewBodilySearch">
+    <div class="col-md-12 col-sm-12">
+        <div class="panel panel-default">
+            <div class="panel-heading text-center">
+                <strong style="color:#158cba">View Body Search</strong>
+            </div>
+            <div class="panel-body">
+
+                <form id="myForm2">
+                    <div class="row">
+
+                        <div class="col-md-4">
+                            @Html.HiddenFor(m => m.Person_Id, new { @id = "id2" })
+                            @Html.HiddenFor(m => m.Admission_Id, new { @id = "Admission_Id2" })
+                            @Html.HiddenFor(m => m.BodySearchId, new { @id = "BodySearchId2" })
+                            Reason For Bodily Search
+                        </div>
+                        <div class="col-md-8 form-group" style="">
+
+                            @*@Html.DropDownList("Reason", (IEnumerable<SelectListItem>)ViewBag.SearchReasonList, "--Select--", new { @id = "SearchReasonId1", @class = "form-control" })*@
+                            @Html.DropDownListFor(m => m.Search_Reason_Id, ViewBag.SearchReasonList as SelectList, "--Select--", new { @id = "Search_Reason_Id2", @class = "form-control", disabled = "disabled" })
+
+                        </div>
+
+                        <div class="col-md-4">
+                            Conducted By
+                        </div>
+                        <div class="col-md-8 form-group" style="">
+                            @*@Html.DropDownList("conduct", (IEnumerable<SelectListItem>)ViewBag.UsersList, "--Select--", new { @id = "CondactedBy1", @class = "form-control" })*@
+                            @Html.DropDownListFor(m => m.Conducted_By, ViewBag.UsersList as SelectList, "--Select--", new { @id = "Conducted_By2", @class = "form-control", disabled = "disabled" })
+
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            Witnessed By
+                        </div>
+                        <div class="col-md-8 form-group">
+
+                            @*@Html.DropDownList("witness", (IEnumerable<SelectListItem>)ViewBag.UsersList, "--Select--", new { @id = "WitnessedBy1", @class = "form-control" })*@
+                            @Html.DropDownListFor(m => m.Witnessed_By, ViewBag.UsersList as SelectList, "--Select--", new { @id = "Witnessed_By2", @class = "form-control", disabled = "disabled" })
+                        </div>
+
+                        <div class="col-md-4">
+                            Description Of Location
+                        </div>
+                        <div class="col-md-8 form-group" style="">
+                            @*<input type="text" class=" form-control" id="Description" required>*@
+                            @Html.TextAreaFor(m => m.Description, new { @id = "Description2", @class = "form-control", disabled = "disabled" })
+                        </div>
+
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            Document Type
+                        </div>
+                        <div class="col-md-8 form-group">
+
+                            @*@Html.DropDownList("docs", (IEnumerable<SelectListItem>)ViewBag.DocumentTypeList, "--Select--", new { @id = "Document_Type_Id1", @class = "form-control", required = "required", onchange = "ShowHideDiv()" })*@
+                            @Html.DropDownListFor(m => m.Document_Type_Id, ViewBag.DocumentTypeList as SelectList, "--Select--", new { @id = "Document_Type_Id2", @class = "form-control", disabled = "disabled" })
+                        </div>
+                        <div id="dvOtherView" style="display: none">
+                            <div class="col-md-4">
+                                Explain Document Type:
+                            </div>
+                            <div class="col-md-8 form-group">
+
+                                <input class="form-control" type="text" id="ExpView" />
+                            </div>
+                        </div>          
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3 pull-left">
+
+                            @foreach (CYCA_Module_V2.Common_Objects.CYCAAdmissionBodySearchViewModel m in Model.CYCAAdmissionBodySearchViewModels)
+                            {
+                                if (m.Files.Count > 0 && m.BodySearchId == 100)
+                                {
+                                    <table class="table">
+                                        <tr><u>Existing Files:</u></tr>
+                                        @*<tr>
+                                <th>
+                                    Attachment(s)
+                                </th>
+                                <th>
+                                    Action
+                                </th>
+                            </tr>*@
+                                        <tr>
+                                            @for (int i = 0; i < m.Files.Count; i++)
+                                            {
+                                            <tr>
+                                                <td>
+                                                    <div class="input-group">
+                                                        <i class="fa fa-1x fa-paperclip text-navy"></i>
+                                                        <a class="download-file1" href="@Url.Action("DownloadSearchFile", "Admit", new { id = m.Files[i].Document_Id })" target="_blank">
+                                                            @m.Files[i].Document_Name
+                                                        </a>
+                                                    </div>
+                                                </td>
+                                                @*<td>
+                                        <a href='#' onclick='DeleteFile()'><span class='red'><i class="fa fa-trash"></i>Remove</span></a>
+                                    </td>*@
+                                            </tr>
+                                        }
+                                        </table>
+                                    }
+                                }
+                        </div>
+                    </div>
+                    <div class="col-md-11">
+
+                    </div>
+                    <div class="col-md-1 form-group">
+                        <a href="#" class="btn btn-info" style="background-color:#158cba; border-color: #158cba;" id="closeView">Close</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@*---------------------------------------------Illegal Items--------------------------------------------------------------------------------------*@
+<div class="row" id="IllegalItemsRecords">
+    <div class="col-md-12">
+        <div class="panel panel-default">
+            <button class="btn btn-primary" id="accordion" data-parent="#accordion" href="#actionModal" onclick="showNewIllegalItem()"><i class="fa fa-plus"></i> Add Illegal Items</button>
+            <div class="panel-heading text-center">
+                <strong style="color:#158cba"> Illegal Items History</strong>
+            </div>
+            <div class="panel-body">
+                <div class="table-responsive">
+                    <table class="table table-striped table-bordered table-hover" id="admissionList">
+                        <thead>
+                            <tr>
+                                <th>Date Captured</th>
+                                <th>Item Description</th>
+                                <th>Quantity</th>
+                                <th>Item Handed To</th>
+                                <th>Attachments</th>
+                                <th>&nbsp;</th>
+                                <th>&nbsp;</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (CYCA_Module_V2.Common_Objects.CycaAdmissionIllegalItemsViewModel m in Model.CycaAdmissionIllegalItemsViewModels.OrderByDescending(m => m.Item_Found_Id))
+                            {
+                            <tr>
+                                <td>@m.IllegalItemDate</td>
+                                <td>@m.Description</td>
+                                <td>@m.Quantity</td>
+                                <td>@m.selectedHandedBy</td>
+                                <td style="text-align: center;">
+                                    @for (int i = 0; i < m.Files.Count; i++)
+                                    {
+                                        <div class="input-group">
+                                            <i class="fa fa-1x fa-paperclip text-navy"></i>
+                                            <a class="download-file1" href="@Url.Action("DownloadSearchFile", "Admit", new { id = m.Files[i].Document_Id })" target="_blank">
+                                                @m.Files[i].Document_Name
+                                            </a>
+                                        </div>
+                                    }
+                                </td>
+                                <td><a href="#" onclick="showViewIllegal(@m.Item_Found_Id)">View</a></td>
+                                <td><a href="#" onclick="showEditIllegal(@m.Item_Found_Id)">Edit</a></td>
+                            </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row col-md-12 col-sm-12" id="AddIllegalItem">
+    <div class="col-md-12 col-sm-12">
+        <div class="panel panel-default">
+            <div class="panel-heading text-center">
+                <strong style="color:#158cba">New Illegal Item</strong>
+            </div>
+            <div class="panel-body">
+                <form id="myForm3">
+                    <div class="row">
+                        <div class="col-md-4">
+                            @Html.HiddenFor(m => m.Admission_Id)
+                            Description of Illegal Item(s) Found:
+                        </div>
+                        <div class="col-md-8 form-group" style="">
+                            @Html.TextAreaFor(m => m.Description, new { @id = "Item_Description", @class = "form-control", required = "required" })
+                        </div>
+
+                    </div>
+                    <div class="row" required>
+                        <div class="col-md-4">
+
+                            Quantity:
+                        </div>
+                        <div class="col-md-8 form-group" style="">
+                            @Html.TextBoxFor(m => m.Quantity, new { @id = "Quantity", @class = "form-control", required = "required" })
+                        </div>
+                        <div class="col-md-4">
+                            Item Handed To:
+                        </div>
+                        <div class="col-md-8 form-group" style="">
+                            @*@Html.DropDownList("conduct", (IEnumerable<SelectListItem>)ViewBag.UsersList, "--Select--", new { @id = "CondactedBy", @class = "form-control", required = "required" })
+                            @Html.DropDownListFor(m => m.Handed_By, new SelectList(@ViewBag.Userlists, "userId", "Full_Name"), "--Select--", new { @id = "Handed_By", @class = "form-control", required = "required" })*@
+                            @Html.DropDownListFor(m => m.Handed_By, ViewBag.UsersList as SelectList, "--Select--", new { @id = "Handed_By", @class = "form-control", required = "required"})
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            Document Type
+                        </div>
+                        <div class="col-md-8 form-group">
+
+                            @*@Html.DropDownList("docs", (IEnumerable<SelectListItem>)ViewBag.DocumentTypeList, "--Select--", new { @id = "Document_Type_Id", @class = "form-control", onchange = "ShowHideDiv()" })*@
+                            @Html.DropDownListFor(m => m.DocType_Id, ViewBag.DocumentTypeList as SelectList, "--Select--", new { @id = "DocType_Id", @class = "form-control", onchange = "ShowHideDiv(), chkatchtbl()" })
+                        </div>
+                        <div id="dvOtherIllegal" style="display: none">
+                            <div class="col-md-4">
+                                Explain Document Type:
+                            </div>
+                            <div class="col-md-8 form-group">
+                                @Html.TextBoxFor(m => m.Additional_Info, new { @class = "form-control", required = "required" })
+                                @*<input class="form-control" type="text" id="ExpIllAdd" required />*@
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label>Documents</label>
+                        </div>
+                        <div class="col-md-8 form-group" style="">
+
+                            <input id="fileInputIllegalAdd" type="file" multiple required disabled>
+                        </div>
+                        <br />            <br />
+                        <div class="col-md-3 pull-left">
+                            <table class="table" id="FilesListIllegalAdd" style="visibility:hidden">
+                                <tr>
+                                    <th>
+                                        Attachment(s)
+                                    </th>
+                                    <th>
+                                        Action
+                                    </th>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="row pull-right">
+                        <div class="col-md-12">
+                            @*<a href="#" class="btn btn-primary" id="InsertIllegalItem">Save</a>*@
+                            <a href="#" class="btn btn-info" style="background-color:#158cba; border-color: #158cba;" id="InsertIllegalItem">Save</a>
+                            <a href="#" class="btn btn-default" id="cancelIllegal">Cancel</a>
+
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row col-md-12 col-sm-12" id="EditIllegalItem">
+    <div class="col-md-12 col-sm-12">
+        <div class="panel panel-default">
+            <div class="panel-heading text-center">
+                <strong style="color:#158cba">New Illegal Item</strong>
+            </div>
+            <div class="panel-body">
+
+                <form id="myForm4">
+                    <div class="row">
+                        <div class="col-md-4">                           
+                            @Html.HiddenFor(m => m.Admission_Id, new { @id = "Admission_Id3" })
+                            @Html.HiddenFor(m => m.Item_Found_Id, new { @id = "Item_Found_Id1" })
+                            Description of Illegal Item(s) Found:
+                        </div>
+                        <div class="col-md-8 form-group" style="">
+                            @Html.TextAreaFor(m => m.Description, new { @id = "Item_Description1", @class = "form-control", required = "required" })
+                        </div>
+
+                    </div>
+                    <div class="row" required>
+                        <div class="col-md-4">
+
+                            Quantity:
+                        </div>
+                        <div class="col-md-8 form-group" style="">
+                            @Html.TextBoxFor(m => m.Quantity, new { @id = "Quantity1", @class = "form-control", required = "required" })
+                        </div>
+                        <div class="col-md-4">
+                            Item Handed To:
+                        </div>
+                        <div class="col-md-8 form-group" style="">
+                            @*@Html.DropDownList("conduct", (IEnumerable<SelectListItem>)ViewBag.UsersList, "--Select--", new { @id = "CondactedBy", @class = "form-control", required = "required" })
+                                @Html.DropDownListFor(m => m.Handed_By, new SelectList(@ViewBag.Userlists, "userId", "Full_Name"), "--Select--", new { @id = "Handed_By", @class = "form-control", required = "required" })*@
+                            @Html.DropDownListFor(m => m.Handed_By, ViewBag.UsersList as SelectList, "--Select--", new { @id = "Handed_By1", @class = "form-control", required = "required" })
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            Document Type
+                        </div>
+                        <div class="col-md-8 form-group">
+
+                            @*@Html.DropDownList("docs", (IEnumerable<SelectListItem>)ViewBag.DocumentTypeList, "--Select--", new { @id = "Document_Type_Id", @class = "form-control", onchange = "ShowHideDiv()" })*@
+                            @Html.DropDownListFor(m => m.DocType_Id, ViewBag.DocumentTypeList as SelectList, "--Select--", new { @id = "DocType_Id1", @class = "form-control", onchange = "ShowHideDiv()" })
+                        </div>
+                        <div id="dvOther2" style="display: none">
+                            <div class="col-md-4">
+                                Explain Document Type:
+                            </div>
+                            <div class="col-md-8 form-group">
+
+                                <input class="form-control" type="text" id="Exp2" required/>
+                            </div>
+                        </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label>Documents</label>
+                            </div>
+                            <div class="col-md-8 form-group" style="">
+
+                                <input id="fileInputIllegalEdit" type="file" multiple>
+                            </div>
+                            <br />            <br />
+                            <div class="col-md-3 pull-left">
+                                <table class="table" id="FilesListIllegalEdit">
+                                    <tr>
+                                        <th>
+                                            Attachment(s)
+                                        </th>
+                                        <th>
+                                            Action
+                                        </th>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="row pull-right">
+                            <div class="col-md-12">
+                                <a href="#" class="btn btn-primary" id="SendEdit">Save</a>
+                                <a href="#" class="btn btn-default" id="cancelEditIllegal">Cancel</a>
+
+                            </div>
+                        </div>
+</form>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row col-md-12 col-sm-12" id="ViewIllegalItem">
+    <div class="col-md-12 col-sm-12">
+        <div class="panel panel-default">
+            <div class="panel-heading text-center">
+                <strong style="color:#158cba">New Illegal Item</strong>
+            </div>
+            <div class="panel-body">
+
+                <form id="myForm5">
+                    <div class="row">
+                        <div class="col-md-4">
+                            @Html.HiddenFor(m => m.Admission_Id, new { @id = "Admission_Id4" })
+                            @Html.HiddenFor(m => m.Item_Found_Id, new { @id = "Item_Found_Id2" })
+                            Description of Illegal Item(s) Found:
+                        </div>
+                        <div class="col-md-8 form-group" style="">
+                            @Html.TextAreaFor(m => m.Description, new { @id = "Item_Description2", @class = "form-control", onchange = "ShowHideDiv()", disabled = "disabled" })
+                        </div>
+
+                    </div>
+                    <div class="row" required>
+                        <div class="col-md-4">
+
+                            Quantity:
+                        </div>
+                        <div class="col-md-8 form-group" style="">
+                            @Html.TextBoxFor(m => m.Quantity, new { @id = "Quantity2", @class = "form-control", onchange = "ShowHideDiv()", disabled = "disabled" })
+                        </div>
+                        <div class="col-md-4">
+                            Item Handed To:
+                        </div>
+                        <div class="col-md-8 form-group" style="">
+                            @*@Html.DropDownList("conduct", (IEnumerable<SelectListItem>)ViewBag.UsersList, "--Select--", new { @id = "CondactedBy", @class = "form-control", required = "required" })
+                                @Html.DropDownListFor(m => m.Handed_By, new SelectList(@ViewBag.Userlists, "userId", "Full_Name"), "--Select--", new { @id = "Handed_By", @class = "form-control", required = "required" })*@
+                            @Html.DropDownListFor(m => m.Handed_By, ViewBag.UsersList as SelectList, "--Select--", new { @id = "Handed_By2", @class = "form-control", disabled = "disabled" })
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            Document Type
+                        </div>
+                        <div class="col-md-8 form-group">
+
+                            @*@Html.DropDownList("docs", (IEnumerable<SelectListItem>)ViewBag.DocumentTypeList, "--Select--", new { @id = "Document_Type_Id", @class = "form-control", onchange = "ShowHideDiv()" })*@
+                            @Html.DropDownListFor(m => m.DocType_Id, ViewBag.DocumentTypeList as SelectList, "--Select--", new { @id = "DocType_Id2", @class = "form-control", disabled = "disabled" })
+                        </div>
+                        <div id="dvOtherViewIll" style="display: none">
+                            <div class="col-md-4">
+                                Explain Document Type:
+                            </div>
+                            <div class="col-md-8 form-group">
+
+                                <input class="form-control" type="text" id="ExpViewIll" required />
+                            </div>
+                        </div>
+
+                        <div class="col-md-8 form-group" style="">
+
+                            <input id="fileInput4" type="file" multiple disabled>
+                        </div>
+                        <br />            <br />
+                        <div class="col-md-3 pull-left">
+                            <table class="table" id="FilesList4" style="visibility:hidden">
+                                <tr>
+                                    <th>
+                                        Attachment(s)
+                                    </th>
+                                    <th>
+                                        Action
+                                    </th>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="row pull-right">
+                        <div class="col-md-12">
+                            @*<a href="#" class="btn btn-default" id="cancelIllegal">Cancel</a>*@
+                            <a href="#" class="btn btn-primary" id="CloseIllegal">Close</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+
+
+    $(document).ready(function () {
+        var child = @ViewBag.childId;
+        $(".datepicker").datepicker({
+            dateFormat: "dd M yy",
+            minDate: new Date(),
+            changeYear: true,
+            onClose: function () {
+                $(this).valid();
+            }
+        });
+        //$("#AddBodilySearch").hide();
+        $("#EditBodilySearch").hide();
+        $("#ViewBodilySearch").hide();
+        $("#AddIllegalItem").hide();
+        $("#EditIllegalItem").hide();
+        $("#ViewIllegalItem").hide();
+
+    });
+    //function showNew() {
+    //    $("#BodilySearchRecords").hide();
+    //    $("#IllegalItemsRecords").hide();
+    //    $("#EditBodilySearch").hide();
+    //    $("#ViewBodilySearch").hide();
+    //    $("#AddIllegalItem").hide();
+    //    $("#EditIllegalItem").hide();
+    //    $("#ViewIllegalItem").hide();
+    //    $("#AddBodilySearch").show();
+
+    //}
+
+    function showNew(id){
+       $.ajax({
+            type: 'POST',
+            url: '@Url.Content("~/Admit/BodySearchAddEdit")',
+            data: {
+              id: id,
+              //clientId: clientId,
+              //display: "Update"
+            },
+         success: function (result) {
+           console.log("returnedURL");
+             $('#BodilySearchRecords').hide();
+             $('#IllegalItemsRecords').hide();
+             $('#AddBodilySearch').append(result);
+             $('#AddBodilySearch').show();
+           
+                // ShowDynamicForm();
+            }
+        });
+  }
+    function showNewIllegalItem() {
+        $("#BodilySearchRecords").hide();
+        $("#IllegalItemsRecords").hide();
+        $("#EditBodilySearch").hide();
+        $("#ViewBodilySearch").hide();
+        $("#AddBodilySearch").hide();
+        $("#EditIllegalItem").hide();
+        $("#ViewIllegalItem").hide();
+        $("#AddIllegalItem").show();
+
+    }
+    $(function () {
+        $("#myForm").validate();
+        $("#myForm3").validate();
+        $("#myForm4").validate();
+
+    });
+    function ShowHideDiv() {
+        //Body Search Add
+        var Document_Type_Id = document.getElementById("Document_Type_Id");
+        var dvOther = document.getElementById("dvOther");
+        dvOther.style.display = Document_Type_Id.value == "4" ? "block" : "none";
+
+        var SearchReasonId = document.getElementById("SearchReasonId");
+        var dvOtherReason = document.getElementById("dvOtherReason");
+        dvOtherReason.style.display = SearchReasonId.value == "5" ? "block" : "none";
+
+
+
+        //Body Search Edit
+        var Document_Type_Id1 = document.getElementById("Document_Type_Id1");
+        var dvOtherEdit = document.getElementById("dvOtherEdit");
+        dvOtherEdit.style.display = Document_Type_Id1.value == "4" ? "block" : "none";
+
+        var Search_Reason_Id = document.getElementById("Search_Reason_Id");
+        var dvOtherReasonEdit = document.getElementById("dvOtherReasonEdit");
+        dvOtherReasonEdit.style.display = Search_Reason_Id.value == "5" ? "block" : "none";
+
+
+        //Illegal Item
+        var DocType_Id = document.getElementById("DocType_Id");
+        var dvOtherIllegal = document.getElementById("dvOtherIllegal");
+        dvOtherIllegal.style.display = DocType_Id.value == "4" ? "block" : "none";
+        //chkatchtbl();
+    }
+
+    var formdata = new FormData(); //FormData object
+    //Body Search
+    $("#fileInput").on("change", function () {
+        var fileInput = document.getElementById('fileInput');
+        //Iterating through each files selected in fileInput
+        for (i = 0; i < fileInput.files.length; i++) {
+            var sfilename = fileInput.files[i].name;
+            let srandomid = Math.random().toString(36).substring(7);
+            formdata.append(sfilename, fileInput.files[i]);
+
+            var markup = "<tr id='" + srandomid + "'><td>" + sfilename + "</td><td><a href='#' onclick='DeleteFile(\"" + srandomid + "\",\"" + sfilename +
+                         "\")'><span class='red'>Remove file</span></a></td></tr>"; // Binding the file name
+            $("#FilesList tbody").append(markup);
+        }
+        chkatchtbl();
+        $('#fileInput').val('');
+    });
+
+    //BodySearch Edit
+    $("#fileInputEdit").on("change", function () {
+        var fileInputEdit = document.getElementById('fileInputEdit');
+        //Iterating through each files selected in fileInput
+        for (i = 0; i < fileInputEdit.files.length; i++) {
+
+            var sfilename = fileInputEdit.files[i].name;
+            let srandomid = Math.random().toString(36).substring(7);
+
+            formdata.append(sfilename, fileInputEdit.files[i]);
+            var markup = "<tr id='" + srandomid + "'><td>" + sfilename + "</td><td><a href='#' onclick='DeleteFile(\"" + srandomid + "\",\"" + sfilename +
+                "\")'><span class='red'><i class='fa fa-trash'></i>Remove</span></a></td></tr>"; // Binding the file name
+            $("#FilesListEdit tbody").append(markup);
+
+        }
+        chkatchtbl();
+        $('#fileInputEdit').val('');
+    });
+
+
+    //Illegal Items
+    $("#fileInputIllegalAdd").on("change", function () {
+        var fileInputIllegalAdd = document.getElementById('fileInputIllegalAdd');
+        //Iterating through each files selected in fileInput
+        for (i = 0; i < fileInputIllegalAdd.files.length; i++) {
+            var sfilename = fileInputIllegalAdd.files[i].name;
+            let srandomid = Math.random().toString(36).substring(7);
+            formdata.append(sfilename, fileInputIllegalAdd.files[i]);
+
+            var markup = "<tr id='" + srandomid + "'><td>" + sfilename + "</td><td><a href='#' onclick='DeleteFile(\"" + srandomid + "\",\"" + sfilename +
+                "\")'><span class='red'>Remove file</span></a></td></tr>"; // Binding the file name
+            $("#FilesListIllegalAdd tbody").append(markup);
+        }
+        chkatchtbl();
+        $('#fileInputIllegalAdd').val('');
+    });
+
+
+
+    function DeleteFile(Fileid, FileName) {
+        formdata.delete(FileName)
+        $("#" + Fileid).remove();
+        chkatchtbl();
+    }
+    function chkatchtbl() {
+        //Body Search
+        if (document.getElementById("Document_Type_Id").value >=1) {
+
+            $("#fileInput").removeAttr("disabled")
+            if ($('#FilesList tr').length > 1) {
+                $("#fileInput").removeAttr("required")
+                $("#FilesList").css("visibility", "visible");
+            } else {
+                $("#fileInput").attr("required", "required")
+                $("#FilesList").css("visibility", "hidden");
+            }
+        } else {
+            $("#fileInput").attr("disabled", "disabled")
+            $("#FilesList").css("visibility", "hidden");
+            if ($('#FilesList tr').length > 1) {
+                $("#FilesList").css("visibility", "visible");
+                $("#Document_Type_Id").attr("required", "required")
+            }
+        }
+
+        //Body Search Edit
+        if (document.getElementById("Document_Type_Id1").value >= 1) {
+
+            $("#fileInputEdit").removeAttr("disabled")
+            if ($('#FilesListEdit tr').length > 1) {
+                $("#fileInputEdit").removeAttr("required")
+                $("#FilesListEdit").css("visibility", "visible");
+            } else {
+                $("#fileInputEdit").attr("required", "required")
+                $("#FilesListEdit").css("visibility", "hidden");
+            }
+        } else {
+            $("#fileInputEdit").attr("disabled", "disabled")
+            $("#FilesListEdit").css("visibility", "hidden");
+            if ($('#FilesListEdit tr').length > 1) {
+                $("#FilesListEdit").css("visibility", "visible");
+                $("#Document_Type_Id1").attr("required", "required")
+            }
+        }
+
+        //Illegal Items
+        if (document.getElementById("DocType_Id").value >=1) {
+            $("#fileInputIllegalAdd").removeAttr("disabled")
+            if ($('#FilesListIllegalAdd tr').length > 1) {
+                $("#fileInputIllegalAdd").removeAttr("required")
+                $("#FilesListIllegalAdd").css("visibility", "visible");
+            } else {
+                $("#fileInputIllegalAdd").attr("required", "required")
+            }
+        } else {
+            $("#fileInputIllegalAdd").attr("disabled", "disabled")
+            $("#FilesListIllegalAdd").css("visibility", "hidden");
+            if ($('#FilesListIllegalAdd tr').length > 1) {
+                $("#FilesListIllegalAdd").css("visibility", "visible");
+                $("#DocType_Id").attr("required", "required")
+            }
+        }
+
+        //if ($('#FilesList1 tr').length > 1) {
+        //    $("#FilesList1").css("visibility", "visible");
+        //} else {
+        //    $("#FilesList1").css("visibility", "hidden");
+        //}
+    }
+    $("#InsertBodySearch").click(function () {
+        var $valid = $("#myForm").valid();
+        if (!$valid) {
+            return;
+        }
+        console.log(formdata);
+        formdata.append('uploadername', $('#txtuploader').val());
+        formdata.append("Bodily_Search_Date", $("#BodySearchDate").val());
+        formdata.append("Conducted_By", $("#CondactedBy").val());
+        formdata.append("Document_Type_Id", $("#Document_Type_Id").val());
+        formdata.append("Witnessed_By", $("#WitnessedBy").val());
+        formdata.append("Search_Reason_Id", $("#SearchReasonId").val());
+        formdata.append("Person_Id",@ViewBag.childId);
+        formdata.append("Description", $("#Description").val());
+        $.confirm({
+            title: 'Add Bodily Search',
+            content: 'Are you sure you want to save changes?',
+            buttons: {
+                Yes: function () {
+                    $.ajax({
+                        url: '@Url.Action("NewBodilySearch", "Admit")',
+                        type: "POST",
+                        contentType: false, // Not to set any content header
+                        processData: false, // Not to process data
+                        data: formdata,
+                        async: false,
+                        success: function (result) {
+                            //alert( "the result is : " + result);
+                            location.reload(true);
+                            @*location.href = "/Admit/BodySearchList/" + @ViewBag.childId;*@
+
+
+                        },
+                        error: function (error) {
+                            console.log(error);
+                        }
+                    })
+                },
+                No: function () {
+
+                }
+            }
+        })
+    });
+
+
+  $("#InsertIllegalItem").click(function () {
+      var $valid = $("#myForm3").valid();
+        if (!$valid) {
+            return;
+        }
+        console.log(formdata);
+        formdata.append('uploadername', $('#txtuploader').val());
+        formdata.append("Person_Id",@ViewBag.childId);
+        formdata.append("Description", $("#Item_Description").val());
+        formdata.append("Quantity", $("#Quantity").val());
+        formdata.append("Handed_By", $("#Handed_By").val());
+        formdata.append("Document_Type_Id", $("#DocType_Id").val());
+      $.confirm({
+          title: 'Add Illegal Item',
+          content: 'Are you sure you want to save changes?',
+          buttons: {
+              Yes: function () {
+                  $.ajax({
+                      url: '@Url.Action("NewIllegalItem", "Admit")',
+                      type: "POST",
+                      contentType: false, // Not to set any content header
+                      processData: false, // Not to process data
+                      data: formdata,
+                      async: false,
+                      success: function (result) {
+                          location.reload(true);
+
+                      },
+                      error: function (error) {
+                          console.log(error);
+                      }
+                  });
+              },
+              No: function () {
+
+              }
+          }
+      })
+    });
+
+
+    $('#cancelAdd').click(function () {
+        document.getElementById("myForm").reset();
+        $("#AddBodilySearch").hide();
+        $("#BodilySearchRecords").show();
+        $("#IllegalItemsRecords").show();
+    });
+    $('#cancelIllegal').click(function () {
+        document.getElementById("myForm3").reset();
+        $("#AddIllegalItem").hide();
+        $("#BodilySearchRecords").show();
+        $("#IllegalItemsRecords").show();
+    });
+
+
+    function showEdit(BodySearchId) {
+        $("#BodilySearchRecords").hide();
+        $("#IllegalItemsRecords").hide();
+        $("#AddBodilySearch").hide();
+        $("#ViewBodilySearch").hide();
+        $("#AddIllegalItem").hide();
+        $("#EditIllegalItem").hide();
+        $("#ViewIllegalItem").hide();
+        $("#EditBodilySearch").show();
+        var url = "/Admit/GetBodySearchByBodySearchId?BodySearchId=" + BodySearchId;
+        $.ajax({
+            type: "GET",
+            url: url,
+            success: function (data) {
+                console.log(data);
+                var obj = JSON.parse(data);            
+                $("#BodySearchId1").val(obj.BodySearchId);
+                $("#Conducted_By").val(obj.Conducted_By);
+                $("#Document_Type_Id1").val(obj.Document_Type_Id);
+                $("#Witnessed_By").val(obj.Witnessed_By);
+                $("#Search_Reason_Id").val(obj.Search_Reason_Id);
+                $("#Description1").val(obj.Description);
+
+            }, error: function () { alert('something bad happened'); }
+        })
+    }
+
+    $("#EditBodySearch").click(function () {
+      var $valid = $("#myForm1").valid();
+        if (!$valid) {
+            return;
+        }
+        console.log(formdata);
+        formdata.append('uploadername', $('#txtuploader').val());
+        formdata.append("Admission_Id", $("#Admission_Id1").val());
+        formdata.append("BodySearchId", $("#BodySearchId1").val());
+        formdata.append("Conducted_By", $("#Conducted_By").val());
+        formdata.append("Document_Type_Id", $("#Document_Type_Id1").val());
+        formdata.append("Witnessed_By", $("#Witnessed_By").val());
+        formdata.append("Search_Reason_Id", $("#Search_Reason_Id").val());
+        formdata.append("Description", $("#Description1").val());
+      $.confirm({
+          title: 'Edit Bodily Search',
+          content: 'Are you sure you want to save changes?',
+          buttons: {
+              Yes: function () {
+                  $.ajax({
+                      url: '@Url.Action("EditBodySearch", "Admit")',
+                      type: "POST",
+                      contentType: false, // Not to set any content header
+                      processData: false, // Not to process data
+                      data: formdata,
+                      async: false,
+                      success: function (result) {
+                          location.reload(true);
+
+                      },
+                      error: function (error) {
+                          console.log(error);
+                      }
+                  });
+              },
+              No: function () {
+
+              }
+          }
+      })
+    });
+
+    @*$("#EditBodySearch").click(function () {
+        if (!$('#myForm1').valid()) {
+            return false;
+        }
+        $.confirm({
+            title: 'Edit Bodily Search',
+            content: 'Are you sure you want to save changes?',
+            buttons: {
+                Yes: function () {
+                    $.ajax({
+                        type: "Post",
+                        url: "/Admit/EditBodySearch",
+                        data: {
+                            Person_Id: @ViewBag.childId,
+                            Admission_Id: $("#Admission_Id1").val(),
+                            BodySearchId: $("#BodySearchId1").val(),
+                            Conducted_By: $("#Conducted_By").val(),
+                            Document_Type_Id: $("#Document_Type_Id1").val(),
+                            Witnessed_By: $("#Witnessed_By").val(),
+                            Search_Reason_Id: $("#Search_Reason_Id").val(),
+                            Description: $("#Description1").val()
+                        },
+                        success: function (result) {
+                            location.reload(true);
+                            //document.getElementById("myForm").reset();
+                            //$("#EditBodilySearch").hide();
+                            //$("#BodilySearchRecords").show();
+                            //$("#IllegalItemsRecords").show();
+                        },
+                        error: function (xhr, ajaxOptions, error) {
+                            alert(xhr.status);
+                            alert('Error: ' + xhr.responseText);
+                        }
+                    })
+                },
+                No: function () {
+
+                }
+            }
+        })
+    })*@
+
+    function showEditIllegal(Item_Found_Id) {
+        $("#BodilySearchRecords").hide();
+        $("#IllegalItemsRecords").hide();
+        $("#AddBodilySearch").hide();
+        $("#ViewBodilySearch").hide();
+        $("#AddIllegalItem").hide();
+        $("#EditBodilySearch").hide();
+        $("#ViewIllegalItem").hide();
+        $("#EditIllegalItem").show();
+        var url = "/Admit/GetIllegalItemByIllegalItemId?Item_Found_Id=" + Item_Found_Id;
+        $.ajax({
+            type: "GET",
+            url: url,
+            success: function (data) {
+                console.log(data);
+                var obj = JSON.parse(data);
+                $("#Item_Found_Id1").val(obj.Item_Found_Id);
+                $("#Item_Description1").val(obj.Description);
+                $("#Quantity1").val(obj.Quantity);
+                $("#Handed_By1").val(obj.Handed_By);
+                $("#DocType_Id1").val(obj.Document_Type_Id);
+
+
+            }, error: function () { alert('something bad happened'); }
+        })
+    }
+    $("#SendEdit").click(function () {
+        if (!$('#myForm4').valid()) {
+            return false;
+        }
+        $.confirm({
+            title: 'Edit Illegal Item',
+            content: 'Are you sure you want to save changes?',
+            buttons: {
+                Yes: function () {
+                    $.ajax({
+                        type: "Post",
+                        url: "/Admit/EditIllegalItem",
+                        data: {
+                            Person_Id: @ViewBag.childId,
+                            Admission_Id: $("#Admission_Id1").val(),
+                            Item_Found_Id: $("#Item_Found_Id1").val(),
+                            Quantity: $("#Quantity1").val(),
+                            Document_Type_Id: $("#DocType_Id1").val(),
+                            Handed_By: $("#Handed_By1").val(),
+                            Description: $("#Item_Description1").val()
+                        },
+                        success: function (result) {
+                            location.reload(true);
+                            //document.getElementById("myForm4").reset();
+
+                            //$("#EditIllegalItem").hide();
+                            //$("#BodilySearchRecords").show();
+                            //$("#IllegalItemsRecords").show();
+                        },
+                        error: function (xhr, ajaxOptions, error) {
+                            alert(xhr.status);
+                            alert('Error: ' + xhr.responseText);
+                        }
+                    })
+                },
+                No: function () {
+
+                }
+            }
+        })
+    })
+    $("#cancelEdit").click(function () {
+        document.getElementById("myForm1").reset();
+        $("#BodilySearchRecords").show();
+        $("#IllegalItemsRecords").show();
+
+        $("#EditBodilySearch").hide();
+    })
+    $("#cancelEditIllegal").click(function () {
+        document.getElementById("myForm1").reset();
+        $("#BodilySearchRecords").show();
+        $("#IllegalItemsRecords").show();
+
+        $("#EditIllegalItem").hide();
+    })
+
+    function showView(BodySearchId) {
+        $("#BodilySearchRecords").hide();
+        $("#IllegalItemsRecords").hide();
+        $("#AddBodilySearch").hide();
+        $("#EditBodilySearch").hide();
+        $("#AddIllegalItem").hide();
+        $("#EditIllegalItem").hide();
+        $("#ViewIllegalItem").hide();
+        $("#ViewBodilySearch").show();
+        var url = "/Admit/GetBodySearchByBodySearchId?BodySearchId=" + BodySearchId;
+        $.ajax({
+            type: "GET",
+            url: url,
+            success: function (data) {
+                console.log(data);
+                var obj = JSON.parse(data);
+                $("#BodySearchId2").val(obj.BodySearchId);
+                $("#Conducted_By2").val(obj.Conducted_By);
+                $("#Document_Type_Id2").val(obj.Document_Type_Id);
+                $("#Witnessed_By2").val(obj.Witnessed_By);
+                $("#Search_Reason_Id2").val(obj.Search_Reason_Id);
+                $("#Description2").val(obj.Description);
+
+            }, error: function () { alert('something bad happened'); }
+        })
+    }
+    function showViewIllegal(Item_Found_Id) {
+        $("#BodilySearchRecords").hide();
+        $("#IllegalItemsRecords").hide();
+        $("#AddBodilySearch").hide();
+        $("#EditBodilySearch").hide();
+        $("#AddIllegalItem").hide();
+        $("#ViewBodilySearch").hide();
+        $("#EditIllegalItem").hide();
+        $("#ViewIllegalItem").show();
+        var url = "/Admit/GetIllegalItemByIllegalItemId?Item_Found_Id=" + Item_Found_Id;
+        $.ajax({
+            type: "GET",
+            url: url,
+            success: function (data) {
+                console.log(data);
+                var obj = JSON.parse(data);
+                $("#Item_Found_Id2").val(obj.Item_Found_Id);
+                $("#Item_Description2").val(obj.Description);
+                $("#Quantity2").val(obj.Quantity);
+                $("#Handed_By2").val(obj.Handed_By);
+                $("#DocType_Id2").val(obj.Document_Type_Id);
+
+            }, error: function () { alert('something bad happened'); }
+        })
+    }
+    $("#closeView").click(function () {
+        $("#BodilySearchRecords").show();
+        $("#IllegalItemsRecords").show();
+        $("#ViewBodilySearch").hide();
+    })
+    $("#CloseIllegal").click(function () {
+        $("#BodilySearchRecords").show();
+        $("#IllegalItemsRecords").show();
+        $("#ViewIllegalItem").hide();
+    })
+
+
+
+    //-----------------------------------------------------------------Illegal Items------------------------------------//
+
+
+
+
+
+</script>
+
+
+
+
+

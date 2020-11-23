@@ -1,0 +1,87 @@
+﻿@using MvcCheckBoxList.Model
+@model Common_Objects.Models.User
+
+@{
+    ViewBag.Title = "Edit User";
+}
+
+<h3>@ViewBag.Message</h3>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="panel panel-primary">
+        <div class="panel-heading" style="text-align: center">
+            Edit User
+            @Html.HiddenFor(x => x.User_Id)
+        </div>
+        <div class="panel-body">
+
+            <div class="col-md-12" style="padding-left:0px !important; padding-right:0px !important;">
+                <div class="form-group">
+                    @Html.LabelFor(x => x.First_Name, new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.TextBoxFor(model => model.First_Name, new { @class = "form-control" })
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-12" style="padding-left:0px !important; padding-right:0px !important;">
+                <div class="form-group">
+                    @Html.LabelFor(x => x.Last_Name, new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.TextBoxFor(model => model.Last_Name, new { @class = "form-control" })
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-12" style="padding-left:0px !important; padding-right:0px !important;">
+                <div class="form-group">
+                    @Html.LabelFor(x => x.Roles, new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.CheckBoxListFor(x => x.Posted_Roles.Role_IDs,
+                            x => x.Available_Roles,
+                            x => x.Role_Id,
+                            x => x.Description,
+                            x => x.Roles.ToList(), Position.Vertical)
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-12" style="padding-left:0px !important; padding-right:0px !important;">
+                <div class="form-group">
+                    @Html.LabelFor(x => x.Groups, new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.CheckBoxListFor(x => x.Posted_Groups.Group_IDs,
+                            x => x.Available_Groups,
+                            x => x.Group_Id,
+                            x => x.Description,
+                            x => x.Groups.ToList(), Position.Vertical)
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-12" style="padding-left:0px !important; padding-right:0px !important;">
+                <div class="form-group">
+                    @Html.LabelFor(x => x.Is_Active, new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.CheckBoxFor(model => model.Is_Active)
+                        <label for="IsActive">Yes</label>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+
+        <div class="panel-footer">
+
+            <input type="submit" id="ButtonSave" value="Save" class="btn btn-success" />
+            @Html.ActionLink("Cancel", "Index", null, new { @class = "btn btn-danger" })
+
+        </div>
+
+    </div>
+}

@@ -1,0 +1,112 @@
+﻿using Common_Objects;
+using Common_Objects.Models;
+using System;
+using System.Web.Mvc;
+
+namespace SDIIS.Controllers
+{
+    public class OrganizationController : Controller
+    {
+        [Authorize(Roles = "SysAdmin")]
+        public ActionResult Index(string SearchDescription)
+        {
+            var organizationModel = new OrganizationModel();
+            var organizationsList = organizationModel.GetListOfOrganizations(true, false, SearchDescription);
+
+            return View(organizationsList);
+        }
+
+        [CustomAuthorize("Main", "Organization", "Create")]
+        public ActionResult Create()
+        {
+            var newOrganization = new Organization();
+
+            return View(newOrganization);
+        }
+
+        [AcceptVerbs(HttpVerbs.Post)]
+        public ActionResult Create(Organization organization)
+        {
+            var dateCreated = DateTime.Now;
+            const string createdBy = "jhendrikse";
+            const bool isActive = true;
+            const bool isDeleted = false;
+
+            if (ModelState.IsValid)
+            {
+                var organizationModel = new OrganizationModel();
+
+                // TODO: fix created-by field
+                var createOrganization = organizationModel.CreateOrganization(organization.Description, organization.Telephone_Number, organization.Fax_Number, organization.Email_Address, isActive, isDeleted, dateCreated, createdBy);
+
+                if (createOrganization == null)
+                {
+                    ViewBag.Message = "An Error Occurred, Please contact support";
+                    return View(organization);
+                }
+
+                return RedirectToAction("Index", "Organization");
+            }
+
+            return View(organization);
+        }
+
+        [CustomAuthorize("Main", "Organization", "Edit")]
+        public ActionResult Edit(string id)
+        {
+            var organizationModel = new OrganizationModel();
+            var organizationToEdit = organizationModel.GetSpecificOrganization(int.Parse(id));
+
+            return View(organizationToEdit);
+        }
+
+        [AcceptVerbs(HttpVerbs.Post)]
+        public ActionResult Edit(Organization organization)
+        {
+            var dateLastModified = DateTime.Now;
+            const string modifiedBy = "jhendrikse";
+            const bool isActive = true;
+            const bool isDeleted = false;
+
+            if (ModelState.IsValid)
+            {
+                var organizationModel = new OrganizationModel();
+                var updatedOrganization = organizationModel.EditOrganization(organization.Organization_Id, organization.Description, organization.Telephone_Number, organization.Fax_Number, organization.Email_Address, isActive, isDeleted, dateLastModified, modifiedBy);
+
+                if (updatedOrganization == null)
+                {
+                    ViewBag.Message = "An Error Occured, Please contact Support";
+                    return View(organization);
+                }
+
+                return RedirectToAction("Index", "Organization");
+            }
+
+            return View(organization);
+        }
+
+        [CustomAuthorize("Main", "Organization", "Delete")]
+        public ActionResult Delete(string id)
+        {
+            var organizationModel = new OrganizationModel();
+            var deleteOrganization = organizationModel.GetSpecificOrganization(int.Parse(id));
+
+            return View(deleteOrganization);
+        }
+
+        [AcceptVerbs(HttpVerbs.Post)]
+        public ActionResult Delete(Organization organization)
+        {
+            var organizationModel = new OrganizationModel();
+            var deletedOrganization = organizationModel.SetOrganizationIsDeleted(organization.Organization_Id, true);
+
+            if (deletedOrganization == null)
+            {
+                ViewBag.Message = "An Error Occured, Contact support";
+                return View(organization);
+            }
+
+            return RedirectToAction("Index", "Organization");
+        }
+	}
+}

@@ -1,0 +1,50 @@
+﻿@model Common_Objects.Models.Local_Municipality
+@{ Layout = null; }
+
+
+                @using (Html.BeginForm("CreateMunicipality", "PlaceName", FormMethod.Post))
+                {
+                    @Html.AntiForgeryToken()
+
+                    <div class="form-horizontal">
+                        @Html.HiddenFor(model => model.Local_Municipality_Id, new { htmlAttributes = new { @class = "form-control" } })
+
+                        @*@Html.HiddenFor(model => model.Area_Id, new { htmlAttributes = new { @class = "form-control" } })*@
+
+
+                        @Html.HiddenFor(model => model.District_Municipality_Id, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.HiddenFor(model => model.District.Province_Id, new { htmlAttributes = new { @class = "form-control" } })
+
+                        <div class="form-group">
+                            @Html.Label("Province", htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @Html.DropDownListFor(model=>model.District.Province_Id, (IEnumerable<SelectListItem>)ViewBag.ProvinceList, "Select", htmlAttributes: new { @class = "form-control", @id = "ResultOfChoice" })
+                                @Html.ValidationMessageFor(model => model.District.Province.Description, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.Label("District", htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @Html.DropDownListFor(model=>model.District.District_Id, (IEnumerable<SelectListItem>)ViewBag.DistrictList, "Select", htmlAttributes: new { @class = "form-control", @id = "ResultOfChoice" })
+                                @Html.ValidationMessageFor(model => model.District.Description, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.Label("Municipality", htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-md-offset-2 col-md-10">
+                                <input type="submit" value="Save" class="btn btn-default" />
+                            </div>
+                        </div>
+                    </div>
+                }
+
+                <div>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                </div>

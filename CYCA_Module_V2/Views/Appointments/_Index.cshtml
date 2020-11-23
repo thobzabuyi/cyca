@@ -1,0 +1,483 @@
+﻿@using Common_Objects.ViewModels;
+@model  CYCA_Module_V2.Common_Objects.CYCA_AppointmentsViewModel
+<style>
+    #newdatescheduled {
+        z-index: 1600 !important; /* has to be larger than 1050 */
+    }
+    #datescheduled {
+        z-index: 1600 !important; /* has to be larger than 1050 */
+    }
+    .fc .fc-timegrid-col {
+        border-top-style: dotted;
+        border: 1px solid var(--fc-border-color,#ddd);
+    }
+    .fc .fc-timegrid-slot {
+        border-top-style: dotted;
+        border: 1px solid var(--fc-border-color,#ddd);
+    }
+    .fc-timegrid-event {
+        cursor:pointer;
+    }
+    .fc-media-screen .fc-timegrid-event {
+        position: absolute !important;
+    }
+</style>
+<div class="row">
+    <!-- scheduler -->
+    <div class="col-md-12">
+        <div id="calendar"></div>
+    </div>
+
+</div>
+<!--New-->
+<div class="modal" id="newSelectedModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <a href="#" data-dismiss="modal" class="btn pull-right">Cancel</a>
+                <a href="#" class="btn btn-primary pull-right" id="newsubmitButton">Save</a>
+            </div>
+            <div class="modal-body">
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="col-md-4">Date/Time Scheduled</div><div class="col-md-6">
+                            <div class='input-group date datetimepicker1'>
+                                <input id="newdatescheduled" type='text' class="form-control datetimepicker1" />
+                                <span class="input-group-addon">
+                                    <span class="glyphicon glyphicon-calendar"></span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <p>&nbsp;</p>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="col-md-4">Duration (minutes)</div><div class="col-md-8"><input class="form-control" id="newduration" type="text" /></div>
+                    </div>
+                </div>
+                <p>&nbsp;</p>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="col-md-4">Appointment Category</div><div class="col-md-8"><select class="form-control" id="newcboCategory"></select></div> <!-- auto populates from JS below -->
+                    </div>
+                </div>
+                <p>&nbsp;</p>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="col-md-4">Appointment Type</div><div class="col-md-8"><select class="form-control" id="newcboType"></select></div> <!-- auto populates from JS below -->
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<!--Edit-->
+<div class="modal" id="editSelectedModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <a href="#" data-dismiss="modal" class="btn pull-right">Cancel</a>
+                <a href="#" class="btn btn-danger pull-right" id="deleteButton">Delete</a>
+                <a href="#" class="btn btn-primary pull-right" id="submitButton">Update</a>
+            </div>
+            <div class="modal-body">
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="col-md-4">Date/Time Scheduled</div><div class="col-md-6">
+                            <div class='input-group date datetimepicker1'>
+                                <input id="datescheduled" type='text' class="form-control datetimepicker1" />
+                                <span class="input-group-addon">
+                                    <span class="glyphicon glyphicon-calendar"></span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <p>&nbsp;</p>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="col-md-4">Duration (minutes)</div><div class="col-md-8"><input class="form-control" id="duration" type="text" /></div>
+                    </div>
+                </div>
+                <p>&nbsp;</p>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="col-md-4">Appointment Category</div><div class="col-md-8"><select class="form-control" id="cboCategory"></select></div> <!-- auto populates from JS below -->
+                    </div>
+                </div>
+                <p>&nbsp;</p>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="col-md-4">Appointment Type</div><div class="col-md-8"><select class="form-control" id="cboType"></select></div> <!-- auto populates from JS below -->
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    var AppointmentTypeList = [];
+    var AppointmentCategoryList = [];
+    var cal;
+    var SelectedEvent; // the selected event object
+    var SelectedID; // the selected event ID
+    $(function () {
+        GetLists();
+        LoadAndRenderCalendar();
+    });
+    $('#newSelectedModal').on('shown.bs.modal', function () {
+        $('#newdatescheduled').datetimepicker({
+            dateFormat: "dd M yy",
+            changeMonth: true,
+            changeYear: true,
+            //minDate: new Date(),
+            //maxDate: new Date(),
+            //yearRange: "-60:+0",
+            controlType: 'select',
+            timeFormat: 'hh:mm TT'
+        });
+    });
+    $('#editSelectedModal').on('shown.bs.modal', function () {
+        $('#datescheduled').datetimepicker({
+            dateFormat: "dd M yy",
+            changeMonth: true,
+            changeYear: true,
+            //minDate: new Date(),
+            //maxDate: new Date(),
+            //yearRange: "-60:+0",
+            controlType: 'select',
+            timeFormat: 'hh:mm TT'
+        });
+    });
+    function LoadAndRenderCalendar() {
+        //ShowCalendar();
+        //$('#calendar').fullCalendar('render');
+        var calendarEl = document.getElementById('calendar');
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'timeGridWeek',
+            headerToolbar: {
+                start: 'today prev,next',  // diary inbuilt menu items
+                center: 'title',
+                end: 'timeGridWeek,list'
+            },
+            allDaySlot: false,
+            //themeSystem:'bootstrap',
+            dateClick: function (date, jsEvent, view, resourceObj) {
+                $('#newSelectedModal').modal();
+                $('#newcboType').empty();
+                $('#newcboCategory').empty();
+               // $('#newtitle').val('');
+                var option = '';
+                AppointmentCategoryList.forEach(function (item) {
+                    option += '<option value="' + item.Id + '">' + item.Description + '</option>';
+                })
+                $('#newcboCategory').append(option);
+                option = '';
+                AppointmentTypeList.forEach(function (item) {
+                    if (item.CatId == $('#newcboCategory').val()) {
+                        option += '<option value="' + item.Id + '">' + item.Description + '</option>';
+                    }
+                })
+                $('#newcboType').append(option);
+                
+                $('#newdatescheduled').val(getFormattedDate(date.dateStr));
+                $('#newduration').val(30); // assuming default 30 minutes appointment
+            },
+            eventClick: function (calEvent) {
+                EditEvent(calEvent.event.id)
+            },
+            eventSources: [
+                {
+                    url: '@Url.Content("~/Appointments/GetScheduledEvents")',
+                    error: function () {
+                        alert('there was an error while fetching resource data!');
+                    }
+                }]
+        });
+        calendar.render();
+        cal = calendar;
+    }
+    function ShowCalendar() {
+        $('#calendar').fullCalendar({
+            schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source', // NOTE: change to commercial license if you are using it commercially, play fair!!
+            theme: false,
+            height: 600,
+            //resourceAreaWidth: 230,
+            //groupByDateAndResource: false,
+            editable: true,
+            aspectRatio: 1.8,
+            scrollTime: '08:00',
+            timezone: 'local',
+            defaultView: 'agendaWeek',
+            //defaultDate: "2020-08-04",
+            header: {
+                left: ' today prev,next',  // diary inbuilt menu items
+                center: 'title',
+                right: 'month,agendaWeek,agendaDay,list'
+            },
+            views: {
+                agendaWeek: {
+                    type: 'agendaWeek',
+                    duration: { days: 7 }
+                }
+            },
+            dayClick: function (date, jsEvent, view, resourceObj) {
+                $('#newSelectedModal').modal();
+                $('#newcboType').empty();
+                $('#newcboCategory').empty();
+              //  $('#newtitle').val('');
+                var option = '';
+                AppointmentTypeList.forEach(function (item) {
+                    option += '<option value="' + item.Id + '">' + item.Description + '</option>';
+                })
+                $('#newcboType').append(option);
+
+                option = '';
+                AppointmentCategoryList.forEach(function (item) {
+                    option += '<option value="' + item.Id + '">' + item.Description + '</option>';
+                })
+                $('#newcboCategory').append(option);
+
+                $('#newdatescheduled').val(getFormattedDate(date));
+                $('#newduration').val(30); // assuming default 30 minutes appointment
+            },
+            eventSources: [
+                {
+                    url: '@Url.Content("~/Appointments/GetScheduledEvents")',
+                    error: function () {
+                        alert('there was an error while fetching resource data!');
+                    }
+                }]
+        });
+    };
+    function GetLists() {
+        $.ajax({
+            url: '@Url.Content("~/Appointments/GetSetupInfo")',
+            cache: false,
+            success: function (resultData) {
+                ClearLists();
+                AppointmentTypeList = resultData.AppointmentTypes.slice(0);
+                AppointmentCategoryList = resultData.AppointmentCategories.slice(0);
+            }
+        });
+    };
+    function ClearLists() {
+        AppointmentTypeList = [];
+        AppointmentCategoryList = [];
+    }
+    function getFormattedDate(date) {
+        var today = new Date(date);
+        var dd = today.getDate();
+        var mm = today.getMonth(); //January is 0!
+        var hh = today.getHours();
+        var min = today.getMinutes();
+        var amPm = "AM";
+        if (hh == 0)
+            hh = '00';
+        console.log(hh);
+        if (hh > 12) {
+            hh = hh - 12;
+            amPm = "PM";
+        }
+        if (hh == 12) {
+            amPm = "PM";
+        }
+        if (hh < 10 && hh> 0) {
+            hh = '0' + hh
+        }
+
+        if (min == 0)
+            min = '00';
+        var yyyy = today.getFullYear();
+        if (dd < 10) {
+            dd = '0' + dd
+        }
+
+        var month = new Array();
+        month[0] = "Jan";
+        month[1] = "Feb";
+        month[2] = "Mar";
+        month[3] = "Apr";
+        month[4] = "May";
+        month[5] = "Jun";
+        month[6] = "Jul";
+        month[7] = "Aug";
+        month[8] = "Sep";
+        month[9] = "Oct";
+        month[10] = "Nov";
+        month[11] = "Dec";
+
+        var today = dd + ' ' + month[mm] + ' ' + yyyy + ' ' + hh + ':' + min + ' ' + amPm;
+        return today;
+    }
+
+    $('#newsubmitButton').on('click', function (e) {
+        e.preventDefault();
+        $("#newSelectedModal").modal('hide');
+        var endTime = new Date($('#newdatescheduled').val());
+        endTime.setMinutes(endTime.getMinutes() + parseInt($('#newduration').val()));
+
+        var event = {
+           // title: $('#newtitle').val(),
+            start: new Date($('#newdatescheduled').val()),
+            end: endTime,
+            appointmentCategoryId: $('#newcboCategory').val(),
+            appointmentTypeId: $('#newcboType').val(),
+            duration: $('#newduration').val(),
+        }
+        UpdateEventMove(event, null);
+
+       // $("#calendar").fullCalendar('refresh');
+       // $('#calendar').fullCalendar('refetchEvents');
+    });
+    $('#submitButton').on('click', function (e) {
+        e.preventDefault();
+        $("#editSelectedModal").modal('hide');
+        var endTime = new Date($('#datescheduled').val());
+        endTime.setMinutes(endTime.getMinutes() + parseInt($('#duration').val()));
+
+        SelectedEvent.start = new Date($('#datescheduled').val());
+        SelectedEvent.end = endTime;
+        SelectedEvent.appointmentCategoryId = $('#cboCategory').val();
+        SelectedEvent.appointmentTypeId = $('#cboType').val();
+        SelectedEvent.duration = $('#duration').val();
+
+        UpdateEventMove(SelectedEvent, null);
+
+        // $("#calendar").fullCalendar('refresh');
+        // $('#calendar').fullCalendar('refetchEvents');
+    });
+    $('#deleteButton').on('click', function (e) {
+        e.preventDefault();
+        
+        $.confirm({
+            title: 'Delete Appointment',
+            content: 'Are you sure you want to delete this appointment?',
+            buttons: {
+                Yes: function () {
+                    $.ajax({
+                        type: "Post",
+                        url: "/Appointments/DeleteAppointment",
+                        data: JSON.stringify({
+                            Id: SelectedID
+                        }),
+                        contentType: "application/json",
+                        success: function () {
+                            $("#editSelectedModal").modal('hide');
+                            cal.refetchEvents();
+                        },
+                        error: function (xhr, ajaxOptions, error) {
+
+                        }
+                    });
+                },
+                No: function () {
+
+                }
+            }
+        });
+    });
+    function UpdateEventMove(event, view) {
+        var dataRow = {
+            'Event': event
+        }
+
+
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Content("~/Appointments/PushEvent")',
+            contentType: "application/json",
+            data: JSON.stringify(dataRow),
+            success: function () {
+                cal.refetchEvents();
+
+            },
+            error: function () { alert('something bad happened'); }
+        });
+    }
+
+    function EditEvent(id) {
+        $.ajax({
+            type: 'GET',
+            url: '@Url.Content("~/Appointments/GetAppointment")',
+            dataType: "json",
+            contentType: "application/json",
+            data: {
+                Id: id
+            },
+            success: function (result) {
+                SelectedEvent = result;
+                SelectedID = result.id;
+                ShowEditModal();
+            },
+            error: function () { alert('something bad happened'); }
+        });
+    }
+    function ShowEditModal() {
+        $('#editSelectedModal').modal();
+        $('#cboType').empty();
+        $('#cboCategory').empty();
+
+        var option = '';
+        
+
+        
+        AppointmentCategoryList.forEach(function (item) {
+            option += '<option value="' + item.Id + '">' + item.Description + '</option>';
+        })
+        $('#cboCategory').append(option);
+        $('#cboCategory').val(SelectedEvent.appointmentCategoryId);
+
+        //$('#cboType').val(SelectedEvent.appointmentTypeId);
+        option = '';
+        AppointmentTypeList.forEach(function (item) {
+            if (item.CatId == $('#cboCategory').val()) {
+                option += '<option value="' + item.Id + '">' + item.Description + '</option>';
+            }
+        })
+        $('#cboType').append(option);
+
+        
+        $('#title').val(SelectedEvent.title);
+        $('#datescheduled').val(getFormattedDate(SelectedEvent.start));
+        $('#duration').val(SelectedEvent.duration);
+        $('#cboType').val(SelectedEvent.appointmentTypeId);
+
+    }
+
+    $('#newcboCategory').change(function () {
+        var category = $(this).val()
+
+        $('#newcboType').empty();
+        var option = '';
+
+        AppointmentTypeList.forEach(function (item) {
+            if (item.CatId == category) {
+                option += '<option value="' + item.Id + '">' + item.Description + '</option>';
+            }
+        })
+        $('#newcboType').append(option);
+    });
+
+    $('#cboCategory').change(function () {
+        var category = $(this).val()
+
+        $('#cboType').empty();
+        var option = '';
+
+        AppointmentTypeList.forEach(function (item) {
+            if (item.CatId == category) {
+                option += '<option value="' + item.Id + '">' + item.Description + '</option>';
+            }
+        })
+        $('#cboType').append(option);
+    });
+
+</script>
+
+

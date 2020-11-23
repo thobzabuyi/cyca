@@ -1,0 +1,126 @@
+﻿using Common_Objects;
+using Common_Objects.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web.Mvc;
+
+namespace SDIIS.Controllers
+{
+    public class ModuleActionController : Controller
+    {
+        [CustomAuthorize("Main", "ModuleAction", "Index")]
+        public ActionResult Index()
+        {
+            var moduleActionModel = new ModuleActionModel();
+            var moduleActionList = moduleActionModel.GetListOfModuleActions(true, false);
+
+            return View(moduleActionList);
+        }
+
+        [CustomAuthorize("Main", "ModuleAction", "Create")]
+        public ActionResult Create()
+        {
+            var newModuleAction = new Module_Action();
+
+            return View(newModuleAction);
+        }
+
+        [AcceptVerbs(HttpVerbs.Post)]
+        public ActionResult Create(Module_Action moduleAction)
+        {
+            if (ModelState.IsValid)
+            {
+                var moduleActionModel = new ModuleActionModel();
+                var createModuleAction = moduleActionModel.CreateModuleAction(moduleAction.Module_Controller_Id, moduleAction.Module_Action_Name);
+
+                if (createModuleAction == null)
+                {
+                    ViewBag.Message = "An Error Occured, Please contact Support";
+                    return View(moduleAction);
+                }
+
+                // Link selected roles
+                var roleIds = new List<int>();
+                if (moduleAction.Posted_Roles != null)
+                {
+                    foreach (var roleId in moduleAction.Posted_Roles.Role_IDs)
+                    {
+                        var roleIdValue = int.Parse(roleId);
+                        roleIds.Add(roleIdValue);
+                    }
+                }
+                moduleActionModel.AddModuleActionToRole(createModuleAction.Module_Action_Id, roleIds);
+
+                return RedirectToAction("Index", "ModuleAction");
+            }
+
+            return View(moduleAction);
+        }
+
+        [CustomAuthorize("Main", "ModuleAction", "Edit")]
+        public ActionResult Edit(string id)
+        {
+            var moduleActionModel = new ModuleActionModel();
+            var moduleActionToEdit = moduleActionModel.GetSpecificModuleAction(int.Parse(id));
+
+            return View(moduleActionToEdit);
+        }
+
+        [AcceptVerbs(HttpVerbs.Post)]
+        public ActionResult Edit(Module_Action moduleAction)
+        {
+            if (ModelState.IsValid)
+            {
+                var moduleActionModel = new ModuleActionModel();
+
+                var updatedModuleAction = moduleActionModel.EditModuleAction(moduleAction.Module_Action_Id, moduleAction.Module_Controller_Id, moduleAction.Module_Action_Name);
+
+                if (updatedModuleAction == null)
+                {
+                    ViewBag.Message = "An Error Occured, Please contact Support";
+                    return View(moduleAction);
+                }
+
+                // Link selected roles
+                var roleIds = new List<int>();
+                if (moduleAction.Posted_Roles != null)
+                {
+                    foreach (var roleId in moduleAction.Posted_Roles.Role_IDs)
+                    {
+                        var roleIdValue = int.Parse(roleId);
+                        roleIds.Add(roleIdValue);
+                    }
+                }
+                moduleActionModel.AddModuleActionToRole(updatedModuleAction.Module_Action_Id, roleIds);
+
+                return RedirectToAction("Index", "ModuleAction");
+            }
+
+            return View(moduleAction);
+        }
+
+        [AcceptVerbs(HttpVerbs.Get)]
+        public ActionResult GetControllersForModule(string moduleId)
+        {
+            if (String.IsNullOrEmpty(moduleId))
+            {
+                throw new ArgumentNullException("moduleId");
+            }
+
+            var moduleControllerModel = new ModuleControllerModel();
+            var controllerList = moduleControllerModel.GetListOfModuleControllers(false, false);
+
+            controllerList.RemoveAll(x => x.Module_Id != int.Parse(moduleId));
+
+            var result = (from c in controllerList
+                          select new
+                          {
+                              id = c.Module_Controller_Id,
+                              name = c.Module_Controller_Name
+                          }).ToList();
+
+            return Json(result, JsonRequestBehavior.AllowGet);
+        }
+	}
+}

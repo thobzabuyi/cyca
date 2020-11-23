@@ -1,0 +1,47 @@
+﻿@using MvcCheckBoxList.Model
+@model Common_Objects.Models.Module_Controller
+
+@{
+    ViewBag.Title = "Create Module Controller";
+}
+
+<h3>@ViewBag.Message</h3>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="panel panel-primary">
+        <div class="panel-heading" style="text-align: center">
+            Create a Module Controller
+        </div>
+        <div class="panel-body">
+
+            <div class="col-md-12" style="padding-left:0px !important; padding-right:0px !important;">
+                <div class="form-group">
+                    @Html.LabelFor(x => x.Module_List, new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.DropDownListFor(n => n.Module_Id, Model.Module_List, "- Please select -", new { @class = "form-control" })
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-12" style="padding-left:0px !important; padding-right:0px !important;">
+                <div class="form-group">
+                    @Html.LabelFor(x => x.Module_Controller_Name, new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.TextBoxFor(model => model.Module_Controller_Name, new { @class = "form-control" })
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+
+        <div class="panel-footer">
+            <input type="submit" id="ButtonSave" value="Save" class="btn btn-success" />
+            @Html.ActionLink("Cancel", "Index", null, new { @class = "btn btn-danger" })
+        </div>
+    </div>
+}

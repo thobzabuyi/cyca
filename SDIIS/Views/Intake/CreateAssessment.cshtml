@@ -1,0 +1,977 @@
+﻿@using Common_Objects.Models
+@using MvcCheckBoxList.Model
+@model Common_Objects.Models.IntakeClientViewModel
+
+@{
+    ViewBag.Title = "Create New Assessment";
+}
+
+<style type="text/css">
+    .GridEditButton {
+        width: 100px;
+    }
+</style>
+
+@*<style type="text/css">
+        /* WebGrid Styling */
+        .webgrid-table {
+            font-family: Arial,Helvetica,sans-serif;
+            font-size: 14px;
+            font-weight: normal;
+            width: 100%;
+            display: table;
+            border-collapse: collapse;
+            border: solid 1px #404040;
+            background-color: white;
+        }
+
+            .webgrid-table td, th {
+                border: 1px solid #696767;
+                padding: 3px 7px 2px;
+                color: #fff;
+            }
+
+        .webgrid-header, .webgrid-header a {
+            background-color: #0094ff;
+            color: #ffffff;
+            text-align: left;
+            text-decoration: none;
+        }
+
+        /*.NestedMainGrid > th, .NestedMainGrid a > th {
+            color: #ffffff;
+        }*/
+
+        .webgrid-footer {
+        }
+
+        .webgrid-row-style {
+            padding: 3px 7px 2px;
+        }
+
+        .webgrid-alternating-row {
+            background-color: azure;
+            padding: 3px 7px 2px;
+        }
+
+        table.gridtable {
+            font-family: verdana,arial,sans-serif;
+            font-size: 11px;
+            color: #333333;
+            border-width: 1px;
+            border-color: #666666;
+            border-collapse: collapse;
+        }
+
+            table.gridtable th {
+                border-width: 1px;
+                padding: 8px;
+                border-style: solid;
+                border-color: #666666;
+                background-color: #dedede;
+            }
+
+            table.gridtable td {
+                border-width: 1px;
+                padding: 8px;
+                border-style: solid;
+                border-color: #666666;
+                background-color: #ffffff;
+            }
+
+        th, td {
+            padding: 5px;
+        }
+
+        th {
+            background-color: rgb(72, 72, 72);
+        }
+
+        .NestedMainGrid, .NestedMainGrid tr {
+            border: 1px solid #4e4e4e;
+        }
+
+        .NestedSubGrid, .NestedSubGrid tr {
+            border: 1px solid #404040;
+        }
+
+        .NestedSubGrid {
+            margin: 0px 0px 0px 10px;
+            padding: 5px;
+            width: 95%;
+            border-collapse: collapse;
+        }
+
+            .NestedSubGrid th {
+                font-size: 12px;
+            }
+
+        .hoverEff {
+            cursor: pointer;
+            width: 25px;
+        }
+
+            .hoverEff:hover {
+                background-color: rgb(248, 242, 242);
+            }
+
+        .NestedMainGrid .expand {
+            background: url("../Images/pm.png") no-repeat scroll -2px center rgba(0, 0, 0, 0);
+            display: table-cell;
+        }
+
+        .NestedMainGrid .collapse {
+            background: url("../Images/pm.png") no-repeat scroll -22px center rgba(0, 0, 0, 0);
+            display: table-cell;
+        }
+
+        .GridEditButton {
+            width: 100px;
+        }
+    </style>*@
+
+<h3>@ViewBag.Message</h3>
+
+@using (Ajax.BeginForm("CreateAssessment", "Intake", new AjaxOptions() { UpdateTargetId = "clientDetails" }, new { @id = "clientDetailsForm" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="panel panel-primary" id="clientDetails">
+
+        <div class="panel-heading" style="text-align: center">
+            Client Details -
+            <div id="headerClientFirstName" style="display:inline">@Html.DisplayTextFor(x => x.Client.Person.First_Name)</div>
+            <div id="headerClientLastName" style="display:inline">@Html.DisplayTextFor(x => x.Client.Person.Last_Name)</div>
+            <div id="headerCPRRefNumber" style="display:inline">(@Html.DisplayTextFor(x => x.Client.Reference_Number))</div>
+        </div>
+
+        @Html.HiddenFor(x => x.Person.Person_Id, new { id = "Person_Id" })
+        @Html.HiddenFor(x => x.Client.Client_Id, new { id = "Client_Id" })
+        @Html.HiddenFor(x => x.PhysicalAddress.Address_Id, new { id = "Physical_Address_Id" })
+        @Html.HiddenFor(x => x.PostalAddress.Address_Id, new { id = "Postal_Address_Id" })
+        @Html.HiddenFor(x => x.IntakeAssessment.Intake_Assessment_Id, new { id = "Intake_Assessment_Id" })
+
+        @ViewBag.Error
+
+        <div class="panel-body">
+
+            <div id="rootwizard">
+                <ul>
+                    <li><a href="#tab1" data-toggle="tab">Personal Details</a></li>
+                    <li><a href="#tab2" data-toggle="tab">Contact Details</a></li>
+                    <li><a href="#tab3" data-toggle="tab">Educational Details</a></li>
+                    <li><a href="#tab4" data-toggle="tab">Employment Details</a></li>
+                    <li><a href="#tab5" data-toggle="tab">Medical Details</a></li>
+                    <li><a href="#tab6" data-toggle="tab">Next Of Kin</a></li>
+                    <li><a href="#tab7" data-toggle="tab">Assessment</a></li>
+                    <li><a href="#tab8" data-toggle="tab">Referrals</a></li>
+                    <li><a href="#tab9" data-toggle="tab">Allocations</a></li>
+                </ul>
+                <hr />
+                <div class="tab-content">
+                    <div class="tab-pane" id="tab1">
+                        <div class="row">
+                            <div class="col-md-3">
+                                @Html.LabelFor(x => x.Person.First_Name, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-3 form-group">
+                                @Html.TextBoxFor(model => model.Person.First_Name, new { @class = "form-control", @required = "required" })
+                            </div>
+                            <div class="col-md-3">
+                                @Html.LabelFor(x => x.Person.Last_Name, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-3 form-group">
+                                @Html.TextBoxFor(model => model.Person.Last_Name, new { @class = "form-control", @required = "required" })
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                @Html.LabelFor(x => x.Person.Known_As, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-3 form-group">
+                                @Html.TextBoxFor(model => model.Person.Known_As, new { @class = "form-control" })
+                            </div>
+                            <div class="col-md-3">
+                                @Html.LabelFor(x => x.Person.Citizenship_List, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-3 form-group">
+                                @Html.DropDownListFor(n => n.Person.Citizenship_Id, Model.Person.Citizenship_List, "- Please select -", new { @id = "DropdownCitizenship", @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                @Html.LabelFor(x => x.Person.Identification_Type_List, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-3 form-group">
+                                @Html.DropDownListFor(n => n.Person.Identification_Type_Id, Model.Person.Identification_Type_List, new { @id = "DropdownIdentificationType", @class = "form-control" })
+                            </div>
+                            <div class="col-md-3">
+                                @Html.LabelFor(x => x.Person.Identification_Number, new { @id = "LabelIdentificationNumber", @class = "control-label" })
+                            </div>
+                            <div class="col-md-3 form-group">
+                                @Html.TextBoxFor(model => model.Person.Identification_Number, new { @id = "Identification_Number", @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                @Html.LabelFor(x => x.Person.Date_Of_Birth, new { @id = "LabelDateOfBirth", @class = "control-label" })
+                            </div>
+                            <div class="col-md-3 form-group">
+                                <div class="input-group">
+                                    @Html.TextBoxFor(x => x.Person.Date_Of_Birth, new { @id = "Date_of_Birth", @class = "form-control jqueryui-marker-datepicker", @required = "required" })
+                                    <label for="Date_of_Birth" class="input-group-addon btn">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                @Html.LabelFor(x => x.Person.Age, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-1 form-group">
+                                @Html.TextBoxFor(model => model.Person.Age, new { @id = "TextboxAge", @class = "form-control", onchange = "RemoveMaritalField()" })
+                            </div>
+                            <div class="col-md-2 form-group">
+                                @Html.CheckBoxFor(x => x.Person.Is_Estimated_Age, new { @id = "IsEstimatedAge" })
+                                @Html.LabelFor(x => x.Person.Is_Estimated_Age, new { @class = "control-label" })
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                @Html.LabelFor(x => x.Person.Gender_List, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-3 form-group">
+                                @Html.DropDownListFor(n => n.Person.Gender_Id, Model.Person.Gender_List, "- Please select -", new { @id = "DropdownGender", @class = "form-control" })
+                            </div>
+                            <div class="col-md-3">
+                                @Html.LabelFor(x => x.Person.Nationality_List, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-3 form-group">
+                                @Html.DropDownListFor(n => n.Person.Nationality_Id, Model.Person.Nationality_List, "- Please select -", new { @id = "DropdownNationality", @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                @Html.LabelFor(x => x.Person.Language_Type_List, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-3 form-group">
+                                @Html.DropDownListFor(n => n.Person.Language_Id, Model.Person.Language_Type_List, "- Please select -", new { @id = "DropdownLanguage", @class = "form-control" })
+                            </div>
+                            <div class="col-md-3">
+                                @Html.LabelFor(x => x.Person.SexualOrientation_List, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-3 form-group">
+                                @Html.DropDownListFor(n => n.Person.Sexual_Orientation_Id, Model.Person.SexualOrientation_List, "- Please select -", new { @id = "DropdownSexualOrientation", @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="row">
+
+                            <div class="col-md-3">
+                                @Html.LabelFor(x => x.Person.Population_Group_List, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-3 form-group">
+                                @Html.DropDownListFor(n => n.Person.Population_Group_Id, Model.Person.Population_Group_List, "- Please select -", new { @id = "DropdownPopulationGroup", @class = "form-control" })
+                            </div>
+                            <div class="col-md-3" id="ResultOfChoice">
+                                @Html.LabelFor(x => x.Person.Marital_Status_List, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-3 form-group" id="ResultOfChoice">
+                                @Html.DropDownListFor(n => n.Person.Marital_Status_Id, Model.Person.Marital_Status_List, "- Please select -", new { @id = "DropdownMaritalStatus", @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                @Html.LabelFor(x => x.Person.Religion_List, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-3 form-group">
+                                @Html.DropDownListFor(n => n.Person.Religion_Id, Model.Person.Religion_List, "- Please select -", new { @id = "DropdownReligion", @class = "form-control" })
+                            </div>
+                            <div class="col-md-3">
+                                @Html.LabelFor(x => x.Person.Disability_List, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-3 form-group">
+                                @*@Html.DropDownListFor(n => n.Person.Disability_Type_Id, Model.Person.Disability_List, "- Please select -", new { @id = "DropdownDisability", @class = "form-control", @multiple = "multiple" })*@
+                                @*@Html.DropDownListFor(n => n.Person.SelectedDisabilityId, Model.Person.Disability_List, "- Please select -", new { @id = "DropdownDisability", @class = "form-control", @multiple = "multiple" })*@
+                                @*@Html.DropDownListFor(n => n.Person.SelectedDisabilityId, @ViewBag.DisabilityList as SelectList, "- Please select -", new { @id = "DropdownModule", @class = "form-control chosen-select", @multiple = "multiple" })*@
+                                @Html.DropDownList("SelectedDisabilities", (IEnumerable<SelectListItem>)ViewBag.AvailableDisabilityType, "- Please select -", new { @class = "form-control chosen-select", @multiple = "multiple" })
+
+                            </div>
+
+
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                @*@Html.LabelFor(x => x.Person.Religion_List, new { @class = "control-label" })*@
+                            </div>
+                            <div class="col-md-3 form-group">
+                                @*@Html.DropDownListFor(n => n.Person.Religion_Id, Model.Person.Religion_List, "- Please select -", new { @id = "DropdownReligion", @class = "form-control" })*@
+                            </div>
+                            <div class="col-md-3">
+                                @*@Html.LabelFor(x => x.Person.Disability_List, new { @class = "control-label" })*@
+                                Disability Type
+                            </div>
+                            <div class="col-md-3 form-group">
+                                @*@Html.DropDownListFor(n => n.Person.Disability_Type_Id, Model.Person.Disability_List, "- Please select -", new { @id = "DropdownDisability", @class = "form-control" })*@
+                                @*@Html.DropDownListFor(n => n.Person.SelectedDisabilityId, Model.Person.Disability_List, "- Please select -", new { @id = "DropdownModule", @class = "form-control chosen-select", @multiple = "multiple" })*@
+                                @Html.DropDownList("SelectedDisabilitiesType", (IEnumerable<SelectListItem>)ViewBag.AvailableDisabilitySubType, "- Please select -", new { @class = "form-control chosen-select", @multiple = "multiple" })
+
+
+                            </div>
+                        </div>
+                        @*<div class="row">
+                                <div class="col-md-3">
+                                </div>
+                                <div class="col-md-3 form-group">
+                                </div>
+                                <div class="col-md-3">
+                                </div>
+                                <div class="col-md-3 form-group">
+                                    @Html.Action("GetListOfDisabilities", "Intake", new { id = Model.Person.Person_Id })
+
+                                </div>
+                            </div>*@
+
+
+                    </div>
+                    <div class="tab-pane" id="tab2">
+                        <div class="row">
+                            <div class="col-md-3">
+                                @Html.LabelFor(x => x.Person.Phone_Number, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-3 form-group">
+                                @Html.TextBoxFor(model => model.Person.Phone_Number, new { @class = "form-control" })
+                            </div>
+                            <div class="col-md-3">
+                                @Html.LabelFor(x => x.Person.Mobile_Phone_Number, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-3 form-group">
+                                @Html.TextBoxFor(model => model.Person.Mobile_Phone_Number, new { @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                @Html.LabelFor(x => x.Person.Email_Address, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-3 form-group">
+                                @Html.TextBoxFor(model => model.Person.Email_Address, new { @class = "form-control" })
+                            </div>
+                            <div class="col-md-3">
+                                @Html.LabelFor(x => x.Person.Preferred_Contact_Type_List, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-3 form-group">
+                                @Html.DropDownListFor(n => n.Person.Preferred_Contact_Type_Id, Model.Person.Preferred_Contact_Type_List, "- Please select -", new { @id = "DropdownPreferredContactType", @class = "form-control" })
+                            </div>
+                        </div>
+                        <hr />
+                        <div class="row">
+                            <div class="col-md-6">
+                                @Html.Label("Physical Address", new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-6 form-group">
+                                @Html.Label("Postal Address Address", new { @class = "control-label" })
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        @Html.LabelFor(x => x.PhysicalAddress.Address_Line_1, new { @class = "control-label" })
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        @Html.TextBoxFor(model => model.PhysicalAddress.Address_Line_1, new { @class = "form-control" })
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        @Html.LabelFor(x => x.PhysicalAddress.Address_Line_2, new { @class = "control-label" })
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        @Html.TextBoxFor(model => model.PhysicalAddress.Address_Line_2, new { @class = "form-control" })
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        @Html.LabelFor(x => x.PhysicalAddress.Province_List, new { @class = "control-label" })
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        @Html.DropDownListFor(n => n.PhysicalAddress.Selected_Province_Id, Model.PhysicalAddress.Province_List, "- Please select -", new { @id = "EnquiredProvinceId", @class = "form-control" })
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        @Html.LabelFor(x => x.PhysicalAddress.District_Municipality_List, new { @class = "control-label" })
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        @Html.DropDownListFor(n => n.PhysicalAddress.Selected_Municipality_Id, Model.PhysicalAddress.District_Municipality_List, "- Please select -", new { @id = "EnquiredMagistratesId", @class = "form-control" })
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        @Html.LabelFor(x => x.PhysicalAddress.Local_Municipality_List, new { @class = "control-label" })
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        @Html.DropDownListFor(n => n.PhysicalAddress.Selected_Local_Municipality_Id, Model.PhysicalAddress.Local_Municipality_List, "- Please select -", new { @id = "EnquiredLocalMuniId", @class = "form-control" })
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        @Html.LabelFor(x => x.PhysicalAddress.Town_List, new { @class = "control-label" })
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        @Html.DropDownListFor(n => n.PhysicalAddress.Town_Id, Model.PhysicalAddress.Town_List, "- Please select -", new { @id = "EnquiredTownId", @class = "form-control" })
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        @Html.LabelFor(x => x.PhysicalAddress.Postal_Code, new { @class = "control-label" })
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        @Html.TextBoxFor(model => model.PhysicalAddress.Postal_Code, new { @class = "form-control" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        @Html.LabelFor(x => x.PostalAddress.Address_Line_1, new { @class = "control-label" })
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        @Html.TextBoxFor(model => model.PostalAddress.Address_Line_1, new { @class = "form-control" })
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        @Html.LabelFor(x => x.PostalAddress.Address_Line_2, new { @class = "control-label" })
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        @Html.TextBoxFor(model => model.PostalAddress.Address_Line_2, new { @class = "form-control" })
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        @Html.LabelFor(x => x.PostalAddress.Province_List, new { @class = "control-label" })
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        @Html.DropDownListFor(n => n.PostalAddress.Selected_Province_Id, Model.PostalAddress.Province_List, "- Please select -", new { @id = "EnquiredProvinceId_1", @class = "form-control" })
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        @Html.LabelFor(x => x.PostalAddress.District_Municipality_List, new { @class = "control-label" })
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        @Html.DropDownListFor(n => n.PostalAddress.Selected_Municipality_Id, Model.PostalAddress.District_Municipality_List, "- Please select -", new { @id = "EnquiredMagistratesId_1", @class = "form-control" })
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        @Html.LabelFor(x => x.PostalAddress.Local_Municipality_List, new { @class = "control-label" })
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        @Html.DropDownListFor(n => n.PostalAddress.Selected_Local_Municipality_Id, Model.PostalAddress.Local_Municipality_List, "- Please select -", new { @id = "EnquiredLocalMuniId_1", @class = "form-control" })
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        @Html.LabelFor(x => x.PostalAddress.Town_List, new { @class = "control-label" })
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        @Html.DropDownListFor(n => n.PostalAddress.Town_Id, Model.PostalAddress.Town_List, "- Please select -", new { @id = "EnquiredTownId_1", @class = "form-control" })
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        @Html.LabelFor(x => x.PostalAddress.Postal_Code, new { @class = "control-label" })
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        @Html.TextBoxFor(model => model.PostalAddress.Postal_Code, new { @class = "form-control" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="tab3" class="tab-pane">
+                        @Html.ActionLink("Add Education", "Create", "Education", new { id = Model.Person.Person_Id }, new { @class = "modal-link btn btn-info pull-right" })
+                        <br /><br />
+                        <div id="educationItemsGrid"></div>
+                    </div>
+                    <div id="tab4" class="tab-pane">
+                        @Html.ActionLink("Add Employment", "Create", "Employment", new { id = Model.Person.Person_Id }, new { @class = "modal-link btn btn-info pull-right" })
+                        <br /><br />
+                        <div id="employmentItemsGrid"></div>
+                    </div>
+                    <div id="tab5" class="tab-pane">
+                        @Html.ActionLink("Add Medical Details", "Create", "MedicalDetail", new { id = Model.Person.Person_Id }, new { @class = "modal-link btn btn-info pull-right" })
+                        <br /><br />
+                        <div id="medicalDetailsGrid"></div>
+                    </div>
+                    <div id="tab6" class="tab-pane">
+                        <div class="row">
+                            <div class="col-md-3">
+                                @Html.LabelFor(x => x.Relation_Type_List, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-3">
+                                @Html.DropDownListFor(n => n.Relation_Type_Id, Model.Relation_Type_List, "- Please select -", new { @id = "Relation_Type_Id", @class = "form-control" })
+                            </div>
+                            <div class="col-md-6">
+                                @Html.ActionLink("Filter", "Create", "Relation", new { id = Model.Person.Person_Id }, new { @class = "filterRelation btn btn-info" })
+                                @Html.ActionLink("Add Relation", "Create", "Relation", new { id = Model.Person.Person_Id, selectedRelationTypeId = -1 }, new { @class = "modal-link btn btn-info" })
+                            </div>
+                        </div>
+
+                        <div id="relationsGrid"></div>
+                    </div>
+                    <div id="tab7" class="tab-pane">
+                        <div class="row">
+                            <div class="col-md-3">
+                                @Html.LabelFor(x => x.IntakeAssessment.Assessment_Date, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-3 form-group">
+                                <div class="input-group">
+                                    @Html.TextBoxFor(x => x.IntakeAssessment.Assessment_Date, new { @id = "Assessment_Date", @class = "form-control jqueryui-marker-datepicker" })
+                                    <label for="Assessment_Date" class="input-group-addon btn">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                @Html.LabelFor(x => x.IntakeAssessment.Assessed_By_List, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-3  form-group">
+                                @Html.HiddenFor(x => x.IntakeAssessment.Assessed_By_Id)
+                                @Html.DropDownListFor(n => n.IntakeAssessment.Assessed_By_Id, Model.IntakeAssessment.Assessed_By_List, "- Please select -", new { @id = "DropdownModule", @class = "form-control", @disabled = "disabled" })
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                @Html.LabelFor(x => x.IntakeAssessment.Problem_Category_List, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-3 form-group">
+                                @Html.DropDownListFor(n => n.IntakeAssessment.Problem_Category_Id, Model.IntakeAssessment.Problem_Category_List, "- Please select -", new { @id = "DropdownProblemCategory", @class = "form-control" })
+                            </div>
+                            <div class="col-md-3">
+                                @Html.LabelFor(x => x.IntakeAssessment.Problem_Sub_Category_List, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-3 form-group">
+                                @Html.DropDownListFor(n => n.IntakeAssessment.Problem_Sub_Category_Id, Model.IntakeAssessment.Problem_Sub_Category_List, "- Please select -", new { @id = "DropdownProblemSubCategory", @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                @Html.LabelFor(x => x.IntakeAssessment.Presenting_Problem, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-9 form-group">
+                                @*@Html.TextBoxFor(x => x.IntakeAssessment.Presenting_Problem, new { @class = "form-control" })*@
+                                @Html.TextAreaFor(x => x.IntakeAssessment.Presenting_Problem, 3, 20, new { @class = "form-control", @onclick = "checkAgeFnd()" , @required = "required" })
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                @Html.LabelFor(x => x.IntakeAssessment.Preliminary_Assessment, new { @class = "control-label",  })
+                            </div>
+                            <div class="col-md-9 form-group">
+                                @*@Html.TextBoxFor(x => x.IntakeAssessment.Preliminary_Assessment, new { @class = "form-control" })*@
+                                @Html.TextAreaFor(x => x.IntakeAssessment.Preliminary_Assessment, 3, 20, new { @class = "form-control" , @required = "required" })
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3 form-group">
+                                @Html.LabelFor(x => x.IntakeAssessment.Is_Priority_Intervention, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-9">
+                                @Html.CheckBoxFor(model => model.IntakeAssessment.Is_Priority_Intervention)
+                                <label for="Is_Priority_Intervention">Yes</label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3 form-group">
+                                @Html.LabelFor(x => x.IntakeAssessment.Is_Referred_For_Assessment, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-9">
+                                @Html.CheckBoxFor(model => model.IntakeAssessment.Is_Referred_For_Assessment)
+                                <label for="Is_Referred_For_Assessment">Yes</label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3 form-group">
+                                @Html.LabelFor(x => x.IntakeAssessment.Is_Referred_To_Other_Service_Provider, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-9">
+                                @Html.CheckBoxFor(model => model.IntakeAssessment.Is_Referred_To_Other_Service_Provider)
+                                <label for="Is_Referred_To_Other_Service_Provider">Yes</label>
+                            </div>
+                        </div>
+                        <hr />
+                        <div class="row">
+                            <div class="col-md-3 form-group">
+                                @Html.LabelFor(x => x.IntakeAssessment.Supervisor_Comments, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-9">
+                                @*@Html.TextBoxFor(x => x.IntakeAssessment.Supervisor_Comments, new { @class = "form-control" })*@
+                                @Html.TextAreaFor(x => x.IntakeAssessment.Supervisor_Comments, 3, 20, new { @class = "form-control" })
+                            </div>
+                        </div>
+
+                    </div>
+                    <div id="tab8" class="tab-pane">
+                        <div class="row">
+                            <div class="col-md-3">
+                                @Html.LabelFor(x => x.IntakeAssessment.Referred_From_Organization_List, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-3 form-group">
+                                @Html.DropDownListFor(n => n.IntakeAssessment.Referred_From_Organization_Id, Model.IntakeAssessment.Referred_From_Organization_List, "- Please select -", new { @id = "DropdownModule", @class = "form-control" })
+                            </div>
+                            <div class="col-md-3">
+                                @Html.LabelFor(x => x.IntakeAssessment.Referred_To_Organization_List, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-3 form-group">
+                                @Html.DropDownListFor(n => n.IntakeAssessment.Referred_To_Organization_Id, Model.IntakeAssessment.Referred_To_Organization_List, "- Please select -", new { @id = "DropdownModule", @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                @Html.LabelFor(x => x.IntakeAssessment.Referral_Focus_Areas, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-9 form-group">
+                                @Html.CheckBoxListFor(x => x.IntakeAssessment.Posted_Referral_Focus_Areas.Referral_Focus_Area_IDs,
+                                          x => x.IntakeAssessment.Available_Referral_Focus_Areas,
+                                          x => x.Referral_Focus_Area_Id,
+                                          x => x.Description,
+                                          x => x.IntakeAssessment.Referral_Focus_Areas.ToList(),
+                                          new { @class = "styled_checkbox" },
+                                          new HtmlListInfo(HtmlTag.vertical_columns, 2, new { @class = "styled_list" }),
+                                          null, null)
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                @Html.LabelFor(x => x.IntakeAssessment.Case_Background, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-9 form-group">
+                                @*@Html.TextBoxFor(x => x.IntakeAssessment.Case_Background, new { @class = "form-control" })*@
+                                @Html.TextAreaFor(x => x.IntakeAssessment.Case_Background, 3, 20, new { @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                @Html.LabelFor(x => x.IntakeAssessment.Social_Worker_Comments, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-9 form-group">
+                                @*@Html.TextBoxFor(x => x.IntakeAssessment.Social_Worker_Comments, new { @class = "form-control" })*@
+                                @Html.TextAreaFor(x => x.IntakeAssessment.Social_Worker_Comments, 3, 20, new { @class = "form-control" })
+                            </div>
+                        </div>
+                    </div>
+                    <div id="tab9" class="tab-pane">
+                        <div class="row">
+                            <div class="col-md-3">
+                                @Html.LabelFor(x => x.IntakeAssessment.Case_Manager_Supervisor_List, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-3 form-group">
+                                @*@Html.DropDownListFor(n => n.IntakeAssessment.Case_Manager_Supervisor_Id, Model.IntakeAssessment.Case_Manager_Supervisor_List, "- Please select -", new { @id = "DropdownCaseManagerSupervisor", @class = "form-control" })*@
+                                @Html.DropDownListFor(n => n.IntakeAssessment.Case_Manager_Supervisor_Id, (IEnumerable<SelectListItem>)(ViewBag.CaseManagerSuperVisor), "- Please select -", new { @class = "form-control" })
+
+
+                            </div>
+                        </div>
+
+                        <div class="row" id="CaseManagerSelection" style="display:none">
+                            <div class="col-md-3">
+                                @Html.LabelFor(x => x.IntakeAssessment.Case_Manager_List, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-3 form-group">
+                                @*@Html.DropDownListFor(n => n.IntakeAssessment.Case_Manager_Id, Model.IntakeAssessment.Case_Manager_List, "- Please select -", new { @id = "DropdownModule", @class = "form-control" })*@
+                                @* @Html.DropDownList("Case_Manager_Id", new SelectList(ViewBag.CaseManagerSuperVisor), "- Please select -", new { @id = "DropdownModule", @class = "form-control" })*@
+
+
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                @Html.LabelFor(x => x.IntakeAssessment.Case_Allocation_Comments, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-9 form-group">
+                                @*@Html.TextBoxFor(x => x.IntakeAssessment.Case_Allocation_Comments, new { @class = "form-control" })*@
+                                @Html.TextAreaFor(x => x.IntakeAssessment.Case_Allocation_Comments, 3, 20, new { @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                @Html.LabelFor(x => x.IntakeAssessment.Date_Allocated, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-3 form-group">
+                                <div class="input-group">
+                                    @Html.TextBoxFor(x => x.IntakeAssessment.Date_Allocated, new { @id = "Date_Allocated", @class = "form-control jqueryui-marker-datepicker" })
+                                    <label for="Date_Allocated" class="input-group-addon btn">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                @Html.LabelFor(x => x.IntakeAssessment.Date_Due, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-3 form-group">
+                                <div class="input-group">
+                                    @Html.TextBoxFor(x => x.IntakeAssessment.Date_Due, new { @id = "Date_Due", @class = "form-control jqueryui-marker-datepicker" })
+                                    <label for="Date_Due" class="input-group-addon btn">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <ul class="pager wizard">
+                        <li class="previous first" style="display:none;"><a href="#">First</a></li>
+                        <li class="previous"><a href="#">Previous</a></li>
+                        <li class="next last" style="display:none;"><a href="#">Last</a></li>
+                        <li class="next"><a href="#">Next</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+
+        <div class="panel-footer">
+            <input type="submit" id="ButtonSave" value="Save" class="btn btn-success" />
+            @Html.ActionLink("Cancel", "Index", null, new { @class = "btn btn-danger" })
+        </div>
+
+    </div>
+}
+
+@section scripts {
+    <script type="text/javascript">
+        $(function () {
+
+            $("#Date_of_Birth").datepicker({
+                dateFormat: "dd M yy",
+                changeYear: true,
+                maxDate: 0,
+                yearRange: "-60:+0"
+            });
+
+            $("#Assessment_Date").datepicker({
+                dateFormat: "dd M yy",
+                changeYear: true,
+                maxDate: 0,
+                yearRange: "-60:+0"
+            });
+
+            $("#Date_Allocated").datepicker({
+                dateFormat: "dd M yy",
+                changeYear: true,
+                maxDate: 0,
+                yearRange: "-60:+0"
+            });
+
+            $("#Date_Due").datepicker({
+                dateFormat: "dd M yy",
+                changeYear: true,
+                minDate: 0,
+                yearRange: "-0:+10"
+            });
+        });
+    </script>
+    <script src="~/Scripts/IDValidation/IDValidationMethods.js"></script>
+    <script src="~/Scripts/Intake/methods.js"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $(".chosen-select").chosen();
+        });
+        //function checkAgeFnd()
+        function checkAgeFnd() {
+            var e = document.getElementById("DropdownProblemSubCategory");
+            var ProbSubCategory = e.options[e.selectedIndex].value;
+            //alert(ProbSubCategory + "yyyy");
+            var DateOfBithEntered = document.getElementById("Date_of_Birth").value;
+            var d = new Date(DateOfBithEntered);
+            //alert(DateOfBithEntered);
+            var today = new Date();
+            var AgeOfPerson = (today - d) / (365 * 24 * 60 * 60 * 1000);
+            //alert(AgeOfPerson);
+            if (AgeOfPerson > 18 && ProbSubCategory == 19) {
+                alert("It is noted that Date of Birth is incorrectly entered!");
+                return false;
+            }
+        }
+        //function select no and it disables another field
+        function RemoveMaritalField() {
+            var value = $("#TextboxAge").val();
+            if (value < 18) {
+                $("#ResultOfChoice").hide();
+                $("#DropdownMaritalStatus").hide();
+                //The followng disables the dropdownmenu if it is named id="ResultOfChoice"
+                document.getElementById('ResultOfChoice').disabled = true;
+            }
+            else if (value >= 18) {
+                $("#ResultOfChoice").show();
+                $("#DropdownMaritalStatus").show();
+
+                //the following ensures validation runs
+                //$("#ResultOfChoice").attr("required", true);
+            }
+
+        };
+    </script>
+
+    <script type="text/javascript">
+        $(function () {
+            //Provincial List
+            $("#EnquiredProvinceId").change(function () {
+                var dropdownPhysicalMunicipality = $('#EnquiredMagistratesId');
+                dropdownPhysicalMunicipality.html('');
+                dropdownPhysicalMunicipality.append($('<option></option>').val("").html("- Please Select -"));
+
+                var dropdownPhysdicalLocalMunicipality = $('#EnquiredLocalMuniId');
+                dropdownPhysdicalLocalMunicipality.html('');
+                dropdownPhysdicalLocalMunicipality.append($('<option></option>').val("").html("- Please Select -"));
+
+                var dropdownPhysicalTown = $('#EnquiredTownId');
+                dropdownPhysicalTown.html('');
+                dropdownPhysicalTown.append($('<option></option>').val("").html("- Please Select -"));
+
+                var selectedItem = $(this).val();
+                $.ajax({
+                    url: $.url('/Intake/FilterFromProvinceAjax'),
+                    data: { "provinceId": selectedItem },
+                    type: "GET",
+                    success: function (response, status, xhr) {
+                        $.each(response, function (id, option) {
+                            dropdownPhysicalMunicipality.append($('<option></option>').val(option.id).html(option.name));
+                        });
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        alert('Error populating physical address municipality dropdown');
+                    }
+                });
+            });
+            $("#EnquiredMagistratesId").change(function () {
+                var dropdownPhysdicalLocalMunicipality = $('#EnquiredLocalMuniId');
+                dropdownPhysdicalLocalMunicipality.html('');
+                dropdownPhysdicalLocalMunicipality.append($('<option></option>').val("").html("- Please Select -"));
+
+                var dropdownPhysicalTown = $('#EnquiredTownId');
+                dropdownPhysicalTown.html('');
+                dropdownPhysicalTown.append($('<option></option>').val("").html("- Please Select -"));
+
+                var selectedItem = $(this).val();
+                $.ajax({
+                    url: $.url('/Intake/FilterFromMunicipalityAjax'),
+                    data: { "municipalityId": selectedItem },
+                    type: "GET",
+                    success: function (response, status, xhr) {
+                        $.each(response, function (id, option) {
+                            dropdownPhysdicalLocalMunicipality.append($('<option></option>').val(option.id).html(option.name));
+                        });
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        alert('Error populating physical address local municipality dropdown');
+                    }
+                });
+            });
+            $("#EnquiredLocalMuniId").change(function () {
+                var dropdownPhysicalTown = $('#EnquiredTownId');
+                dropdownPhysicalTown.html('');
+                dropdownPhysicalTown.append($('<option></option>').val("").html("- Please Select -"));
+
+                var selectedItem = $(this).val();
+                $.ajax({
+                    url: $.url('/Intake/FilterFromLocalMunicipalityAjax'),
+                    data: { "localMunicipalityId": selectedItem },
+                    type: "GET",
+                    success: function (response, status, xhr) {
+                        $.each(response, function (id, option) {
+                            dropdownPhysicalTown.append($('<option></option>').val(option.id).html(option.name));
+                        });
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        alert('Error populating physical address town dropdown');
+                    }
+                });
+            });
+        });
+    </script>
+
+    <script type="text/javascript">
+        $(function () {
+            //Provincial List
+            $("#EnquiredProvinceId_1").change(function () {
+                var dropdownPhysicalMunicipality = $('#EnquiredMagistratesId_1');
+                dropdownPhysicalMunicipality.html('');
+                dropdownPhysicalMunicipality.append($('<option></option>').val("").html("- Please Select -"));
+
+                var dropdownCPhysicalLocalMunicipality = $('#DropdownPhysicalAddressLocalMunicipality');
+                dropdownCPhysicalLocalMunicipality.html('');
+                dropdownCPhysicalLocalMunicipality.append($('<option></option>').val("").html("- Please Select -"));
+
+                var dropdownPostalTown = $('#EnquiredTownId_1');//Town Loading
+                dropdownPostalTown.html('');
+                dropdownPostalTown.append($('<option></option>').val("").html("- Please Select -"));
+
+                var selectedItem = $(this).val();
+                $.ajax({
+                    url: $.url('/Intake/FilterFromProvinceAjax'),
+                    data: { "provinceId": selectedItem },
+                    type: "GET",
+                    success: function (response, status, xhr) {
+                        $.each(response, function (id, option) {
+                            dropdownPhysicalMunicipality.append($('<option></option>').val(option.id).html(option.name));
+                        });
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        alert('Error populating postal address municipality dropdown');
+                    }
+                });
+
+            });
+            $("#EnquiredMagistratesId_1").change(function () {
+                var dropdownPostalLocalMunicipality = $('#EnquiredLocalMuniId_1');
+                dropdownPostalLocalMunicipality.html('');
+                dropdownPostalLocalMunicipality.append($('<option></option>').val("").html("- Please Select -"));
+
+                var dropdownPostalTown = $('#EnquiredTownId_1');
+                dropdownPostalTown.html('');
+                dropdownPostalTown.append($('<option></option>').val("").html("- Please Select -"));
+
+                var selectedItem = $(this).val();
+                $.ajax({
+                    url: $.url('/Intake/FilterFromMunicipalityAjax'),
+                    data: { "municipalityId": selectedItem },
+                    type: "GET",
+                    success: function (response, status, xhr) {
+                        $.each(response, function (id, option) {
+                            dropdownPostalLocalMunicipality.append($('<option></option>').val(option.id).html(option.name));
+                        });
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        alert('Error populating postal address local municipality dropdown');
+                    }
+                });
+            });
+            $("#EnquiredLocalMuniId_1").change(function () {
+                var dropdownPostalTown = $('#EnquiredTownId_1');
+                dropdownPostalTown.html('');
+                dropdownPostalTown.append($('<option></option>').val("").html("- Please Select -"));
+
+                var selectedItem = $(this).val();
+                $.ajax({
+                    url: $.url('/Intake/FilterFromLocalMunicipalityAjax'),
+                    data: { "localMunicipalityId": selectedItem },
+                    type: "GET",
+                    success: function (response, status, xhr) {
+                        $.each(response, function (id, option) {
+                            dropdownPostalTown.append($('<option></option>').val(option.id).html(option.name));
+                        });
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        alert('Error populating postal address town dropdown');
+                    }
+                });
+            })
+        });
+    </script>
+}
+

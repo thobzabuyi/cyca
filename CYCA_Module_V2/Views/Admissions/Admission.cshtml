@@ -1,0 +1,225 @@
+﻿
+@model Common_Objects.ViewModels.CYCAAdmissionViewModel
+<br />
+<style>
+    #btnSearch {
+        outline: none !important;
+        border-radius: 8px 8px 0px 0px;
+        box-shadow: none;
+    }
+
+    #tool-bar {
+        transition: width 0.1s;
+        -webkit-transition: width 0.1s;
+    }
+
+    .progress {
+        height: 12px;
+        border-radius: 0px 0px 4px 4px;
+    }
+
+
+    .center-div {
+        width: 300px;
+        height: 300px;
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        margin-left: -150px;
+        margin-top: -150px;
+    }
+
+    .spinner {
+        position: fixed;
+        z-index: 999;
+        height: 100%;
+        width: 100%;
+        top: 0;
+        left: 0;
+        background-color: Black;
+        filter: alpha(opacity=60);
+        opacity: 0.6;
+        -moz-opacity: 0.8;
+    }
+
+    .loader {
+        margin: auto;
+        border: 16px solid #f3f3f3;
+        border-radius: 50%;
+        border-top: 16px solid #15a0ec;
+        border-bottom: 16px solid #15a0ec;
+        width: 120px;
+        height: 120px;
+        -webkit-animation: spin 2s linear infinite;
+        animation: spin 2s linear infinite;
+    }
+
+    .inner-div {
+        background-color: white;
+        border-radius: 15px;
+        margin: auto;
+        padding: 2%;
+        width: 150px;
+    }
+
+    @@-webkit-keyframes spin {
+        0% {
+            -webkit-transform: rotate(0deg);
+        }
+
+        100% {
+            -webkit-transform: rotate(360deg);
+        }
+    }
+
+    @@keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+</style>
+
+<div class="tab-pane" id="tab3" >
+    <div class="row">
+        <div class="col-md-12 col-sm-12">
+            <div class="panel panel-default form-horizontal">
+                <div class="panel panel-primary">
+                    @*<div class="panel-heading" style="text-align: center">
+                        Child Admission : <span style="color:white;font-weight: bolder; font-size:large; text-shadow: 2px 2px grey; ">Child Ref (@ViewBag.ModuleRef)</span>
+                    </div>*@
+                </div>
+                <div class="panel-body">
+                    <div id="rootwizardA1">
+                        <ul class="nav nav-tabs" id="myTB">
+                            <li class="active"><a href="#AssessmentTab1" data-toggle="tab" data-id="AssessmentTab1">Admission</a></li>
+                            <li><a href="#AssessmentTab2" data-toggle="tab" data-id="AssessmentTab2">Bodily Search</a></li>
+                            <li><a href="#AssessmentTab3" data-toggle="tab" data-id="AssessmentTab3">Illegal items Found</a></li>
+                            <li><a href="#AssessmentTab4" data-toggle="tab" data-id="AssessmentTab4">Documents</a></li>
+                        </ul>
+                        <div class="tab-content col-md-6">
+                            <div class="tab-pane fade active in" id="AssessmentTab1">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="panel-body">                                            
+                                            @*@Html.Partial("../CYCAAdmission/SaveAdmissionDetails")*@
+                                            @Html.Action("SaveAdmissionDetailsNew", "CYCAAdmission")
+                                        </div>
+                                    </div>
+                                </div>
+                            </div> 
+                            <div class="tab-pane" id="AssessmentTab2">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="panel-body">
+                                            @*@Html.Partial("../CYCAAdmission/BodilySearchDetails")*@
+                                            @Html.Action("BodilySearchDetails", "CYCAAdmission")
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane" id="AssessmentTab3">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="panel-body">
+                                            @*@Html.Partial("../PCMCase/GetOrderdetails")*@
+                                            @Html.Action("IllegalItemsFound", "CYCAAdmission")
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane" id="AssessmentTab4">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="panel-body">
+                                            @*@Html.Partial("../ChildAssessment/_InterventionPlanning", Model)*@
+                                            @Html.Action("UploadDocument", "CYCAAdmission")
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    @*<div id="collapseOne" class="panel-collapse collapse" style="height: 0px;">
+                        <div class="panel-body">
+
+                            <div class="col-md-12">
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        New Admission
+                                    </div>
+                                    <div class="panel-body">
+
+                                        <table>
+
+                                            <tr>
+                                                <td style="padding: 10px;">Admission Reansons</td>
+                                                <td>
+                                                    <select class="form-control">
+                                                        <option> Select Admission Reasons </option>
+                                                        <option> Admission reason 1 </option>
+                                                        <option> Admission reason 2 </option>
+                                                        <option> Admission reason 3 </option>
+                                                        <option> Admission reason 4 </option>
+                                                    </select>
+                                                </td>
+
+                                            </tr>
+                                            <tr>
+                                                <td style="padding: 10px;">Admission comments</td>
+                                                <td><textArea class="form-control" placeholder="Enter comments"></textArea>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding: 10px;">Venue</td>
+                                                <td><input type="text" class="form-control" placeholder="Enter venue" /></td>
+
+                                            </tr>
+                                            <tr>
+                                                <td style="padding: 10px;">Document</td>
+                                                <td><input type="file" class="form-control" placeholder="Browse document" /></td>
+                                            </tr>
+
+                                        </table>
+
+                                        <div class="row" style="float: right; margin-right: 10px;">
+                                            <input type="submit" class="btn btn-default" value="Cancel" />
+                                            <input type="submit" class="btn btn-warning" value="Save" />
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>*@
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@*<div class="spinner" style="display:none" id="spinner">
+    <div class="center-div">
+        <div class="inner-div">
+            <div class="loader"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    $(document).ready(function () {
+
+        $('.spinner').css('display', 'block');
+
+
+        setTimeout(function () {
+            $('.spinner').hide();
+        }, 10000);
+
+    });
+</script>*@

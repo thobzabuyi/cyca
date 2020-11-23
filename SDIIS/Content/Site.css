@@ -1,0 +1,120 @@
+﻿body {
+    padding-top: 0px;
+    padding-bottom: 0px;
+    background-color: #fdf6ee !important;
+}
+
+.cornerImage{
+     background-image: url('../Images/dsd_Corner.png');
+     background-repeat: no-repeat;
+}
+
+.navbar-inverse{
+    margin-bottom: 0px !important;
+    border-width: 0 1px 2px 1px !important;
+    padding: 0px !important;
+}
+
+/* Set padding to keep content from hitting the edges */
+.body-content {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+.site-title {
+    background-color: #fdf6f0;
+}
+/* Set width on the form input elements since they're 100% wide by default */
+/*input,
+select,
+textarea {
+    max-width: 280px;
+}*/
+
+/*Datepicker Year dropdown fix*/
+.ui-datepicker select.ui-datepicker-month, .ui-datepicker select.ui-datepicker-year {
+    color: #807f7e;
+}
+
+/* styles for validation helpers */
+.error {
+    color: #b94a48;
+}
+
+input.error {
+    border: 1px solid #b94a48;
+}
+
+select.error {
+    border: 1px solid #b94a48;
+}
+
+.field-validation-error {
+    color: #b94a48;
+}
+
+.field-validation-error {
+    color: #b94a48;
+}
+
+.field-validation-valid {
+    display: none;
+}
+
+input.input-validation-error {
+    border: 1px solid #b94a48;
+}
+
+input[type="checkbox"].input-validation-error {
+    border: 0 none;
+}
+
+.validation-summary-errors {
+    color: #b94a48;
+}
+
+.validation-summary-valid {
+    display: none;
+}
+
+.unblock {
+    display: inline;
+}
+
+.styled_checkbox {
+  cursor:pointer; 
+  margin: 3px; padding: 0px 5px;
+}
+
+.styled_list {
+  width: 50%; margin-right: 0px; padding:3px 5px 3px 5px; line-height: 25px;
+}
+
+/*Override Checkbox style because it's 2px too high*/
+.radio,
+.checkbox {
+    position: relative;
+    display: block;
+    margin-top: 9px;
+    margin-bottom: 9px;
+}
+
+.multiSelectButton {
+    text-align: left;
+}
+
+.padRight {
+    padding-right: 10px;
+}
+.marginRight {
+    margin-right: 10px;
+}
+
+.monitoringRunning {
+    display: inline;
+    color: lime;
+}
+
+.monitoringStopped {
+    display: inline;
+    color: red;
+}

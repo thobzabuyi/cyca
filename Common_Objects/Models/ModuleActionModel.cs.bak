@@ -1,0 +1,212 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace Common_Objects.Models
+{
+    public class ModuleActionModel
+    {
+        public Module_Action GetSpecificModuleAction(int moduleActionId)
+        {
+            var dbContext = new SDIIS_DatabaseEntities();
+
+            Module_Action moduleAction;
+
+            try
+            {
+                var moduleActionsList = (from ma in dbContext.Module_Actions
+                                         where ma.Module_Action_Id.Equals(moduleActionId)
+                                         select ma).ToList();
+
+                moduleAction = PopulateAdditionalItems(moduleActionsList, dbContext).FirstOrDefault();
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+
+            return moduleAction;
+        }
+
+        public List<Module_Action> GetListOfModuleActions(bool showInActive, bool showDeleted)
+        {
+            var dbContext = new SDIIS_DatabaseEntities();
+
+            List<Module_Action> moduleActions;
+
+            try
+            {
+                var moduleActionsList = (from ma in dbContext.Module_Actions
+                                         select ma).ToList();
+
+                moduleActions = PopulateAdditionalItems(moduleActionsList, dbContext).ToList();
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+
+            return moduleActions;
+        }
+
+        public Module_Action CreateModuleAction(int moduleControllerId, string moduleActionName)
+        {
+            var dbContext = new SDIIS_DatabaseEntities();
+
+            var moduleAction = new Module_Action() { Module_Controller_Id = moduleControllerId, Module_Action_Name = moduleActionName };
+
+            try
+            {
+                var newModuleAction = dbContext.Module_Actions.Add(moduleAction);
+
+                dbContext.SaveChanges();
+
+                return newModuleAction;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        public Module_Action EditModuleAction(int moduleActionId, int moduleControllerId, string moduleActionName)
+        {
+            var dbContext = new SDIIS_DatabaseEntities();
+
+            try
+            {
+                var editModuleAction = (from ma in dbContext.Module_Actions
+                                        where ma.Module_Action_Id.Equals(moduleActionId)
+                                        select ma).FirstOrDefault();
+
+                if (editModuleAction == null) return null;
+
+                editModuleAction.Module_Controller_Id = moduleControllerId;
+                editModuleAction.Module_Action_Name = moduleActionName;
+
+                dbContext.SaveChanges();
+
+                return editModuleAction;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        public Module_Action AddModuleActionToRole(int moduleActionId, int roleId)
+        {
+            var dbContext = new SDIIS_DatabaseEntities();
+
+            try
+            {
+                var roleToAdd = dbContext.Roles.FirstOrDefault(x => x.Role_Id.Equals(roleId));
+                if (roleToAdd == null) return null;
+
+                var moduleActionToEdit = dbContext.Module_Actions.FirstOrDefault(x => x.Module_Action_Id.Equals(moduleActionId));
+                if (moduleActionToEdit == null) return null;
+
+                moduleActionToEdit.Roles.Add(roleToAdd);
+
+                dbContext.SaveChanges();
+
+                return moduleActionToEdit;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
+        public Module_Action AddModuleActionToRole(int moduleActionId, List<int> roleIds)
+        {
+            var dbContext = new SDIIS_DatabaseEntities();
+
+            try
+            {
+                var moduleActionToEdit = dbContext.Module_Actions.FirstOrDefault(x => x.Module_Action_Id.Equals(moduleActionId));
+                if (moduleActionToEdit == null) return null;
+
+                moduleActionToEdit.Roles.Clear();
+
+                foreach (var roleId in roleIds)
+                {
+                    var roleToAdd = dbContext.Roles.FirstOrDefault(x => x.Role_Id.Equals(roleId));
+                    if (roleToAdd == null) return null;
+
+                    moduleActionToEdit.Roles.Add(roleToAdd);
+                }
+
+                dbContext.SaveChanges();
+
+                return moduleActionToEdit;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
+        public Module_Action RemoveMenuItemFromRole(int moduleActionId, int roleId)
+        {
+            var dbContext = new SDIIS_DatabaseEntities();
+
+            try
+            {
+                var roleToRemove = dbContext.Roles.FirstOrDefault(x => x.Role_Id.Equals(roleId));
+                if (roleToRemove == null) return null;
+
+                var moduleActionToEdit = dbContext.Module_Actions.FirstOrDefault(x => x.Module_Action_Id.Equals(moduleActionId));
+                if (moduleActionToEdit == null) return null;
+
+                moduleActionToEdit.Roles.Remove(roleToRemove);
+
+                dbContext.SaveChanges();
+
+                return moduleActionToEdit;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
+        public Module_Action ClearMenuItemRoles(int moduleActionId)
+        {
+            var dbContext = new SDIIS_DatabaseEntities();
+
+            try
+            {
+                var moduleActionToEdit = dbContext.Module_Actions.FirstOrDefault(x => x.Module_Action_Id.Equals(moduleActionId));
+                if (moduleActionToEdit == null) return null;
+
+                moduleActionToEdit.Roles.Clear();
+
+                dbContext.SaveChanges();
+
+                return moduleActionToEdit;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
+        #region Helpers
+
+        private IEnumerable<Module_Action> PopulateAdditionalItems(IEnumerable<Module_Action> listOfModuleActions, SDIIS_DatabaseEntities dbContext)
+        {
+            var populatedModuleActions = new List<Module_Action>();
+
+            populatedModuleActions = (from m in listOfModuleActions
+                                      select m.Set(m1 =>
+                                      {
+                                          m1.Module_Id = m.Module_Controller.Module_Id;
+                                      })).ToList();
+
+            return populatedModuleActions;
+        }
+
+        #endregion
+    }
+}

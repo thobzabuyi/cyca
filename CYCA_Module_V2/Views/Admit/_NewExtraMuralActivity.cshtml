@@ -1,0 +1,201 @@
+﻿
+@model Common_Objects.ViewModels.CYCAAdmissionViewModel
+@{
+    ViewBag.Title = "Extra Mural Activity";
+    Layout = null;
+}
+<div class="row">
+    <div class="col-md-12 col-sm-12">
+        <div class="panel panel-default">
+            <div class="panel-heading text-center">
+                <strong style="color:#158cba">New Physical Appearance & Extra Mural Activity</strong>
+            </div>
+            <div class="panel-body">
+                <form id="myForm">
+                    <div class="row">              
+                        <div class="col-md-4">
+                            @Html.HiddenFor(m => m.Admission_Id, new { @id = "Admission_Id" })
+                            @Html.HiddenFor(m => m.Extra_Mural_Activity_Id, new { @id = "Extra_Mural_Activity_Id" })
+                            @Html.LabelFor(x => x.Weight)
+                        </div>
+                        <div class="col-md-8 form-group" style="">
+                            @Html.TextBoxFor(m => m.Weight, new { @id = "Weight", @class = "form-control", required = "required" })
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            @Html.LabelFor(x => x.selectedPhysicalBuild)
+                        </div>
+                        <div class="col-md-8 form-group" style="">
+                            @Html.DropDownListFor(m => m.Physical_Build_Id, ViewBag.PhysicalBuildList as SelectList, "--Select--", new { @id = "Physical_Build_Id", @class = "form-control", required = "required" })
+                            @*@Html.DropDownListFor(m => m.Search_Reason_Id, new SelectList(@ViewBag.SearchReason, "search_ReasonId", "description"), "--Select Search Reason--", new { @id = "Search_Reason_Id", @class = "form-control" })*@
+                        </div>
+                        <div class="col-md-4">
+                            @Html.LabelFor(x => x.selectedEyeColor)
+                        </div>
+                        <div class="col-md-8 form-group" style="">
+                            @Html.DropDownListFor(m => m.Eye_Color_Id, ViewBag.EyeColorList as SelectList, "--Select--", new { @id = "Eye_Color_Id", @class = "form-control", required = "required" })
+                        </div>
+
+                        <div class="col-md-4">
+                            @Html.LabelFor(x => x.selectedHairColor)
+                        </div>
+                        <div class="col-md-8 form-group" style="">
+                            @Html.DropDownListFor(m => m.Hair_Color_Id, ViewBag.HairColorList as SelectList, "--Select--", new { @id = "Hair_Color_Id", @class = "form-control", required = "required" })
+                        </div>
+
+                        <div class="col-md-4">
+                            @Html.LabelFor(x => x.selectedHobby)
+                        </div>
+                        <div class="col-md-8 form-group" style="">
+                            @Html.DropDownListFor(m => m.Hobby_Id, ViewBag.ChildHobbyList as SelectList, "--Select--", new { @id = "Hobby_Id", @class = "form-control", required = "required" })
+                        </div>
+
+                        <div class="col-md-4">
+                            @Html.LabelFor(x => x.selectedSportActivity)
+                        </div>
+                        <div class="col-md-8 form-group" style="">
+                            @Html.DropDownListFor(m => m.Activity_Id, ViewBag.SportActivityList as SelectList, "--Select--", new { @id = "Activity_Id", @class = "form-control", required = "required" })
+                        </div>
+                        <div class="col-md-4">                      
+                            @Html.LabelFor(x => x.additionalDescription)
+                        </div>
+                        <div class="col-md-8 form-group" style="">
+                            @Html.TextBoxFor(m => m.Description, new { @id = "Description", @class = "form-control", required = "required" })
+                        </div>
+
+                    </div>
+
+                    <div class="row pull-right">
+                        <div class="col-md-12">
+                            <a class="btn btn-default" id="Cancel">Cancel</a>                            
+                            <a href="#" class="btn btn-primary" id="Send">Save</a>
+                        </div>
+
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(function () {
+        $("#myForm").validate();
+    });
+    $("#Send").click(function () {
+        //Vaidate Form
+        var $valid = $("#myForm").valid();
+        if (!$valid) {
+            return;
+        }
+        $.ajax({
+            type: "Post",
+            url: "/Admit/AddBodilySearch",
+            data: {
+                Admission_Id: $("#Admission_Id").val(),
+                physicalLocationDescription: $("#physicalLocationDescription").val(),
+                Search_Reason_Id: $("#Search_Reason_Id").val(),
+                Conducted_By: $("#Conducted_By").val(),
+                Witnessed_By: $("#Witnessed_By").val()
+            },
+            success: function (result) {
+                $.confirm({
+                    title: 'Illegal Items',
+                    content: 'Did you find any illegal items?',
+                    buttons: {
+                        Yes: function () {
+                            NewIllegalItem($("#Admission_Id").val());
+                        },
+                        No: function () {
+                            ConfirmUploadDocuments($("#Admission_Id").val());
+                        }
+                    }
+                });
+            },
+            error: function (xhr, ajaxOptions, error) {
+
+            }
+        })
+    });
+    $('#Cancel').click(function () {
+        ConfirmUploadDocuments($("#Admission_Id").val());
+    });
+    $("#Cancel2").click(function () {
+        ConfirmCancellation($("#Admission_Id").val());
+        //location.reload(true);
+        //$("#myForm").show();
+        //location.url("~/Admit/AdmitNewIllegalItems");
+        //$("#myForm").show();
+        //location.html("_AdmitNew.cshtml");
+    });
+    function ConfirmUploadDocuments(id) {
+        $.confirm({
+            title: 'Documents Upload',
+            content: 'Would you like to upload document(s)?',
+            buttons: {
+                Yes: function () {
+                    NewUploadDocument(id);
+                },
+                No: function () {
+                    location.reload(true);
+                }
+            }
+        });
+    }
+
+
+     function ConfirmCancellation(id) {
+        $.confirm({
+            title: 'Back to admission',
+            content: 'Would you like to cancel body search process?',
+            buttons: {
+                Yes: function () {
+                  NewAdmission(id);
+                },
+                No: function () {
+                    //location.reload(false);
+                    //location.NewAdmission();
+                }
+            }
+        });
+    }
+
+    function NewIllegalItem(id) {
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Content("~/Admit/AdmitNewIllegalItems")',
+            data: {
+                Id: id
+            },
+            success: function (result) {
+                $('#mainDiv').html(result);
+            }
+        });
+    }
+    function NewUploadDocument(id) {
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Content("~/Admit/AdmitNewUploadDocument")',
+                data: {
+                    Id: id
+                },
+                success: function (result) {
+                    $('#mainDiv').html(result);
+                }
+            });
+    }
+
+     function NewAdmission(id) {
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Content("~/Admit/Admission")',
+                data: {
+
+                    Id: id
+                },
+                success: function (result) {
+                    $('#mainDiv').html(result);
+                }
+            });
+        }
+</script>

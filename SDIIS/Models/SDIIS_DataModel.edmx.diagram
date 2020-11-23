@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="2172d0a797e6461984c4b2123f851b2e" Name="Diagram1" ZoomLevel="78">
+        <EntityTypeShape EntityType="SDIIS_DatabaseModel.Employee" Width="2" PointX="11.625" PointY="11.625" />
+        <EntityTypeShape EntityType="SDIIS_DatabaseModel.Menu" Width="1.875" PointX="8.375" PointY="4" />
+        <EntityTypeShape EntityType="SDIIS_DatabaseModel.Menu_Item" Width="1.875" PointX="8.375" PointY="7.375" />
+        <EntityTypeShape EntityType="SDIIS_DatabaseModel.Module" Width="1.5" PointX="0.75" PointY="8" />
+        <EntityTypeShape EntityType="SDIIS_DatabaseModel.Module_Action" Width="1.5" PointX="5.75" PointY="8.25" />
+        <EntityTypeShape EntityType="SDIIS_DatabaseModel.Module_Controller" Width="1.5" PointX="3.25" PointY="8.25" />
+        <AssociationConnector Association="SDIIS_DatabaseModel.FK_MenuItem_Menu" />
+        <AssociationConnector Association="SDIIS_DatabaseModel.FK_MenuItem_MenuItem" />
+        <AssociationConnector Association="SDIIS_DatabaseModel.FK_MenuItem_ModuleAction" />
+        <AssociationConnector Association="SDIIS_DatabaseModel.FK_ModuleController_Module" />
+        <AssociationConnector Association="SDIIS_DatabaseModel.FK_ModuleAction_ModuleController" />
+        <EntityTypeShape EntityType="SDIIS_DatabaseModel.Group" Width="1.5" PointX="5.75" PointY="15.5" />
+        <EntityTypeShape EntityType="SDIIS_DatabaseModel.Role" Width="1.5" PointX="5.75" PointY="12" />
+        <EntityTypeShape EntityType="SDIIS_DatabaseModel.User" Width="1.875" PointX="8.375" PointY="12.75" />
+        <AssociationConnector Association="SDIIS_DatabaseModel.FK_apl_Employee_apl_User" />
+        <AssociationConnector Association="SDIIS_DatabaseModel.apl_Module_Action_Role" />
+        <AssociationConnector Association="SDIIS_DatabaseModel.apl_Role_Group" />
+        <AssociationConnector Association="SDIIS_DatabaseModel.apl_User_Group" />
+        <AssociationConnector Association="SDIIS_DatabaseModel.apl_User_Role" />
+        <EntityTypeShape EntityType="SDIIS_DatabaseModel.Gender" Width="1.5" PointX="14.875" PointY="14" />
+        <EntityTypeShape EntityType="SDIIS_DatabaseModel.Job_Position" Width="1.875" PointX="8.375" PointY="17.875" />
+        <EntityTypeShape EntityType="SDIIS_DatabaseModel.Paypoint" Width="1.5" PointX="14.875" PointY="11.75" />
+        <EntityTypeShape EntityType="SDIIS_DatabaseModel.Race" Width="1.5" PointX="14.875" PointY="19.75" />
+        <EntityTypeShape EntityType="SDIIS_DatabaseModel.Salary_Level" Width="1.5" PointX="14.875" PointY="16.5" />
+        <EntityTypeShape EntityType="SDIIS_DatabaseModel.Service_Office" Width="1.5" PointX="14.875" PointY="6.625" />
+        <AssociationConnector Association="SDIIS_DatabaseModel.FK_apl_Employee_apl_Gender" />
+        <AssociationConnector Association="SDIIS_DatabaseModel.FK_apl_Employee_apl_JobPosition" />
+        <AssociationConnector Association="SDIIS_DatabaseModel.FK_apl_Employee_apl_Paypoint" />
+        <AssociationConnector Association="SDIIS_DatabaseModel.FK_apl_Employee_apl_Race" />
+        <AssociationConnector Association="SDIIS_DatabaseModel.FK_apl_Employee_apl_SalaryLevel" />
+        <AssociationConnector Association="SDIIS_DatabaseModel.FK_apl_Employee_apl_ServiceOffice" />
+        <EntityTypeShape EntityType="SDIIS_DatabaseModel.Area" Width="1.5" PointX="21.125" PointY="11.75" />
+        <EntityTypeShape EntityType="SDIIS_DatabaseModel.Country" Width="1.5" PointX="18.25" PointY="17.375" />
+        <EntityTypeShape EntityType="SDIIS_DatabaseModel.District" Width="1.5" PointX="18.25" PointY="11.75" />
+        <EntityTypeShape EntityType="SDIIS_DatabaseModel.Province" Width="1.5" PointX="18.25" PointY="14.625" />
+        <AssociationConnector Association="SDIIS_DatabaseModel.FK_apl_Area_apl_District" />
+        <AssociationConnector Association="SDIIS_DatabaseModel.FK_apl_ServiceOffice_apl_Area" />
+        <AssociationConnector Association="SDIIS_DatabaseModel.FK_apl_Province_apl_Country" />
+        <AssociationConnector Association="SDIIS_DatabaseModel.FK_apl_District_apl_Province" />
+        <AssociationConnector Association="SDIIS_DatabaseModel.FK_apl_Paypoint_apl_District" />
+        <AssociationConnector Association="SDIIS_DatabaseModel.FK_apl_Employee_apl_Employee" />
+        <AssociationConnector Association="SDIIS_DatabaseModel.FK_apl_Employee_apl_Employee1" />
+        </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

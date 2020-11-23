@@ -1,0 +1,282 @@
+﻿@model Common_Objects.ViewModels.CYCAAdmissionViewModel
+@{
+    ViewBag.Title = "Illegal Item";
+    Layout = null;
+}
+<div class="row">
+    <div class="portlet-body">
+        <div class="col-md-12 col-sm-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    @*<a href="#">
+                            <span class="glyphicon glyphicon-step-backward pull-right" value="Back" style="margin-left:20px" onclick="goBack()"></span>
+                        </a>*@
+                    <h3>New Illegal Item found for @Model.childFullNames</h3>
+                </div>
+                <div class="panel-body">
+                    <form id="myForm">
+                        <div class="row">
+                            <div class="col-md-4">
+                                @Html.HiddenFor(m => m.Admission_Id)
+                                Description of Illegal Item(s) Found:
+                                @*@Html.LabelFor(x => x.Item_Description)*@
+                            </div>
+                            <div class="col-md-8 form-group" style="">
+                                @Html.TextAreaFor(m => m.Description, new { @id = "Item_Description", @class = "form-control", required = "required" })
+                            </div>
+
+                        </div>
+                        <div class="row" required>
+                            <div class="col-md-4">
+
+                                @Html.LabelFor(x => x.Quantity)
+                            </div>
+                            <div class="col-md-8 form-group" style="">
+                                @Html.TextBoxFor(m => m.Quantity, new { @id = "Quantity", @class = "form-control", required = "required" })
+                            </div>
+                            <div class="col-md-4">
+                                @Html.LabelFor(x => x.selectedHandedBy)
+                            </div>
+                            <div class="col-md-8 form-group" style="">
+
+                                @Html.DropDownListFor(m => m.Handed_By, new SelectList(@ViewBag.Userlist, "userId", "Full_Name"), "--Select--", new { @id = "Handed_By", @class = "form-control", required = "required" })
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4">
+                                Document Type
+                            </div>
+                            <div class="col-md-8 form-group">
+
+                                @*@Html.DropDownList("docs", (IEnumerable<SelectListItem>)ViewBag.DocumentTypeList, "--Select--", new { @id = "Document_Type_Id", @class = "form-control", onchange = "ShowHideDiv()" })*@
+                                @Html.DropDownListFor(m => m.DocType_Id, ViewBag.DocumentTypeList as SelectList, "--Select--", new { @id = "DocType_Id", @class = "form-control", onchange = "ShowHideDiv(), chkatchtbl()" })
+                            </div>
+                            <div id="dvOther" style="display: none">
+                                <div class="col-md-4">
+                                    Explain Document Type:
+                                </div>
+                                <div class="col-md-8 form-group">
+                                    @Html.TextBoxFor(m => m.Additional_Info, new { @class = "form-control", required = "required" })
+                                    @*<input class="form-control" type="text" id="Exp" required />*@
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                @Html.LabelFor(x => x.Document_Name)
+                            </div>
+                            <div class="col-md-8 form-group" style="">
+
+                                <input id="fileInput" type="file" multiple required disabled>
+                            </div>
+                            <br />            <br />
+                            <div class="col-md-3 pull-left">
+                                <table class="table" id="FilesList" style="visibility:hidden">
+                                    <tr>
+                                        <th>
+                                            Attachment(s)
+                                        </th>
+                                        <th>
+                                            Action
+                                        </th>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="row pull-right">
+                            <div class="col-md-12">
+                                <a href="#" class="btn btn-primary" id="Send">Complete</a>
+                                <a href="#" class="btn btn-default" id="Cancel">Skip Illigal Items</a>
+
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    <script>
+    $(function () {
+        $("#myForm").validate();
+    });
+    function ShowHideDiv() {
+        //var Document_Type_Id = document.getElementById("DocType_Id");
+        //var dvOther = document.getElementById("dvOther");
+        //dvOther.style.display = Document_Type_Id.value == "4" ? "block" : "none";
+
+        var DocType_Id = document.getElementById("DocType_Id");
+        var dvOther = document.getElementById("dvOther");
+        var selectedText = DocType_Id.options[DocType_Id.selectedIndex].text;
+        console.log(selectedText.toUpperCase() + "inside org");
+        dvOther.style.display = selectedText == "Other" ? "block" : "none";
+
+
+    }
+    var formdata = new FormData(); //FormData object
+    $("#fileInput").on("change", function () {
+        var fileInput = document.getElementById('fileInput');
+        //Iterating through each files selected in fileInput
+        for (i = 0; i < fileInput.files.length; i++) {
+            var sfilename = fileInput.files[i].name;
+            let srandomid = Math.random().toString(36).substring(7);
+            formdata.append(sfilename, fileInput.files[i]);
+
+            var markup = "<tr id='" + srandomid + "'><td>" + sfilename + "</td><td><a href='#' onclick='DeleteFile(\"" + srandomid + "\",\"" + sfilename +
+                "\")'><span class='red'>Remove file</span></a></td></tr>"; // Binding the file name
+            $("#FilesList tbody").append(markup);
+        }
+        chkatchtbl();
+        $('#fileInput').val('');
+    });
+
+    function DeleteFile(Fileid, FileName) {
+        formdata.delete(FileName)
+        $("#" + Fileid).remove();
+        chkatchtbl();
+    }
+    function chkatchtbl() {
+        //if ($('#FilesList tr').length > 1) {
+        //    $("#FilesList").css("visibility", "visible");
+        //} else {
+        //    $("#FilesList").css("visibility", "hidden");
+        //}
+
+        if (document.getElementById("DocType_Id").value >=1) {
+            $("#fileInput").removeAttr("disabled")
+            if ($('#FilesList tr').length > 1) {
+                $("#fileInput").removeAttr("required")
+                $("#FilesList").css("visibility", "visible");
+            } else {
+                $("#fileInput").attr("required", "required")
+            }
+        } else {
+            $("#fileInput").attr("disabled", "disabled")
+            $("#FilesList").css("visibility", "hidden");
+            if ($('#FilesList tr').length > 1) {
+                $("#FilesList").css("visibility", "visible");
+                $("#DocType_Id").attr("required", "required")
+            }
+        }
+    }
+    $('#Cancel').click(function () {
+        //ConfirmUploadDocuments($("#Admission_Id").val());
+        location.reload(true);
+    });
+    $("#Send").click(function () {
+        var $valid = $("#myForm").valid();
+        if (!$valid) {
+            return;
+        }
+        console.log(formdata);
+        formdata.append('uploadername', $('#txtuploader').val());
+
+        formdata.append("Admission_Id", $("#Admission_Id").val());
+        formdata.append("Description", $("#Item_Description").val());
+        formdata.append("Quantity", $("#Quantity").val());
+        formdata.append("Handed_By", $("#Handed_By").val());
+        formdata.append("DocType_Id", $("#DocType_Id").val());
+        formdata.append("Additional_Info", $("#Additional_Info").val());
+        $.ajax({
+            url: '@Url.Action("NewIllegalItem", "Admit")',
+                type: "POST",
+                contentType: false, // Not to set any content header
+                processData: false, // Not to process data
+                data: formdata,
+                async: false,
+            success: function (result) {
+                location.reload(true);
+                    //$.confirm({
+                    //    title: 'Illegal Items',
+                    //    content: 'Would you like to add another?',
+                    //    buttons: {
+                    //        Yes: function () {
+                    //            $("#myForm").trigger("reset");
+                    //        },
+                    //        No: function () {
+                    //            //ConfirmUploadDocuments($("#Admission_Id").val());
+                    //            location.reload(true);
+                    //        }
+                    //    }
+                    //});
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+        });
+    });
+    //$("#Send").click(function () {
+    //    //Vaidate Form
+    //    var $valid = $("#myForm").valid();
+    //    if (!$valid) {
+    //        return;
+    //    }
+    //    $.ajax({
+    //        type: "Post",
+    //        //url: "/Admit/AddIllegalItem",
+    //        url: "/Admit/NewIllegalItem",
+    //        data: {
+    //            Admission_Id: $("#Admission_Id").val(),
+    //            Description: $("#Item_Description").val(),
+    //            Quantity: $("#Quantity").val(),
+    //            Handed_By: $("#Handed_By").val(),
+    //            Document_Type_Id: $("#DocType_Id").val(),
+
+    //        },
+    //        success: function (result) {
+    //            $.confirm({
+    //                title: 'Illegal Items',
+    //                content: 'Would you like to add another?',
+    //                buttons: {
+    //                    Yes: function () {
+    //                        $("#myForm").trigger("reset");
+    //                    },
+    //                    No: function () {
+    //                        ConfirmUploadDocuments($("#Admission_Id").val());
+    //                    }
+    //                }
+    //            });
+    //        },
+    //        error: function (xhr, ajaxOptions, error) {
+
+    //        }
+    //    })
+    //});
+    function NewBodySearch(id) {
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Content("~/Admit/AdmitNewIllegalItems")',
+            data: {
+                Id: id
+            },
+            success: function (result) {
+                $('#mainDiv').html(result);
+            }
+        });
+    }
+    function ConfirmUploadDocuments(id) {
+        $.confirm({
+            title: 'Documents Upload',
+            content: 'Would you like to upload document(s)?',
+            buttons: {
+                Yes: function () {
+                    NewUploadDocument(id);
+                },
+                No: function () {
+                    location.reload(true);
+                }
+            }
+        });
+    }
+    function NewUploadDocument(id) {
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Content("~/Admit/AdmitNewUploadDocument")',
+                data: {
+                    Id: id
+                },
+                success: function (result) {
+                    $('#mainDiv').html(result);
+                }
+            });
+    }
+    </script>

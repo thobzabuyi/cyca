@@ -1,0 +1,342 @@
+﻿@model Common_Objects.Models.PersonDetailViewModel
+
+<div class="row">
+    <div class="col-md-3">
+        @Html.LabelFor(x => x.Person.Phone_Number, new { @class = "control-label" })
+    </div>
+    <div class="col-md-3 form-group">
+        @Html.TextBoxFor(model => model.Person.Phone_Number, new { @id = "Popup_Phone_Number", @class = "form-control" })
+    </div>
+    <div class="col-md-3">
+        @Html.LabelFor(x => x.Person.Mobile_Phone_Number, new { @class = "control-label" })
+    </div>
+    <div class="col-md-3 form-group">
+        @Html.TextBoxFor(model => model.Person.Mobile_Phone_Number, new { @id = "Popup_Mobile_Phone_Number", @class = "form-control" })
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-3">
+        @Html.LabelFor(x => x.Person.Email_Address, new { @class = "control-label" })
+    </div>
+    <div class="col-md-3 form-group">
+        @Html.TextBoxFor(model => model.Person.Email_Address, new { @id = "Popup_Email_Address", @class = "form-control" })
+    </div>
+    <div class="col-md-3">
+        @Html.LabelFor(x => x.Person.Preferred_Contact_Type_List, new { @class = "control-label" })
+    </div>
+    <div class="col-md-3 form-group">
+        @Html.DropDownListFor(n => n.Person.Preferred_Contact_Type_Id, Model.Person.Preferred_Contact_Type_List, "- Please select -", new { @id = "Popup_Preferred_Contact_Type", @class = "form-control" })
+    </div>
+</div>
+<hr />
+<div class="row">
+    <div class="col-md-6">
+        <h4>@Html.Label("Physical Address", new { @class = "control-label" })</h4>
+        @Html.HiddenFor(x => x.PhysicalAddress.Address_Type_Id, new { id = "Popup_Physical_Address_Type_Id" })
+    </div>
+    <div class="col-md-6 form-group">
+        <h4>@Html.Label("Postal Address Address", new { @class = "control-label" })</h4>
+        @Html.HiddenFor(x => x.PostalAddress.Address_Type_Id, new { id = "Popup_Postal_Address_Type_Id" })
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6">
+        <div class="row">
+            <div class="col-md-6">
+                @Html.LabelFor(x => x.PhysicalAddress.Address_Line_1, new { @class = "control-label" })
+            </div>
+            <div class="col-md-6 form-group">
+                @Html.TextBoxFor(model => model.PhysicalAddress.Address_Line_1, new { @id = "Popup_Physical_Address_Line_1", @class = "form-control" })
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                @Html.LabelFor(x => x.PhysicalAddress.Address_Line_2, new { @class = "control-label" })
+            </div>
+            <div class="col-md-6 form-group">
+                @Html.TextBoxFor(model => model.PhysicalAddress.Address_Line_2, new { @id = "Popup_Physical_Address_Line_1", @class = "form-control" })
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                @Html.LabelFor(x => x.PhysicalAddress.Province_List, new { @class = "control-label" })
+            </div>
+            <div class="col-md-6 form-group">
+                @Html.DropDownListFor(n => n.PhysicalAddress.Selected_Province_Id, Model.PhysicalAddress.Province_List, "- Please select -", new { @id = "EProvinceId", @class = "form-control" })
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                @Html.LabelFor(x => x.PhysicalAddress.District_Municipality_List, new { @class = "control-label" })
+            </div>
+            <div class="col-md-6 form-group">
+                @Html.DropDownListFor(n => n.PhysicalAddress.Selected_Municipality_Id, Model.PhysicalAddress.District_Municipality_List, "- Please select -", new { @id = "MagistratesId", @class = "form-control" })
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                @Html.LabelFor(x => x.PhysicalAddress.Local_Municipality_List, new { @class = "control-label" })
+            </div>
+            <div class="col-md-6 form-group">
+                @Html.DropDownListFor(n => n.PhysicalAddress.Selected_Local_Municipality_Id, Model.PhysicalAddress.Local_Municipality_List, "- Please select -", new { @id = "LocalMunicipality", @class = "form-control" })
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                @Html.LabelFor(x => x.PhysicalAddress.Town_List, new { @class = "control-label" })
+            </div>
+            <div class="col-md-6 form-group">
+                @Html.DropDownListFor(n => n.PhysicalAddress.Town_Id, Model.PhysicalAddress.Town_List, "- Please select -", new { @id = "Address_Town_Id", @class = "form-control" })
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                @Html.LabelFor(x => x.PhysicalAddress.Postal_Code, new { @class = "control-label" })
+            </div>
+            <div class="col-md-6 form-group">
+                @Html.TextBoxFor(model => model.PhysicalAddress.Postal_Code, new { @id = "Popup_Physical_Address_Postal_Code", @class = "form-control" })
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="row">
+            <div class="col-md-6">
+                @Html.LabelFor(x => x.PostalAddress.Address_Line_1, new { @class = "control-label" })
+            </div>
+            <div class="col-md-6 form-group">
+                @Html.TextBoxFor(model => model.PostalAddress.Address_Line_1, new { @id = "Popup_Postal_Address_Line_1", @class = "form-control" })
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                @Html.LabelFor(x => x.PostalAddress.Address_Line_2, new { @class = "control-label" })
+            </div>
+            <div class="col-md-6 form-group">
+                @Html.TextBoxFor(model => model.PostalAddress.Address_Line_2, new { @id = "Popup_Postal_Address_Line_2", @class = "form-control" })
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                @Html.LabelFor(x => x.PostalAddress.Province_List, new { @class = "control-label" })
+            </div>
+            <div class="col-md-6 form-group">
+                @Html.DropDownListFor(n => n.PostalAddress.Selected_Province_Id, Model.PostalAddress.Province_List, "- Please select -", new { @id = "ProvinceId_1", @class = "form-control" })
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                @Html.LabelFor(x => x.PostalAddress.District_Municipality_List, new { @class = "control-label" })
+            </div>
+            <div class="col-md-6 form-group">
+                @Html.DropDownListFor(n => n.PostalAddress.Selected_Municipality_Id, Model.PostalAddress.District_Municipality_List, "- Please select -", new { @id = "MagistratesId_1", @class = "form-control" })
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                @Html.LabelFor(x => x.PostalAddress.Local_Municipality_List, new { @class = "control-label" })
+            </div>
+            <div class="col-md-6 form-group">
+                @Html.DropDownListFor(n => n.PostalAddress.Selected_Local_Municipality_Id, Model.PostalAddress.Local_Municipality_List, "- Please select -", new { @id = "PostalAddressLocalMunicipality", @class = "form-control" })
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                @Html.LabelFor(x => x.PostalAddress.Town_List, new { @class = "control-label" })
+            </div>
+            <div class="col-md-6 form-group">
+                @Html.DropDownListFor(n => n.PostalAddress.Town_Id, Model.PhysicalAddress.Town_List, "- Please select -", new { @id = "Postal_Address_Town_Id", @class = "form-control" })
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                @Html.LabelFor(x => x.PostalAddress.Postal_Code, new { @class = "control-label" })
+            </div>
+            <div class="col-md-6 form-group">
+                @Html.TextBoxFor(model => model.PostalAddress.Postal_Code, new { @id = "Popup_Postal_Address_Postal_Code", @class = "form-control" })
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    //Physical address cascade
+    $(function () {
+        //Filter for physical District List :TC
+        $("#EProvinceId").change(function () {
+            
+            var dropdownPhysicalMunicipality = $('#MagistratesId');//District loading
+            dropdownPhysicalMunicipality.html('');
+            dropdownPhysicalMunicipality.append($('<option></option>').val("").html("- Please Select -"));
+
+            var dropdownCPhysicalLocalMunicipality = $('#LocalMunicipality');//Local Municipality
+            dropdownCPhysicalLocalMunicipality.html('');
+            dropdownCPhysicalLocalMunicipality.append($('<option></option>').val("").html("- Please Select -"));
+
+            var dropdownPhysicalTown = $('#Address_Town_Id');//Town Loading
+            dropdownPhysicalTown.html('');
+            dropdownPhysicalTown.append($('<option></option>').val("").html("- Please Select -"));
+
+            var selectedItem = $(this).val();
+            $.ajax({
+                url: $.url('/Relation/FilterFromProvinceAjax'),
+                data: { "provinceId": selectedItem },
+                type: "GET",
+                success: function (response, status, xhr) {
+                    $.each(response, function (id, option) {
+                        dropdownPhysicalMunicipality.append($('<option></option>').val(option.id).html(option.name));
+                    });
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    alert('Error populating district dropdown');
+                }
+            });
+
+        });
+
+        //Filter for physical Local Municipality : TC
+        $("#MagistratesId").change(function () {
+           
+            var dropdownCPhysicalLocalMunicipality = $('#LocalMunicipality');
+
+            dropdownCPhysicalLocalMunicipality.html('');
+            dropdownCPhysicalLocalMunicipality.append($('<option></option>').val("").html("- Please Select -"));
+
+            var dropdownPhysicalTown = $('#Address_Town_Id');//Town Loading
+            dropdownPhysicalTown.html('');
+            dropdownPhysicalTown.append($('<option></option>').val("").html("- Please Select -"));
+
+            var selectedItem = $(this).val();
+            $.ajax({
+                url: $.url('/Relation/FilterFromMunicipalityAjax'),
+                data: { "municipalityId": selectedItem },
+                type: "GET",
+                success: function (response, status, xhr) {
+                    $.each(response, function (id, option) {
+              
+                        console.log(option.name);
+                        dropdownCPhysicalLocalMunicipality.append($('<option></option>').val(option.id).html(option.name));
+                    });
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    alert('Error populating local municipality dropdown');
+                }
+            });
+        });
+
+
+        //Filter for physical town : TC
+        $("#LocalMunicipality").change(function () {
+            var dropdownPhysicalTown = $('#Address_Town_Id');
+
+            var dropdownPhysicalTown = $('#Address_Town_Id');
+            dropdownPhysicalTown.html('');
+            dropdownPhysicalTown.append($('<option></option>').val("").html("- Please Select -"));
+
+            var selectedItem = $(this).val();
+            $.ajax({
+                url: $.url('/Relation/FilterFromLocalMunicipalityAjax'),
+                data: { "localMunicipalityId": selectedItem },
+                type: "GET",
+                success: function (response, status, xhr) {
+                    $.each(response, function (id, option) {
+                        console.log(option.name);
+                        dropdownPhysicalTown.append($('<option></option>').val(option.id).html(option.name));
+                    });
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    alert('Error populating towns dropdown');
+                }
+            });
+        });
+
+    });
+</script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $(".chosen-select").chosen();
+    });
+    //Postal address cascade
+    $(function () {
+        //Filter for postal District List :TC
+        $("#ProvinceId_1").change(function () {
+            var dropdownPostalMunicipality = $('#MagistratesId_1');//Distric loading
+            dropdownPostalMunicipality.html('');
+            dropdownPostalMunicipality.append($('<option></option>').val("").html("- Please Select -"));
+
+            var dropdownPostalLocalMunicipality = $('#PostalAddressLocalMunicipality');//Local Munipality Loading
+            dropdownPostalLocalMunicipality.html('');
+            dropdownPostalLocalMunicipality.append($('<option></option>').val("").html("- Please Select -"));
+
+            var dropdownPostalTown = $('#Postal_Address_Town_Id');//Town Loading
+            dropdownPostalTown.html('');
+            dropdownPostalTown.append($('<option></option>').val("").html("- Please Select -"));
+
+            var selectedItem = $(this).val();
+            $.ajax({
+                url: $.url('/Relation/FilterFromProvinceAjax'),
+                data: { "provinceId": selectedItem },
+                type: "GET",
+                success: function (response, status, xhr) {
+                    $.each(response, function (id, option) {
+                        dropdownPostalMunicipality.append($('<option></option>').val(option.id).html(option.name));
+                    });
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    alert('Error populating district dropdown');
+                }
+            });
+
+        });
+        //Filter for postal Local Municipality : TC
+        $("#MagistratesId_1").change(function () {
+            var dropdownPostalLocalMunicipality = $('#PostalAddressLocalMunicipality');//Local Munipality Loading
+            dropdownPostalLocalMunicipality.html('');
+            dropdownPostalLocalMunicipality.append($('<option></option>').val("").html("- Please Select -"));
+
+            var dropdownPostalTown = $('#Postal_Address_Town_Id');//Town Loading
+            dropdownPostalTown.html('');
+            dropdownPostalTown.append($('<option></option>').val("").html("- Please Select -"));
+
+            var selectedItem = $(this).val();
+            $.ajax({
+                url: $.url('/Relation/FilterFromMunicipalityAjax'),
+                data: { "municipalityId": selectedItem },
+                type: "GET",                
+                success: function (response, status, xhr) {
+                    $.each(response, function (id, option) {
+                        console.log(option.name);
+                        dropdownPostalLocalMunicipality.append($('<option></option>').val(option.id).html(option.name));
+                    });
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    alert('Error populating local municipality dropdown');
+                }
+            });
+        });
+
+        //Filter for postal town : TC
+        $("#PostalAddressLocalMunicipality").change(function () {
+            var dropdownPostalTown = $('#Postal_Address_Town_Id');
+            dropdownPostalTown.html('');
+            dropdownPostalTown.append($('<option></option>').val("").html("- Please Select -"));
+
+            var selectedItem = $(this).val();
+            $.ajax({
+                url: $.url('/Relation/FilterFromLocalMunicipalityAjax'),
+                data: { "localMunicipalityId": selectedItem },
+                type: "GET",
+                success: function (response, status, xhr) {
+                    $.each(response, function (id, option) {
+                        console.log(option.name);
+                        dropdownPostalTown.append($('<option></option>').val(option.id).html(option.name));
+                    });
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    alert('Error populating town dropdown');
+                }
+            });
+        });
+
+    });
+</script>

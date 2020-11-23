@@ -1,0 +1,63 @@
+﻿@model Common_Objects.Models.User_Role_Delegation
+
+@{
+    ViewBag.Title = "Create Role Delegation";
+}
+
+<h3>@ViewBag.Message</h3>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="panel panel-primary">
+        <div class="panel-heading" style="text-align: center">
+            Create a Role Delegation
+        </div>
+        <div class="panel-body">
+
+            <div class="col-md-12" style="padding-left:0px !important; padding-right:0px !important;">
+                <div class="form-group">
+                    @Html.LabelFor(x => x.Delegated_From_User_List, new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.DropDownListFor(n => n.From_User_Id, Model.Delegated_From_User_List, "- Please select -", new { @class = "form-control" })
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-12" style="padding-left:0px !important; padding-right:0px !important;">
+                <div class="form-group">
+                    @Html.LabelFor(x => x.Delegated_To_User_List, new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.DropDownListFor(n => n.To_User_Id, Model.Delegated_To_User_List, "- Please select -", new { @class = "form-control" })
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-12" style="padding-left:0px !important; padding-right:0px !important;">
+                <div class="form-group">
+                    @Html.LabelFor(x => x.Date_From, new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.TextBoxFor(model => model.Date_From, new { @class = "form-control" })
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-12" style="padding-left:0px !important; padding-right:0px !important;">
+                <div class="form-group">
+                    @Html.LabelFor(x => x.Date_To, new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.TextBoxFor(model => model.Date_To, new { @class = "form-control" })
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+
+        <div class="panel-footer">
+            <input type="submit" id="ButtonSave" value="Save" class="btn btn-success" />
+            @Html.ActionLink("Cancel", "Index", null, new { @class = "btn btn-danger" })
+        </div>
+    </div>
+}

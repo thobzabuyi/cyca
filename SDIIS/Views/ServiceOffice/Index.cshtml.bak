@@ -1,0 +1,107 @@
+﻿@model IEnumerable<Common_Objects.Models.Service_Office>
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<p>
+    @Html.ActionLink("Create New", "CreateServiceOffice", new {})
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Service_Office_Id)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Description)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Local_Municipality_Id)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Office_Size)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Is_Rental_Office)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Monthly_Rent)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Vat)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Escalation_Rate)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Date_Created)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Created_By)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Date_Last_Modified)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Modified_By)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Is_Active)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Is_Deleted)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Service_Office_Id)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Description)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Local_Municipality_Id)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Office_Size)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Is_Rental_Office)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Monthly_Rent)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Vat)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Escalation_Rate)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Date_Created)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Created_By)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Date_Last_Modified)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Modified_By)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Is_Active)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Is_Deleted)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "EditServiceOffice", new { serviceOfficeId = item.Service_Office_Id }) |
+            @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
+            @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+        </td>
+    </tr>
+}
+
+</table>

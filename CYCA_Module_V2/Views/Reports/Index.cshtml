@@ -1,0 +1,165 @@
+﻿@model Common_Objects.ViewModels.CYCAReportsViewModel
+
+<div class="portlet light bordered">
+    <div class="portlet-body">
+        <div id="reportwizard" style="padding-left: 1.1em; padding-right:1.1em">
+            <ul id="TopTab">
+                <li>
+                    <a href="#admission" data-toggle="tab">New Admissions</a>
+                </li>
+                <li>
+                    <a href="#bedspace" data-toggle="tab">Bed Space Utilisation</a>
+                </li>
+                <li>
+                    <a href="#illigalitems" data-toggle="tab">Children Found With Illegal Items</a>
+                </li>
+                <li>
+                    <a href="#gang" data-toggle="tab">Children in Gangs</a>
+                </li>
+                <li>
+                    <a href="#pregnantchildren" data-toggle="tab">Pregnant Children</a>
+                </li>
+                <li>
+                    <a href="#dischargedchildren" data-toggle="tab">Discharged Children</a>
+                </li>
+                <li>
+                    <a href="#reportableincident" data-toggle="tab">Reportable Incident</a>
+                </li>
+            </ul>
+            <hr />
+            <div class="tab-content">
+                <div class="tab-pane" id="admission">
+                    @Html.Partial("NewAdmissionReports",Model)
+                </div>
+                <div class="tab-pane" id="bedspace">
+                    @*@Html.Partial("_Archives")*@
+                </div>
+                <div class="tab-pane" id="illigalitems">
+                    @*@Html.Partial("_BedSpaceCapacity")*@
+                </div>
+                <div class="tab-pane" id="gang">
+                    @*@Html.Partial("_BedSpaceCapacity")*@
+                </div>
+                <div class="tab-pane" id="pregnantchildren">
+                    @*@Html.Partial("_BedSpaceCapacity")*@
+                </div>
+                <div class="tab-pane" id="dischargedchildren">
+                    @*@Html.Partial("_BedSpaceCapacity")*@
+                </div>
+                <div class="tab-pane" id="reportableincident">
+                    @*@Html.Partial("_BedSpaceCapacity")*@
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<script>
+    var currentTab = 0;
+    var tabTypes = {
+        admission: 0,
+        bedspace: 1,
+        illigalitems : 2,
+        gang: 3,
+        pregnantchildren: 4,
+        dischargedchildren: 5,
+        reportableincident: 6
+
+    };
+    $(document).ready(function () {
+
+            console.log('here' + currentTab);
+
+            $('#reportwizard').bootstrapWizard({
+                'tabClass': 'nav nav-pills',
+        });
+
+    });
+    $('#TopTab a').on('load', function (e) {
+        console.log("in initial tab load");
+        var sendPost = false;
+        var tabType = "";
+        var formType = -1;
+        sendPost = true;
+        tabType = tabTypes.admission;
+        // var
+
+        if (sendPost) {
+            currentTab = tabType;
+            var currentTarget = "";
+
+            currentTarget = e.target.hash;
+            console.log(currentTarget + ": current target")
+
+            ShowReportTabs(tabType, e.target.hash);
+        }
+    });
+            $('#TopTab a').on('click', function (e) {
+                var sendPost = false;
+                var tabType = "";
+                var formType = -1;
+               // var
+          console.log(e.target.text);
+                switch (e.target.text) {
+                    case "New Admissions":
+                        sendPost = true;
+                        tabType = tabTypes.admission;
+                        break;
+                    case "Bed Space Utilisation":
+                        sendPost = true;
+                        tabType = tabTypes.bedspace;
+                        break;
+                    case "Children Found With Illegal Items":
+                        sendPost = true;
+                        tabType = tabTypes.illigalitems;
+                        break;
+                    case "Children in Gangs":
+                        sendPost = true;
+                        tabType = tabTypes.gang;
+                        break;
+                    case "Pregnant Children":
+                        sendPost = true;
+                        tabType = tabTypes.pregnantchildren;
+                        break;
+                    case "Discharged Children":
+                        sendPost = true;
+                        tabType = tabTypes.dischargedchildren;
+                        break;
+                    case "Reportable Incident":
+                        sendPost = true;
+                        tabType = tabTypes.reportableincident;
+                        break;
+                };
+          if (sendPost) {
+              currentTab = tabType;
+              var currentTarget = "";
+
+              currentTarget = e.target.hash;
+              console.log(currentTarget + ": current target")
+
+              ShowReportTabs(tabType,e.target.hash);
+                }
+    });
+           function ShowReportTabs(tabType, target) {
+            console.log(target);
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Content("~/ReportChart/ShowTabs")',
+                data: {
+                    type: tabType
+                },
+              success: function (result) {
+                  $(target).html(result);
+                }
+            });
+        }
+
+            //$('#otherContent').bootstrapWizard({
+            //    'tabClass': 'nav nav-pills',
+            //});
+</script>
+

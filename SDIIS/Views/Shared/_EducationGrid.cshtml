@@ -1,0 +1,28 @@
+﻿@model IEnumerable<Common_Objects.Models.Person_Education>
+
+<div class="row">
+    <div class="col-md-12">
+        @{
+            var educationGrid = new WebGrid(source: Model, canSort: false, rowsPerPage: 20, ajaxUpdateContainerId: "educationItemsGrid");
+
+            @educationGrid.GetHtml(
+                tableStyle: "webgrid-table",
+                headerStyle: "webgrid-header",
+                footerStyle: "webgrid-footer",
+                alternatingRowStyle: "webgrid-alternating-row",
+                selectedRowStyle: "webgrid-selected-row",
+                rowStyle: "webgrid-row-style",
+                htmlAttributes: new { id = "educationGrid", width = "100%" },
+                columns: educationGrid.Columns(
+                    educationGrid.Column("School.School_Name", "School Name"),
+                    educationGrid.Column("Date_Last_Attended", "Last Attended", format: (dateItem) => dateItem.Date_Last_Attended == null ? "" : string.Format("{0:dd MMM yyyy}", dateItem.Date_Last_Attended)),
+                    educationGrid.Column(header: "", style: "GridEditButton", format: (item) =>
+                    {
+                        var link = Html.ActionLink("Edit", "Edit", "Education", new { id = item.Person_Education_Id }, new { @class = "modal-link btn btn-success GridEditButton" });
+                        return link;
+                    })
+                )
+            )
+        }
+    </div>
+</div>

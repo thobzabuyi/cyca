@@ -1,0 +1,231 @@
+﻿@model Common_Objects.Models.PersonDetailViewModel
+
+<style type="text/css">
+
+    .chosen-container-multi .chosen-choices {
+        width: 250px;
+    }
+
+    .chosen-container .chosen-drop {
+        width: 250px;
+    }
+
+    .GridEditButton {
+        width: 100px;
+    }
+
+    
+</style>
+
+
+@Html.HiddenFor(x => x.Person.Person_Id, new { @id = "Popup_Related_Person_Id" })
+<div class="row">
+    <div class="col-md-3">
+        @Html.LabelFor(x => x.Person.First_Name, new { @class = "control-label" })
+    </div>
+    <div class="col-md-3 form-group">
+        @Html.TextBoxFor(model => model.Person.First_Name, new { @id = "Popup_First_Name", @class = "form-control", @required = "required" })
+    </div>
+    <div class="col-md-3">
+        @Html.LabelFor(x => x.Person.Last_Name, new { @class = "control-label" })
+    </div>
+    <div class="col-md-3 form-group">
+        @Html.TextBoxFor(model => model.Person.Last_Name, new { @id = "Popup_Last_Name", @class = "form-control", @required = "required" })
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-3">
+        @Html.LabelFor(x => x.Person.Known_As, new { @class = "control-label" })
+    </div>
+    <div class="col-md-3 form-group">
+        @Html.TextBoxFor(model => model.Person.Known_As, new { @id = "Popup_Known_As", @class = "form-control" })
+    </div>
+    <div class="col-md-3">
+        @Html.LabelFor(x => x.Person.Citizenship_List, new { @class = "control-label" })
+    </div>
+    <div class="col-md-3 form-group">
+        @Html.DropDownListFor(n => n.Person.Citizenship_Id, Model.Person.Citizenship_List, "- Please select -", new { @id = "DropdownCitizenship", @class = "form-control" })
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-3">
+        @Html.LabelFor(x => x.Person.Identification_Type_List, new { @class = "control-label" })
+    </div>
+    <div class="col-md-3 form-group">
+        @Html.DropDownListFor(n => n.Person.Identification_Type_Id, Model.Person.Identification_Type_List, new { @id = "DropdownIdentificationType_Popup", @class = "form-control" })
+    </div>
+    <div class="col-md-3">
+        @Html.LabelFor(x => x.Person.Identification_Number, new { @id = "LabelIdentificationNumber_Popup", @class = "control-label" })
+    </div>
+    <div class="col-md-3 form-group">
+        @Html.TextBoxFor(model => model.Person.Identification_Number, new { @id = "Identification_Number_Popup", @class = "form-control" })
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-3">
+        @Html.LabelFor(x => x.Person.Date_Of_Birth, new { @id = "LabelDateOfBirth_Popup", @class = "control-label" })
+    </div>
+    <div class="col-md-3 form-group">
+        <div class="input-group">
+            @Html.TextBoxFor(x => x.Person.Date_Of_Birth, new { @id = "Date_of_Birth_Popup", @class = "form-control jqueryui-marker-datepicker", @required = "required" })
+            <label for="Date_of_Birth_Popup" class="input-group-addon btn">
+                <span class="glyphicon glyphicon-calendar"></span>
+            </label>
+        </div>
+    </div>
+    <div class="col-md-3">
+        @Html.LabelFor(x => x.Person.Age, new { @class = "control-label" })
+    </div>
+    <div class="col-md-1 form-group">
+        @Html.TextBoxFor(model => model.Person.Age, new { @id = "TextboxAge_Popup", @class = "form-control" })
+    </div>
+    <div class="col-md-2 form-group">
+        @Html.CheckBoxFor(x => x.Person.Is_Estimated_Age, new { @id = "IsEstimatedAge_Popup" })
+        @Html.LabelFor(x => x.Person.Is_Estimated_Age, new { @class = "control-label" })
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-3">
+        @Html.LabelFor(x => x.Person.Gender_List, new { @class = "control-label" })
+    </div>
+    <div class="col-md-3 form-group">
+        @Html.DropDownListFor(n => n.Person.Gender_Id, Model.Person.Gender_List, "- Please select -", new { @id = "DropdownGender_Popup", @class = "form-control" })
+    </div>
+    <div class="col-md-3">
+        @Html.LabelFor(x => x.Person.Nationality_List, new { @class = "control-label" })
+    </div>
+    <div class="col-md-3 form-group">
+        @Html.DropDownListFor(n => n.Person.Nationality_Id, Model.Person.Nationality_List, "- Please select -", new { @id = "DropdownNationality_Popup", @class = "form-control" })
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-3">
+        @Html.LabelFor(x => x.Person.Language_Type_List, new { @class = "control-label" })
+    </div>
+    <div class="col-md-3 form-group">
+        @Html.DropDownListFor(n => n.Person.Language_Id, Model.Person.Language_Type_List, "- Please select -", new { @id = "DropdownLanguage", @class = "form-control" })
+    </div>
+    <div class="col-md-3">
+        @Html.LabelFor(x => x.Person.SexualOrientation_List, new { @class = "control-label" })
+    </div>
+    <div class="col-md-3 form-group">
+        @Html.DropDownListFor(n => n.Person.Sexual_Orientation_Id, Model.Person.SexualOrientation_List, "- Please select -", new { @id = "DropdownSexualOrientation", @class = "form-control" })
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-3">
+        @Html.LabelFor(x => x.Person.Marital_Status_List, new { @class = "control-label" })
+    </div>
+    <div class="col-md-3 form-group">
+        @Html.DropDownListFor(n => n.Person.Marital_Status_Id, Model.Person.Marital_Status_List, "- Please select -", new { @id = "DropdownMaritalStatus_Popup", @class = "form-control" })
+    </div>
+    <div class="col-md-3">
+        @Html.LabelFor(x => x.Person.Population_Group_List, new { @class = "control-label" })
+    </div>
+    <div class="col-md-3 form-group">
+        @Html.DropDownListFor(n => n.Person.Population_Group_Id, Model.Person.Population_Group_List, "- Please select -", new { @id = "DropdownPopulationGroup_Popup", @class = "form-control" })
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-3">
+        @Html.LabelFor(x => x.Person.Religion_List, new { @class = "control-label" })
+    </div>
+    <div class="col-md-3 form-group">
+        @Html.DropDownListFor(n => n.Person.Religion_Id, Model.Person.Religion_List, "- Please select -", new { @id = "DropdownReligion_Popup", @class = "form-control" })
+    </div>
+    <div class="col-md-3">
+        @Html.LabelFor(x => x.Person.Disability_List, new { @class = "control-label" })
+    </div>
+    <div class="col-md-3 form-group">
+        @*@Html.DropDownListFor(n => n.Person.Disability_Type_Id, Model.Person.Disability_List, "- Please select -", new { @id = "DropdownDisability", @class = "form-control", @multiple = "multiple" })*@
+        @*@Html.DropDownListFor(n => n.Person.SelectedDisabilityId, Model.Person.Disability_List, "- Please select -", new { @id = "DropdownDisability", @class = "form-control", @multiple = "multiple" })*@
+        @*@Html.DropDownListFor(n => n.Person.SelectedDisabilityId, Model.Person.Disability_List, "- Please select -", new { @id = "DropdownModule", @class = "form-control chosen-select", @multiple = "multiple", @style = "width:100px" })*@
+        @*@Html.DropDownList("SelectedDisabilities", (IEnumerable<SelectListItem>)ViewBag.AvailableDisabilityType, "- Please select -", new { @class = "form-control chosen-select", @multiple = "multiple" })*@
+
+    </div>
+</div>
+@*<div class="row">
+    <div class="col-md-3">
+    </div>
+    <div class="col-md-3 form-group">
+    </div>
+    <div class="col-md-3">
+    </div>
+    <div class="col-md-3 form-group">
+        @Html.Action("GetListOfDisabilities", "Intake", new { id = Model.Person.Person_Id })
+
+    </div>
+</div>*@
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $(".chosen-select").chosen();
+    });
+    $(function () {
+        // Initialize items marked as datepickers
+        $(".jqueryui-marker-datepicker").datepicker({
+            beforeShow: function () {
+                setTimeout(function () {
+                    $('.ui-datepicker').css('z-index', 99999999999999);
+                }, 0);
+            },
+            dateFormat: "dd M yy",
+            changeYear: true
+        });
+
+        // Temporary Workaround: Reset date values so that they display properly in the DatePicker fields
+        $('.jqueryui-marker-datepicker').each(function (i, obj) {
+            if ($(this).val() != '') {
+                var dateValue = new Date($(this).val());
+                $(this).datepicker("setDate", new Date(dateValue));
+            }
+        });
+        
+        // Set ID Number field label according to Identification Type Selected
+        $("#DropdownIdentificationType_Popup").change(function () {
+            var idType = $(this).val();
+
+            if (idType == '1') {
+                $("#LabelIdentificationNumber_Popup").html("ID Number");
+            } else if (idType == '2') {
+                $("#LabelIdentificationNumber_Popup").html("Passport Number");
+            }
+        });
+
+        // Change Event for ID Number in order to do validation
+        $("#Identification_Number_Popup").change(function () {
+            var idType = $("#DropdownIdentificationType_Popup").val();
+
+            // Only do calculations for RSA ID Numbers                
+            if (idType == '1') {
+                var idDetails = extractFromID($(this).val());
+
+                if (idDetails.valid) {
+                    // A valid id number is detected, assign the gender
+                    if (idDetails.gender == 'male') {
+                        $("#DropdownGender_Popup").val('1'); // Don't like that the values is hardcoded, but not sure how to handle it otherwise
+                    } else {
+                        $("#DropdownGender_Popup").val('2'); // Don't like that the values is hardcoded, but not sure how to handle it otherwise
+                    }
+
+                    // Date of Birth
+                    var dob = idDetails.birthdate;
+
+                    $("#Date_of_Birth_Popup").datepicker("setDate", dob);
+
+                    var today = new Date();
+                    var birthDate = new Date(dob);
+                    var age = today.getFullYear() - birthDate.getFullYear();
+                    var m = today.getMonth() - birthDate.getMonth();
+                    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+                        age--;
+                    }
+
+                    $("#TextboxAge_Popup").val(age);
+                    $("#IsEstimatedAge_Popup").prop('checked', false);
+                }
+            }
+        });
+    });
+
+</script>

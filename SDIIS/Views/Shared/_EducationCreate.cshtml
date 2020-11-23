@@ -1,0 +1,156 @@
+﻿@model Common_Objects.Models.Person_Education
+
+@{
+    ViewBag.Title = "Create Education Details";
+}
+
+@using (Html.BeginForm("Save", "Home", FormMethod.Post, new { role = "form", id = "saveFormCreate" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="panel-body">
+
+        <div class="row">
+
+            @Html.HiddenFor(x => x.Person_Id)
+
+            <div class="col-md-6">
+                <div class="row">
+                    <div class="col-md-6">
+                        @Html.LabelFor(x => x.School_List_Type, new { @class = "control-label" })
+                    </div>
+                    <div class="col-md-6 form-group">
+                        @Html.DropDownListFor(n => n.School.School_Type.School_Type_Id, Model.School_List_Type, "- Please select -", new { @id = "SchoolType_Id", @class = "form-control" })
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="row">
+                    <div class="col-md-6">
+                        @Html.LabelFor(x => x.Province_List, new { @class = "control-label" })
+                    </div>
+                    <div class="col-md-6 form-group">
+                        @Html.DropDownListFor(n => n.Selected_Province_Id, Model.Province_List, "- Please select -", new { @id = "Province_Id", @class = "form-control" })
+                    </div>
+                </div>
+            </div>
+
+
+
+            <div class="col-md-6">
+                <div class="row">
+                    <div class="col-md-6">
+                        @Html.LabelFor(x => x.School_List, new { @class = "control-label" })
+                    </div>
+                    <div class="col-md-6 form-group">
+                        @Html.DropDownListFor(n => n.School_Id, Model.School_List, "- Please select -", new { @id = "School_Id", @class = "form-control" })
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="row">
+                    <div class="col-md-6">
+                        @Html.LabelFor(x => x.Grade_Completed_List, new { @class = "control-label" })
+                    </div>
+                    <div class="col-md-6 form-group">
+                        @Html.DropDownListFor(n => n.Grade_Completed_Id, Model.Grade_Completed_List, "- Please select -", new { @id = "Grade_Completed_Id", @class = "form-control" })
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="row">
+
+            <div class="col-md-6">
+                <div class="row">
+                    <div class="col-md-6">
+                        @Html.LabelFor(x => x.Year_Completed, new { @class = "control-label" })
+                    </div>
+                    <div class="col-md-6 form-group">
+                        @Html.TextBoxFor(model => model.Year_Completed, new { @class = "form-control" })
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="row">
+                    <div class="col-md-6">
+                        @Html.LabelFor(x => x.Date_Last_Attended, new { @class = "control-label" })
+                    </div>
+                    <div class="col-md-6 form-group">
+                        <div class="input-group">
+                            @Html.TextBoxFor(x => x.Date_Last_Attended, new { @id = "Date_Last_Attended", @class = "form-control jqueryui-marker-datepicker" })
+                            <label for="Date_Last_Attended" class="input-group-addon btn">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="row">
+
+            <div class="col-md-6">
+                <div class="row">
+                    <div class="col-md-6">
+                        @Html.LabelFor(x => x.Additional_Information, new { @class = "control-label" })
+                    </div>
+                    <div class="col-md-6 form-group">
+                        @Html.TextBoxFor(model => model.Additional_Information, new { @class = "form-control" })
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+
+    <div class="panel-footer">
+        <input type="submit" id="ButtonSave" value="Save" class="btn btn-success" />
+        <input type="button" id="ButtonEducationCancel" value="Cancel" class="btn btn-danger modal-close-btn" />
+    </div>
+}
+
+<script type="text/javascript">
+    // Initialize items marked as datepickers
+    $(".jqueryui-marker-datepicker").datepicker({
+        beforeShow: function () {
+            setTimeout(function () {
+                $('.ui-datepicker').css('z-index', 99999999999999);
+            }, 0);
+        },
+        dateFormat: "dd M yy",
+        changeYear: true,
+        maxDate: 0,
+        yearRange: "-60:+0"
+    });
+
+    // Populate School items
+    $("#SchoolType_Id").change(function () {
+        var dropdownSchoolList = $('#School_Id');
+        dropdownSchoolList.html('');
+        dropdownSchoolList.append($('<option></option>').val("").html("- Please Select -"));
+
+        var selectedItem = $(this).val();
+        $.ajax({
+            url: $.url('/Education/FilterFromSchooltypeAjax'),
+            data: { "SchoolTypeId": selectedItem },
+            type: "GET",
+            success: function (response, status, xhr) {
+                $.each(response, function (id, option) {
+                    dropdownSchoolList.append($('<option></option>').val(option.id).html(option.name));
+                });
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                alert('Error populating school list dropdown');
+            }
+        });
+
+    });
+</script>

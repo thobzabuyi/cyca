@@ -1,0 +1,102 @@
+﻿@using Common_Objects.ViewModels;
+@model  CYCAAdmissionPartialViewModel
+<div class="row" id="AdmissionList">
+    <div class="col-md-12">
+        <div class="panel panel-default">
+            @*<button class="btn btn-primary" id="accordion" data-parent="#accordion" href="#actionModal" onclick="showNew(@Model.PersonId)"><i class="fa fa-plus"></i> New Admission</button>*@
+            <div class="panel-heading text-center">
+                <strong style="color:#158cba"> Admission Details</strong>
+            </div>
+            <div class="panel-body">
+                <div class="table-responsive">
+                    <table class="table table-striped table-bordered table-hover" id="admissionList">
+                        <thead>
+                            <tr>
+                                <th>Facility</th>
+                                <th>Admission Type</th>
+                                <th>Admission Date</th>
+                                <th>Gang Membership</th>
+                                <th>Status</th>
+                                <th>Attachments</th>
+                                <th>&nbsp;</th>
+
+
+                            </tr>
+                        </thead>
+                        <tbody id="SetAdmissiontList">
+                            
+                            @foreach (Common_Objects.ViewModels.CYCAAdmissionViewModel m in Model.CYCAAdmissionViewModels.OrderByDescending(m => m.Admission_Id))
+                            {
+                            <tr>
+                                <td>@m.FacilityName</td>
+                                <td>@m.selectedAdmissionType</td>
+                                <td>@m.AdmissionDate</td>
+                                <td>@m.SelectedGangMemberType</td>
+
+                                @if (m.Is_Active)
+                                {
+                                    <td>Current Admission</td>
+                                }
+                                else
+                                {
+                                    <td>Discharged</td>
+                                }
+
+                                <td>
+                                    @for (int i = 0; i < m.files.Count; i++)
+                                    {
+                                        <div class="input-group">
+                                            <i class="fa fa-1x fa-paperclip text-navy"></i>
+                                            <a class="download-file1" href="@Url.Action("DownloadFile", "Admit", new { id = m.files[i].Document_Id,  })" target="_blank">
+                                                @m.files[i].Document_Name
+                                            </a>
+                                        </div>
+                                    }
+                                </td>
+                                @if (m.Is_Active)
+                                {
+                                    <td>&nbsp;</td>
+                                }
+                                else if (m.LatestAdmission == m.Admission_Id)
+                                {
+
+                                    <p id="admitId" hidden>@m.Admission_Id</p>
+                                    <td><a href="#" onclick="ShowReAdmissions(@m.Person_Id)">Re-Admit</a></td>
+                                }
+                                else
+                                {
+                                    <td>&nbsp;</td>
+                                }
+
+                            </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+
+         function ShowReAdmissions(id) {
+            $('#rootwizard').hide();
+            $('#otherContent').show();
+            $(".admissions").addClass("active");
+            $(".personal").removeClass("active");
+            $(".appointments").removeClass("active");
+
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Content("~/Admit/ReAdmitPerson")',
+                data: {
+                    id: id
+                },
+                success: function (result) {
+                    $('#otherContent').html(result);
+                }
+            });
+        }
+</script>

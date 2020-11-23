@@ -1,0 +1,277 @@
+﻿
+@model Common_Objects.ViewModels.CYCAAdmissionViewModel
+@{
+    ViewBag.Title = "New Admission";
+}
+<div id="mainDiv">
+    <div class="row">
+        <div class="col-md-12 col-sm-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3>Re Admission for @Model.childFullNames</h3>
+                </div>
+                <div class="panel-body">
+                    <form id="myForm">
+                        <div class="row">
+                            <div class="col-md-4">
+                                @Html.HiddenFor(m => m.Person_Id)
+                                @Html.HiddenFor(m => m.Admission_Id)
+                                Re Admition Reason
+                            </div>
+                            <div class="col-md-8 form-group" style="">
+                                @Html.DropDownListFor(m => m.Admission_Type_Id, ViewBag.AdmissionTypeList as SelectList, "--Select--", new { @id = "Admission_Type_Id", @class = "form-control", required = "required" })
+                            </div>
+
+                            @*<div class="col-md-4">
+                                    @Html.LabelFor(x => x.AdmissionDate)
+                                </div>
+                                <div class="col-md-8 form-group" style="">
+                                    @Html.TextBoxFor(m => m.AdmissionDate, new { @id = "casestartdate", @class = "form-control", @readonly = "readonly" })
+                                </div>*@
+                        </div>
+                        <div class="row">
+                            @*<div class="col-md-4">
+                                    @Html.LabelFor(x => x.CaseStartTime)
+                                </div>
+                                <div class="col-md-8 form-group" style="">
+                                    @Html.TextBoxFor(m => m.CaseStartTime, new { @id = "casestarttime", @class = "form-control", @readonly = "readonly" })
+                                </div>*@
+                            <div class="col-md-4">
+                                @Html.LabelFor(x => x.selectedVenue)
+                            </div>
+                            <div class="col-md-8 form-group">
+                                @Html.DropDownListFor(m => m.VenueId, ViewBag.VenueList as SelectList, "--Select--", new { @id = "VenueId", @class = "form-control", required = "required" })
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4">
+                                Readmission Start Date
+                            </div>
+                            <div class="col-md-8 form-group">
+                                <div class="input-group">
+                                    @Html.TextBoxFor(m => m.CaseEndDate, new { @id = "Re_Admission_StartDate", @class = "form-control jqueryui-marker-datepicker", required = "required" })
+                                    <label for="caseenddate" class="input-group-addon btn">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                @Html.HiddenFor(m => m.Admission_Id, new { @id = "Admission_Id" })
+                                @Html.LabelFor(x => x.SelectedGangMemberType)
+                            </div>
+                            <div class="col-md-8 form-group" style="">
+                                @Html.DropDownListFor(m => m.Gang_Member_Type_Id, ViewBag.GangMembershipTypeList as SelectList, "--Select--", new { @id = "Gang_Membership_Type_Id", @class = "form-control", required = "required" })
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                @Html.LabelFor(x => x.CommentsAndObservation)
+                            </div>
+                            <div class="col-md-8 form-group">
+                                @Html.TextAreaFor(m => m.CommentsAndObservation, new { @id = "comments", @class = "form-control" })
+                            </div>
+                        </div>
+                        @if (!Model.HasBiometric)
+                        {
+                            <div class="row">
+                                <div class="col-md-12"><h3>Biometrics</h3></div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <input type="button" id="btnEnroll" onclick="EnrollFingerPrints()" value="Enroll" class="btn btn-success signalRObject" />
+                                </div>
+                            </div>
+                        }
+
+                        @*<div class="row">
+                                <div class="col-md-3 form-group">
+                                    @Html.LabelFor(x => x.IsVerified, new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-9">
+                                    @Html.CheckBoxFor(model => model.IsVerified, new { disabled = "disabled" })
+                                    <label for="HasBiometric">Yes</label>
+                                </div>
+                            </div>*@
+                        @*<div class="row">
+                                <div class="col-md-3 form-group">
+                                    @Html.LabelFor(x => x.IsPivaVerified, new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-9">
+                                    @Html.CheckBoxFor(model => model.IsPivaVerified, new { disabled = "disabled" })
+                                    <label for="HasBiometric">Yes</label>
+                                </div>
+                            </div>*@
+                        @*<div class="panel-footer">
+                                <input type="submit" id="ButtonSave" value="Save" class="btn btn-success" />
+
+                                <input type="button" id="ButtonVerify" value="Verify" class="btn btn-success" />
+                            </div>*@
+                        <div class="row pull-right">
+                            <div class="col-md-12">
+                                <a class="btn btn-default" id="Cancel">Cancel</a>
+                                <a class="btn btn-primary" id="Send">Next</a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+        $(function () {
+            // Initialize items marked as datepickers
+            $("#caseenddate").datepicker({
+                dateFormat: "dd M yy",
+                changeYear: true,
+                maxDate: 30,
+                yearRange: "-60:+0",
+                onClose: function () {
+                    $(this).valid();
+                }
+            });
+            $("#myForm").validate();
+            //Check if signalR is working
+            console.log(signalHub.IsConnected);
+            if (signalHub.IsConnected) {
+                $('.signalRObject').removeAttr('disabled');
+            } else {
+                $('.signalRObject').attr('disabled', 'disabled');
+            };
+        });
+        function EnrollFingerPrints() {
+            //Call Server Methods
+            request.requestType = "Enroll";
+            FingerPrintServerProxy.invoke('fPCaptureRq', request).done(function () {
+                //console.log('Invocation of fPCaptureRq succeeded');
+            }).fail(function (error) {
+                //console.log('Invocation of fPCaptureRq failed. Error: ' + error);
+            });
+        }
+        $("#Send").click(function () {
+            //Vaidate Form
+            var $valid = $("#myForm").valid();
+            if (!$valid) {
+                return;
+            }
+            var clicked = false;
+            console.log(true);
+            $.ajax({
+                type: "Post",
+                url: "/Admit/AddReAdmission",
+                data: {
+                    Admission_Id: @ViewBag.adm,
+                    Person_Id: $("#Person_Id").val(),
+                    Admission_Type_Id: $("#Admission_Type_Id").val(),
+                    CaseStartDate: $("#casestartdate").val(),
+                    CaseStartTime: $("#casestarttime").val(),
+                    VenueId: $("#VenueId").val(),
+                    CaseEndDate: $("#caseenddate").val(),
+                    CommentsAndObservation: $("#comments").val(),
+                    Re_Admission_StartDate: $("#Re_Admission_StartDate").val(),
+                    Gang_Member_Type_Id: $("#Gang_Membership_Type_Id").val()
+                },
+                success: function (result) {
+                   
+                    $.confirm({
+                        title: 'New Admission',
+                        content: 'Would you like to do a bodily search?',
+                        buttons: {
+                            Yes: function () {
+                                if (clicked == false) {
+                                    clicked = true;
+                                    NewBodySearch(result);
+                                }
+                            },
+                            No: function () {
+                                ConfirmUploadDocuments(result);
+                            }
+                        }
+                    });
+                },
+                error: function (xhr, ajaxOptions, error) {
+
+                }
+            })
+        });
+        $("#Cancel").click(function () {
+             location.reload(true);
+        });
+        function NewBodySearch(id) {
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Content("~/Admit/AdmitNewBodilySearch")',
+                data: {
+                    Id: id
+                },
+                success: function (result) {
+                    $('#mainDiv').html(result);
+                }
+            });
+        }
+        function NewUploadDocument(id) {
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Content("~/Admit/AdmitNewUploadDocument")',
+                data: {
+                    Id: id
+                },
+                success: function (result) {
+                    $('#mainDiv').html(result);
+                }
+            });
+        }
+        function NewGangMembership(id) {
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Content("~/Admit/AdmitNewGangMembership")',
+                data: {
+                    Id: id
+                },
+                success: function (result) {
+                    $('#mainDiv').html(result);
+                }
+            });
+        }
+
+    function ConfirmUploadDocuments(id) {
+        var clickedHere = false;
+            $.confirm({
+                title: 'New Admission',
+                content: 'Would you like to upload document(s)?',
+                buttons: {
+                    Yes: function () {
+                        if (clickedHere == false) {
+                            clickedHere = true;
+                            NewUploadDocument(id);
+                        }
+                    },
+                    No: function () {
+                        location.reload(true);
+                    }
+                }
+            });
+        }
+    function ConfirmGangMembership(id) {
+        var confirmClicked = false;
+            $.confirm({
+                title: 'New Admission',
+                content: 'Would you like to add gang membership?',
+                buttons: {
+                    Yes: function () {
+                        if (confirmClicked == false) {
+                            confirmClicked = true;
+                            NewGangMembership(id);
+                        }
+                    },
+                    No: function () {
+                        ConfirmUploadDocuments(id);
+                    }
+                }
+            });
+        }
+
+</script>

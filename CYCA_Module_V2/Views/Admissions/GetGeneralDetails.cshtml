@@ -1,0 +1,219 @@
+﻿
+@model Common_Objects.ViewModels.CYCAAdmissionViewModel
+<br />
+
+<style>
+
+    #btnSearch {
+        outline: none !important;
+        border-radius: 8px 8px 0px 0px;
+        box-shadow: none;
+    }
+
+    #tool-bar {
+        transition: width 0.1s;
+        -webkit-transition: width 0.1s;
+    }
+
+    .fade.in {
+        background-color: transparent;
+    }
+
+    .modal {
+        top: 5%;
+        max-width: 100%;
+        margin: 0 auto;
+        height: 97%;
+    }
+
+    .modal-dialog {
+        display: inline-block;
+        width: 100%;
+    }
+
+    .modal-backdrop {
+        opacity: 0.5 !important;
+    }
+</style>
+
+@using (Html.BeginForm("UpdateGeneralDetails", "CYCAAdmission", new { id = Model.General_Details_Id }))
+{
+    @Html.AntiForgeryToken()
+    <div class="panel panel-primary">
+        <div class="panel-heading" style="text-align: center">
+            General Details: <span style="color:white;font-weight: bolder; font-size:large; text-shadow: 2px 2px grey; ">Child Ref (@ViewBag.ModuleRef)</span>
+        </div>
+        <div class="panel-body">
+            @Html.HiddenFor(m => m.Intake_Assessment_Id, new { @id = "Intake_Assessment_Id" })
+            <div class="row">
+                <div class="col-md-2">
+                    @Html.LabelFor(x => x.Assessment_DateEnd)<span style="color:red; font-weight:bolder; font-size:20px">*</span>
+                </div>
+                <div class="col-md-4 form-group">
+                    <div class="input-group">
+                        @Html.TextBoxFor(x => x.Assessment_DateEnd, new { @id = "Assessment_Date", @class = "form-control jqueryui-marker-datepicker", @required = "required" })
+                        <label for="Assessment_Date" class="input-group-addon btn">
+                            <span class="glyphicon glyphicon-calendar"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="col-md-2">
+                    @Html.LabelFor(x => x.Consulted_Sources)<span style="color:red; font-weight:bolder; font-size:20px">*</span>
+                </div>
+                <div class="col-md-4 form-group">
+                    @Html.TextAreaFor(x => x.Consulted_Sources, new { @id = "Consulted_Sources", rows = "4", @class = "form-control", @required = "required" })
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-2">
+                    @Html.LabelFor(x => x.Trace_Efforts)<span style="color:red; font-weight:bolder; font-size:20px">*</span>
+                </div>
+                <div class="col-md-4 form-group">
+                    @Html.TextAreaFor(x => x.Trace_Efforts, new { @id = "Trace_Efforts", rows = "4", @class = "form-control", @required = "required" })
+                </div>
+
+                <div class="col-md-2">
+                    @Html.LabelFor(x => x.Additional_Info)<span style="color:red; font-weight:bolder; font-size:20px">*</span>
+                </div>
+                <div class="col-md-4 form-group">
+                    @Html.TextAreaFor(x => x.Additional_Info, new { @id = "Additional_Info", rows = "4", @class = "form-control", @required = "required" })
+                </div>
+            </div>
+
+        </div>
+        <div class="form-group">
+            <input type="submit" id="ButtonSave" value="Save" class="btn btn-success" />
+            @*<input type="submit" id="SavePCMLetter" value="Save" class="btn btn-success" />*@
+
+            <a href="#" class="btn btn-info" id="SavePCMLetter">print Letter</a> <br /><br />
+            @*<a OnClick="window.open('../../Reports/AssessmentReportPcm.aspx')">View Report</a>*@
+
+
+        </div>
+
+    </div>
+
+
+    @*@Html.HiddenFor(m => m.Intake_Assessment_Id, new { @id = "Intake_Assessment_Id" })
+    @Html.HiddenFor(m => m.PCM_Preliminary_Id, new { @id = "PCM_Preliminary_Id" })
+    @Html.HiddenFor(m => m.PCM_Case_Id, new { @id = "PCM_Case_Id" })*@
+
+
+}
+
+
+
+
+<script type="text/javascript">
+
+
+    function navigate() {
+        //Grab your values
+        var assmentid = $("#Intake_Assessment_Id").val();
+
+        //Perform your navigation
+        window.open.href = target + '?UserName=' + username + '&Password=' + password;
+    }
+
+
+    //$(function () {
+    //    $('#SavePCMLetter').click(function () {
+
+
+    //        var assmentid = $("#Intake_Assessment_Id").val();
+
+    //        if (assmentid>0) {
+
+
+
+
+
+    //            //ASPX page URL to load report
+    //            var src = '../Reports/AssessmentReportPcm.aspx?';
+    //            //$.url('/Letters');
+    //            //We can add parameters here
+
+
+    //            src = src + "idd=" + assmentid + "&id=" + 0;
+
+    //            alert(src);
+
+    //            //Perform your navigation
+    //            window.open = src + '?idd=' + idd + '&id=' + id;
+
+
+
+
+
+    //        }
+    //    });
+    //    });
+
+    $(document).ready(function () {
+        $('#SavePCMLetter').on('click', function () {
+            var assmentid = $("#Intake_Assessment_Id").val();
+            //window.open('../Reports/AssessmentReportPcm.aspx?' + "idd=" + assmentid, );
+
+            window.open("../../Reports/AssessmentReport.aspx?idd=" + assmentid + "&id=" + 0, '_blank', 'left=100,top=100,width=400,height=300,toolbar=1,resizable=0');
+        });
+    })
+
+
+    $(document).ready(function () {
+
+
+
+
+
+            jQuery('#email_error1').hide();
+            jQuery('#email_error2').hide();
+            var Date_FinalisedTo = $("#Date_FinalisedTo").val();
+            var Date_FinalisedFrom = $("#Date_FinalisedFrom").val();
+            var Province = $("#ddlProvince").val();
+            var Gender = $("#ddlGender").val();
+            var Population = $("#ddlPopulation").val();
+            var Status = $("#ddlStatus").val();
+
+            var ageFrom = $("#ageFrom").val();
+            var ageTo = $("#ageTo").val();
+
+            //ASPX page URL to load report
+        var src = '../../Reports/AssessmentReport.aspx?';
+            //$.url('/Letters');
+            //We can add parameters here
+        src = src + "idd=" + Date_FinalisedTo + "&id=" + Date_FinalisedFrom ;
+
+
+
+
+            //We can append more than one parameter like below
+
+
+            //var companyId = 1
+            //src = src + "compnayID=" + companyId
+
+            //Create a dynamic iframe here and append this to div tag
+            var iframe = '<iframe id="reportFrame" width="100%" height="800px" scrolling="no" frameborder="0" src="' + src + '" allowfullscreen></iframe>';
+
+
+            $("#divReport").html(iframe);
+
+
+            $('.spinner').css('display', 'block');
+
+
+            setTimeout(function () {
+                $('.spinner').hide();
+            }, 15000);
+
+
+
+
+    });
+    ;
+
+</script>
+
+

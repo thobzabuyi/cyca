@@ -1,0 +1,250 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+
+namespace Common_Objects.ViewModels
+{
+   public class AdoptionPersonViewModel
+    {
+        
+        public int Client_Adoptive_Parent_Id { get; set; }
+        public int Person_Id { get; set; }
+        [Required]
+        [Display(Name = "First Name")]
+        public string First_Name { get; set; }
+        [Required]
+        [Display(Name = "Last Name")]
+        public string Last_Name { get; set; }
+        [Required]
+        [Display(Name = "Know As")]
+        public string Known_As { get; set; }
+        
+        [Display(Name = "Identity Type")]
+        public int? Identification_Type_Id { get; set; }
+        [Required]
+        public string selectedIdType { get; set; }
+        [Required]
+        [Display(Name = "Identity Number")]
+        public string Identification_Number { get; set; }
+        public bool Is_Piva_Validated { get; set; }
+        public string Piva_Transaction_Id { get; set; }
+        [Required]
+        [Display(Name = "Date Of Birth")]
+        public DateTime? Date_Of_Birth { get; set; }
+        public int? Age { get; set; }
+        [Display(Name = "Estimated Age")]
+        public bool Is_Estimated_Age { get; set; }
+        [Display(Name = "Language")]
+        public int? Language_Id { get; set; }
+        [Required]
+        public string selectedLanguage { get; set; }
+
+        [Display(Name = "Gender")]
+        public int? Gender_Id { get; set; }
+        [Required]
+        public string selectedGender { get; set; }
+        [Display(Name = "Marital Status")]
+        public int? Marital_Status_Id { get; set; }
+        [Required]
+        public string selectedMaritalStatus { get; set; }
+        [Display(Name = "Preferred Contact Type")]
+        public int? Preferred_Contact_Type_Id { get; set; }
+        [Required]
+        public string selectedContact { get; set; }
+        [Display(Name = "Religion")]
+        public int? Religion_Id { get; set; }
+        [Required]
+        public string selectedReligion { get; set; }
+        [Display(Name = "Phone Number")]
+        public string Phone_Number { get; set; }
+
+        [Display(Name = "Mobile Number")]
+        public string Mobile_Phone_Number { get; set; }
+        [Display(Name = ("Email Address"))]
+        public string Email_Address { get; set; }
+        [Display(Name = ("Population Group"))]
+        public int? Population_Group_Id { get; set; }
+        [Required]
+        public string selectedPopulation { get; set; }
+        [Display(Name = "Nationality")]
+        public int? Nationality_Id { get; set; }
+        [Required]
+        public string selectNationality { get; set; }
+        [Display(Name = "Disability Type")]
+        public int? Disability_Type_Id { get; set; }
+        [Required]
+        public string selectedDisability { get; set; }
+        public DateTime? Date_Created { get; set; }
+        public string Created_By { get; set; }
+        public DateTime? Date_Last_Modified { get; set; }
+        public string Modified_By { get; set; }
+        public bool Is_Active { get; set; }
+        public bool Is_Deleted { get; set; }
+        public virtual ICollection<IdentificationTypeLookupAdopt> Identification_Type { get; set; }
+        public virtual ICollection<LanguageTypeLookupAdopt> Language_Type { get; set; }
+        public virtual ICollection<GenderTypeLookupAdopt> Gender_Type { get; set; }
+        public virtual ICollection<MaritalTypeLookupAdopt> Marital_Type { get; set; }
+        public virtual ICollection<ContactTypeLookupAdopt> Contact_Type { get; set; }
+        public virtual ICollection<ReligionTypeLookupAdopt> Religion_Type { get; set; }
+        public virtual ICollection<Population_GroupTypeLookupAdopt> Population_Group { get; set; }
+        public virtual ICollection<NationalityTypeLookupAdopt> Nationality_Group { get; set; }
+        public virtual ICollection<DisabilityTypeLookupAdopt> Disability_Group { get; set; }
+
+        public virtual ICollection<OrganisationTypeLookupAdoptParent> Organisation_Parent_Group { get; set; }
+        public virtual ICollection<OrganisationTypeLookupAdoptSocialWorker> Organisation_SocialWorker_Group { get; set; }
+        public virtual ICollection<OrganisationTypeLookupAdoptChild> Organisation_Child_Group { get; set; }
+
+
+    }
+
+    /// <summary>
+    /// Identification Type dropdown list
+    ///// </summary>
+    public class IdentificationTypeAdopt
+    {
+        public int? selectedIdType { get; set; }
+        public IEnumerable<IdentificationTypeLookupAdopt> Identification_Type_List { get; set; }
+    }
+    public class IdentificationTypeLookupAdopt
+    {
+        public int Identification_Type_Id { get; set; }
+        public string Description { get; set; }
+
+    }
+
+
+    public class LanguageTypeAdopt
+    {
+        public int? selectedLanguage { get; set; }
+        public IEnumerable<LanguageTypeLookupAdopt> Language_Type_List { get; set; }
+    }
+
+    public class LanguageTypeLookupAdopt
+    {
+        public int Language_Id { get; set; }
+        public string Description { get; set; }
+
+    }
+
+    public class GenderTypeAdopt
+    {
+        public int? selectedGender { get; set; }
+        public IEnumerable<GenderTypeLookupAdopt> Gender_Type_List { get; set; }
+    }
+
+    public class GenderTypeLookupAdopt
+    {
+        public int Gender_Id { get; set; }
+        public string Description { get; set; }
+
+    }
+
+    public class MaritalTypeAdopt
+    {
+        public int? selectedMaritalStatus { get; set; }
+        public IEnumerable<MaritalTypeLookupAdopt> Gender_Type_List { get; set; }
+    }
+
+    public class MaritalTypeLookupAdopt
+    {
+        public int Marital_Status_Id { get; set; }
+        public string Description { get; set; }
+
+    }
+
+
+    public class ContactTypeAdopt
+    {
+        public int? selectedContact { get; set; }
+        public IEnumerable<ContactTypeLookupAdopt> Contact_Type_List { get; set; }
+    }
+
+    public class ContactTypeLookupAdopt
+    {
+        public int Preferred_Contact_Type_Id { get; set; }
+        public string Description { get; set; }
+
+    }
+
+
+    public class ReligionTypeAdopt
+    {
+        public int? selectedReligion { get; set; }
+        public IEnumerable<ReligionTypeLookupAdopt> Religion_Type_List { get; set; }
+    }
+
+    public class ReligionTypeLookupAdopt
+    {
+        public int Religion_Id { get; set; }
+        public string Description { get; set; }
+
+    }
+
+    public class Population_GroupTypeAdopt
+    {
+        public int? selectedPopulation { get; set; }
+        public IEnumerable<Population_GroupTypeLookupAdopt> Population_Type_List { get; set; }
+    }
+
+    public class Population_GroupTypeLookupAdopt
+    {
+        public int Population_Group_Id { get; set; }
+        public string Description { get; set; }
+
+    }
+
+  
+    public class NationalityTypeAdopt
+    {
+        public int? selectNationality { get; set; }
+        public IEnumerable<NationalityTypeLookupAdopt> Nationality_Type_List { get; set; }
+    }
+
+    public class NationalityTypeLookupAdopt
+    {
+        public int Nationality_Id { get; set; }
+        public string Description { get; set; }
+
+    }
+
+    public class DisabilityTypeAdopt
+    {
+        public int? selectedDisability { get; set; }
+        public IEnumerable<DisabilityTypeLookupAdopt> Disability_Type_List { get; set; }
+    }
+
+    public class DisabilityTypeLookupAdopt
+    {
+        public int Disability_Type_Id { get; set; }
+        public string Description { get; set; }
+
+    }
+
+    public class OrganisationTypeLookupAdoptParent
+    {
+        public int Organization_Type_Id { get; set; }
+        public string Description { get; set; }
+
+    }
+
+    public class OrganisationTypeLookupAdoptSocialWorker
+    {
+        public int Organization_Type_Id { get; set; }
+        public string Description { get; set; }
+
+    }
+
+    public class ChildTypeLookupAdopt
+    {
+        public int Organization_Type_Id { get; set; }
+        public string Description { get; set; }
+
+    }
+
+
+
+}

@@ -1,0 +1,263 @@
+﻿@using CYCA_Module_V2.Common_Objects;
+@model CYCAAdmissionBodilySearchPartiallViewModel
+<div class="row" id="BodilySearchRecords">
+    <div class="col-md-12">
+        <div class="panel panel-default">
+            <button class="btn btn-primary enabledisable" id="accordion" data-parent="#accordion" href="#actionModal" onclick="showBodySearchNew(@Model.CLientID)"><i class="fa fa-plus"></i> Add Body Search</button>
+            <div class="panel-heading text-center">
+                <strong style="color:#158cba"> Body Search History</strong>
+            </div>
+            <div class="panel-body">
+                <div class="table-responsive">
+                    <table class="table table-striped table-bordered table-hover" id="admissionList">
+                        <thead>
+                            <tr>
+                                <th>Body Search Date & Time</th>
+                                <th>Reason for body Search</th>
+                                @*<th>Witnessed By</th>*@
+                                <th>Description</th>
+                                <th>Attachments</th>
+                                <th>&nbsp;</th>
+                                <th>&nbsp;</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (CYCA_Module_V2.Common_Objects.CYCAAdmissionBodySearchViewModel m in Model.CYCAAdmissionBodySearchViewModels.OrderByDescending(m => m.BodySearchId))
+                            {
+                                <tr>
+                                    <td>@m.BodySearchDate</td>
+                                    <td>@m.ReasonForSearch</td>
+                                    @*<td>@m.WitnessedBy</td>*@
+                                    <td>@m.Description</td>
+                                    <td style="text-align: center;">
+                                        @for (int i = 0; i < m.liteFiles.Count; i++)
+                                        {
+                                            <div class="input-group">
+                                                <i class="fa fa-1x fa-paperclip text-navy"></i>
+                                                <a class="download-file1" href="@Url.Action("DownloadSearchFile", "Admit", new { id = m.liteFiles[i].Document_Id })" target="_blank">
+                                                    @m.liteFiles[i].Document_Name
+                                                </a>
+                                            </div>
+                                        }
+                                    </td>
+
+                                    <td><a href="#" onclick="showBodySearchView(@m.BodySearchId, @Model.CLientID)">View</a></td>
+                                    <td><a href="#" onclick="showBodySearchEdit(@m.BodySearchId, @Model.CLientID)" class="enabledisable">Edit</a></td>
+                                    
+                                    
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@*---------------------------------------------Illegal Items--------------------------------------------------------------------------------------*@
+<div class="row" id="IllegalItemsRecords">
+    <div class="col-md-12">
+        <div class="panel panel-default">
+            <button class="btn btn-primary  enabledisable" id="accordion" data-parent="#accordion" href="#actionModal" onclick="showNewIllegalItem(@Model.CLientID)"><i class="fa fa-plus"></i> Add Illegal Items</button>
+            <div class="panel-heading text-center">
+                <strong style="color:#158cba"> Illegal Items History</strong>
+            </div>
+            <div class="panel-body">
+                <div class="table-responsive">
+                    <table class="table table-striped table-bordered table-hover" id="admissionList">
+                        <thead>
+                            <tr>
+                                <th>Date Captured</th>
+                                <th>Item Description</th>
+                                <th>Quantity</th>
+                                <th>Item Handed To</th>
+                                <th>Attachments</th>
+                                <th>&nbsp;</th>
+                                <th>&nbsp;</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (CYCA_Module_V2.Common_Objects.CycaAdmissionIllegalItemsViewModel m in Model.CycaAdmissionIllegalItemsViewModels.OrderByDescending(m => m.Item_Found_Id))
+                            {
+                                <tr>
+                                    <td>@m.IllegalItemDate</td>
+                                    <td>@m.Description</td>
+                                    <td>@m.Quantity</td>
+                                    <td>@m.selectedHandedBy</td>
+                                    <td style="text-align: center;">
+                                        @for (int i = 0; i < m.liteFiles.Count; i++)
+                                        {
+                                            <div class="input-group">
+                                                <i class="fa fa-1x fa-paperclip text-navy"></i>
+                                                <a class="download-file1" href="@Url.Action("DownloadIllegalItemFile", "Admit", new { id = m.liteFiles[i].Document_Id })" target="_blank">
+                                                    @m.liteFiles[i].Document_Name
+                                                </a>
+                                            </div>
+                                        }
+                                    </td>
+                                    <td><a href="#" onclick="showViewIllegal(@m.Item_Found_Id, @Model.CLientID)">View</a></td>
+                                    <td><a href="#" onclick="showEditIllegal(@m.Item_Found_Id, @Model.CLientID)" class="enabledisable">Edit</a></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="BodySearch"></div>
+<div id="IllegalItem"></div>
+
+
+<script>
+
+
+  function DeleteFile() {
+    console.log("delete this file");
+  }
+
+  function base64toBlob(base64Data, contentType) {
+
+     var byteString = atob(base64Data.split(',')[1]);
+     var ab = new ArrayBuffer(byteString.length);
+     var ia = new Uint8Array(ab);
+
+    for (var i = 0; i < byteString.length; i++) {
+        ia[i] = byteString.charCodeAt(i);
+    }
+
+    return new Blob([ab], { type: contentType });
+  }
+  function downloadFile(file, type) {
+    console.log(file);
+   $.ajax({
+            type: 'POST',
+            url: '@Url.Content("~/Admit/DownloadFile")',
+            data: {
+              id: file
+            },
+            success: function (result) {
+              console.log("returned");
+
+                // ShowDynamicForm();
+            }
+        });
+      }
+    function showBodySearchNew(clientId){
+       $.ajax({
+            type: 'POST',
+            url: '@Url.Content("~/Client/AddBodySearch")',
+            data: {
+              //id: id,
+              clientId: clientId,
+              display: "Add"
+            },
+         success: function (result) {
+           console.log("returnedURL");
+             $('#BodilySearchRecords').hide();
+             $('#IllegalItemsRecords').hide();
+             $('#BodySearch').append(result);
+                // ShowDynamicForm();
+            }
+        });
+    }
+    function showNewIllegalItem(clientId){
+       $.ajax({
+            type: 'POST',
+            url: '@Url.Content("~/Client/AddIllegalItem")',
+            data: {
+              //id: id,
+              clientId: clientId,
+              display: "Add"
+            },
+         success: function (result) {
+           console.log("returnedURL");
+             $('#BodilySearchRecords').hide();
+             $('#IllegalItemsRecords').hide();
+             $('#IllegalItem').append(result);
+                // ShowDynamicForm();
+            }
+        });
+  }
+    function showBodySearchView(id, clientId){
+       $.ajax({
+            type: 'POST',
+            url: '@Url.Content("~/Client/EditViewBodySearch")',
+            data: {
+              id: id,
+              clientId: clientId,
+              display: "View"
+            },
+         success: function (result) {
+           console.log("returnedURL");
+             $('#BodilySearchRecords').hide();
+             $('#IllegalItemsRecords').hide();
+             $('#BodySearch').append(result);
+                // ShowDynamicForm();
+            }
+        });
+    }
+    function showViewIllegal(id, clientId){
+       $.ajax({
+            type: 'POST',
+            url: '@Url.Content("~/Client/EditViewIllegalItem")',
+            data: {
+              id: id,
+              clientId: clientId,
+              display: "View"
+            },
+         success: function (result) {
+           console.log("returnedURL");
+             $('#BodilySearchRecords').hide();
+             $('#IllegalItemsRecords').hide();
+             $('#IllegalItem').append(result);
+                // ShowDynamicForm();
+            }
+        });
+  }
+    function showBodySearchEdit(id, clientId){
+       $.ajax({
+            type: 'POST',
+            url: '@Url.Content("~/Client/EditViewBodySearch")',
+            data: {
+              id: id,
+              clientId: clientId,
+              display: "Update"
+            },
+         success: function (result) {
+           console.log("returnedURL");
+             $('#BodilySearchRecords').hide();
+             $('#IllegalItemsRecords').hide();
+             $('#BodySearch').append(result);
+                // ShowDynamicForm();
+            }
+        });
+    }
+
+    function showEditIllegal(id, clientId){
+       $.ajax({
+            type: 'POST',
+            url: '@Url.Content("~/Client/EditViewIllegalItem")',
+            data: {
+              id: id,
+              clientId: clientId,
+              display: "Update"
+            },
+         success: function (result) {
+           console.log("returnedURL");
+             $('#BodilySearchRecords').hide();
+             $('#IllegalItemsRecords').hide();
+             $('#IllegalItem').append(result);
+                // ShowDynamicForm();
+            }
+        });
+    }
+    $(function () {
+        EnableDisableClass();
+    });
+   
+</script>

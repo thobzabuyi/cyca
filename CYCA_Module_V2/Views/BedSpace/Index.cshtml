@@ -1,0 +1,49 @@
+﻿
+<div class="portlet light bordered">
+    <div class="portlet-body">
+        <div id="bedspacewizard" style="padding-left: 1.1em; padding-right:1.1em">
+            <ul id="TopTab">
+                <li>
+                    <a href="#home" data-toggle="tab">Inbox</a>
+                </li>
+                <li>
+                    <a href="#archive" data-toggle="tab">Archives</a>
+                </li>
+                <li>
+                    <a href="#bedspace" data-toggle="tab">Bed Space Capacity</a>
+                </li>
+            </ul>
+            <hr />
+            <div class="tab-content">
+                <div class="tab-pane" id="home">
+                    @Html.Partial("_BedSpaceRequest")
+                </div>
+                <div class="tab-pane" id="archive">
+                    @Html.Partial("_Archives")
+                </div>
+                <div class="tab-pane" id="bedspace">
+                    @Html.Partial("_BedSpaceCapacity")
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+    <script>
+
+        $(document).ready(function () {
+            console.log('here');
+            $('#bedspacewizard').bootstrapWizard({
+                'tabClass': 'nav nav-pills',
+            });
+
+            //$('#otherContent').bootstrapWizard({
+            //    'tabClass': 'nav nav-pills',
+            //});
+        });
+    </script>
+  

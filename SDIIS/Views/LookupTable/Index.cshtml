@@ -1,0 +1,55 @@
+﻿@model Common_Objects.Models.LookupData
+@using GridMvc.Html
+
+@{
+    ViewBag.Title = "Lookup Table Data";
+}
+
+<h3>@ViewBag.Message</h3>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="panel panel-primary form-horizontal" style=" width:100% !important">
+        <div class="panel-heading" style="text-align: center; vertical-align: middle !important;">
+            <div class="row">
+                <div class="col-md-11 vcenter">
+                    @Html.Label("Lookup Data Maintenance")
+                </div>
+                <div class="col-md-1">
+                    @Html.ActionLink("Create", "Create", null, new { @class = "btn btn-info pull-right" })
+                </div>
+            </div>
+        </div>
+
+        <div class="panel-body">
+
+            <div class="col-md-12">
+                <div class="row">
+                    <div class="col-md-3 form-group">
+                        @Html.LabelFor(x => x.LookupTableList, new { @class = "control-label" })
+                    </div>
+                    <div class="col-md-3">
+                        @Html.DropDownListFor(n => n.SelectedLookupTableId, Model.LookupTableList, "- Please select -", new { @id = "DropdownModule", @class = "form-control unblock" })
+                        <input type="submit" id="ButtonFilter" value="Filter" class="btn btn-success" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="row">
+                    <div class="col-md-12">
+                        @Html.Grid(Model.LookupDataItems).Columns(columns =>
+                        {
+                            columns.Add(x => x.Description).Titled("Description").Sortable(true);
+                            columns.Add().Encoded(false).Sanitized(false).SetWidth(30).RenderValueAs(d => @<b> @Html.ActionLink("Edit", "Edit", new { id = d.ItemId, lookupDataTypeId = d.LookupTableTypeId }, new { @class = "btn btn-success", enabled = "false" }) </b>);
+                            columns.Add().Encoded(false).Sanitized(false).SetWidth(30).RenderValueAs(d => @<b> @Html.ActionLink("Delete", "Delete", new { id = d.ItemId, lookupDataTypeId = d.LookupTableTypeId }, new { @class = "btn btn-danger" }) </b>);
+                        }).WithPaging(5)
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+}

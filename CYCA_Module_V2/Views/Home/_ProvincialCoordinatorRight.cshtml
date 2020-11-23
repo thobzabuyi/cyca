@@ -1,0 +1,537 @@
+﻿@using CYCA_Module_V2.Common_Objects;
+@using Common_Objects.ViewModels;
+@model CYCA_Module_V2.Common_Objects.ProvincialCoordinatorRightViewModel
+
+
+
+<div class="portlet light bordered">
+    <div class="portlet-body">
+        <div id="rootwizard">
+            <ul id="TopTab">
+                <li onclick="setTab(1)"><a href="#tab1" data-toggle="tab">Inbox</a></li>
+                @*<li onclick="setTab(2)"><a href="#tab2" data-toggle="tab">All Requests</a></li>*@
+            </ul>
+            <hr />
+            <div class="tab-content">
+                <div class="tab-pane" id="tab1">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="panel panel-default">
+                                <div class="panel-heading text-center">
+                                    <strong style="color:#158cba">Bed Space Requests</strong>
+                                </div>
+                                <div class="panel-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-striped table-bordered table-hover" id="requestList">
+                                            <thead>
+                                                <tr>
+                                                    <th>IncomingRequestId</th>
+                                                    <th>Probation Officer</th>
+                                                    <th>Court Name</th>
+                                                    <th>Date Received</th>
+                                                    <th>Time Received</th>
+                                                    <th>Request Open/Closed</th>
+                                                    <th>Days Lapsed</th>
+                                                    <th>Status</th>
+                                                    <th>Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="SetRequestList"></tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="reports">
+
+        </div>
+        <div id="orgchart">
+
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="actionModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog" style="width: 105%">
+        <div class="modal-content">
+            <div class="modal-header bg-color-brown">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">Reply to Requests</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <form id="form">
+                        <div class="col-md-6 col-sm-6">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    Request Details
+                                </div>
+                                <div class="panel-body">
+                                    <div class="row">
+
+                                        <div class="col-md-4">
+                                            @Html.HiddenFor(m => m.Request_Id, new { @id = "id" })
+                                            @Html.HiddenFor(m => m.AvailableFemaleSpace, new { @id = "AvailableFemaleSpace" })
+                                            @Html.HiddenFor(m => m.AvailableMaleSpace, new { @id = "AvailableMaleSpace" })
+                                            @Html.LabelFor(x => x.selectProbationOfficerName)
+                                        </div>
+                                        <div class="col-md-8 form-group" style="">
+                                            @Html.TextBoxFor(m => m.selectProbationOfficerName, new { @id = "officername", @class = "form-control", @readonly = "readonly" })
+                                        </div>
+                                        <div class="col-md-4">
+                                            @Html.LabelFor(x => x.selectProbationOfficerSurname)
+                                        </div>
+                                        <div class="col-md-8 form-group" style="">
+                                            @Html.TextBoxFor(m => m.selectProbationOfficerSurname, new { @id = "officersurname", @class = "form-control", @readonly = "readonly" })
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            @Html.LabelFor(x => x.selectProbationOfficerTel)
+                                        </div>
+                                        <div class="col-md-8 form-group" style="">
+                                            @Html.TextBoxFor(m => m.selectProbationOfficerTel, new { @id = "officertel", @class = "form-control", @readonly = "readonly" })
+                                        </div>
+                                        <div class="col-md-4">
+                                            @Html.LabelFor(x => x.selectProbationOfficerEmail)
+                                        </div>
+                                        <div class="col-md-8 form-group" style="">
+                                            @Html.TextBoxFor(m => m.selectProbationOfficerEmail, new { @id = "officeremail", @class = "form-control", @readonly = "readonly" })
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            @Html.LabelFor(x => x.courtName)
+                                        </div>
+                                        <div class="col-md-8 form-group" style="">
+                                            @Html.TextBoxFor(m => m.courtName, new { @id = "court", @class = "form-control", @readonly = "readonly" })
+                                        </div>
+                                        <div class="col-md-4">
+                                            @Html.LabelFor(x => x.selectProvince)
+                                        </div>
+                                        <div class="col-md-8 form-group" style="">
+                                            @Html.TextBoxFor(m => m.selectProvince, new { @id = "province", @class = "form-control", @readonly = "readonly" })
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            @Html.LabelFor(x => x.selectClientName)
+                                        </div>
+                                        <div class="col-md-8 form-group" style="">
+                                            @Html.TextBoxFor(m => m.selectClientName, new { @id = "childname", @class = "form-control", @readonly = "readonly" })
+                                        </div>
+                                        <div class="col-md-4">
+                                            @Html.LabelFor(x => x.selectClientGender)
+                                        </div>
+                                        <div class="col-md-8 form-group" style="">
+                                            @Html.TextBoxFor(m => m.selectClientGender, new { @id = "childgender", @class = "form-control", @readonly = "readonly" })
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            @Html.LabelFor(x => x.selectOffenceDetails)
+                                        </div>
+                                        <div class="col-md-8 form-group" style="">
+                                            @Html.TextBoxFor(m => m.selectOffenceDetails, new { @id = "offencedetails", @class = "form-control", @readonly = "readonly" })
+                                        </div>
+                                        <div class="col-md-4">
+                                            @Html.LabelFor(x => x.selectRequestStatus)
+                                        </div>
+                                        <div class="col-md-8 form-group" style="">
+                                            @Html.TextBoxFor(m => m.selectRequestStatus, new { @id = "reqstatus", @class = "form-control", @readonly = "readonly" })
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            @Html.LabelFor(x => x.selectAdmissionType)
+                                        </div>
+                                        <div class="col-md-8 form-group" style="">
+                                            @Html.TextBoxFor(m => m.selectAdmissionType, new { @id = "admissiontype", @class = "form-control", @readonly = "readonly" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-sm-6">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    Facility Details
+                                </div>
+                                <div class="panel-body">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            @Html.LabelFor(x => x.selectFacilityName)
+                                        </div>
+                                        <div class="col-md-8 form-group" style="">
+                                            @Html.TextBoxFor(m => m.selectFacilityName, new { @id = "facilityname", @class = "form-control", @readonly = "readonly" })
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            @Html.LabelFor(x => x.selectFaciltyTel)
+                                        </div>
+                                        <div class="col-md-8 form-group" style="">
+                                            @Html.TextBoxFor(m => m.selectFaciltyTel, new { @id = "facilitytel", @class = "form-control", @readonly = "readonly" })
+                                        </div>
+                                        <div class="col-md-4">
+                                            @Html.LabelFor(x => x.selectFacilityManagerEmail)
+                                        </div>
+                                        <div class="col-md-8 form-group" style="">
+                                            @Html.TextBoxFor(m => m.selectFacilityManagerEmail, new { @id = "facilitymanager", @class = "form-control", @readonly = "readonly" })
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            @Html.LabelFor(x => x.Date_Closed)
+                                        </div>
+                                        <div class="col-md-8 form-group" style="">
+                                            @Html.TextBoxFor(m => m.Date_Closed, new { @id = "dateclosed", @class = "form-control", @readonly = "readonly" })
+                                        </div>
+                                        <div class="col-md-4">
+                                            @Html.LabelFor(x => x.Time_Replied)
+                                        </div>
+                                        <div class="col-md-8 form-group" style="">
+                                            @Html.TextBoxFor(m => m.Time_Replied, new { @id = "timereplied", @class = "form-control", @readonly = "readonly" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    Process Request
+                                </div>
+                                <div class="panel-body">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            @Html.LabelFor(x => x.outcomeDescription)
+                                        </div>
+                                        <div class="col-md-8 form-group">
+                                            @Html.DropDownListFor(m => m.Outcome_Id, ViewBag.RequestOutcomeList as SelectList, new { @id = "Outcome_Id", @class = "form-control", @onchange = "enableButtonSend()" })
+                                            @*@Html.TextBoxFor(m => m.Outcome_Id, new { @id = "Outcome_Id", @class = "form-control" })*@
+                                        </div>
+                                        <div class="col-md-4">
+                                            @Html.LabelFor(x => x.Request_Comments)
+                                        </div>
+                                        <div class="col-md-8 form-group" style="">
+                                            @*@Html.TextAreaFor(m => m.Request_Comments, new { @id = "reqcomments", @class = "form-control", @disabled = "disabled" })*@
+                                            @Html.TextAreaFor(m => m.Request_Comments, new { @id = "reqcomments", @class = "form-control", @disabled = "disabled", required = "required" })
+                                            @Html.ValidationMessageFor(m => m.Request_Comments, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+
+                <a href="#" class="btn btn-default" data-dismiss="modal" id="r">Cancel</a>
+                <a href="#" class="btn btn-warning" disabled id="Send">Send</a>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<script src="~/Scripts/jquery.validate.min.js"></script>
+<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+<script>
+    var currentTab = 1;
+    $(document).ready(function () {
+        $('#rootwizard').bootstrapWizard({
+            'tabClass': 'nav nav-pills',
+        });
+        if (leftLoaded) {
+            console.log('right');
+            SetupDragAndDropCenterManager();
+        }
+        rightLoaded = true;
+
+        //Load Table Body
+        $.getJSON('../../BedSpace/GetBedSpaceList',
+            function (json) {
+                var tr;               
+                var found = false;               
+                for (var i = 0; i < json.length; i++) {
+                    tr = $('<tr/>');
+                    req = "Open";
+                    //if (json[i].Days_Lapsed < 1 && json[i].Hours_Lapsed < 24) {
+                    tr.append("<td>" + json[i].Request_Id + "</td>");
+                    tr.append("<td>" + json[i].selectPropationOfficer + "</td>");
+                    tr.append("<td>" + json[i].courtName + "</td>");
+                    tr.append("<td>" + ToJavaScriptDate(json[i].Date_Recieved) + "</td>");
+                    tr.append("<td>" + json[i].Time_Recieved + "</td>");
+                    tr.append("<td>" + json[i].RequestOpenClose + "</td>");
+                    tr.append("<td>" + json[i].Days_Lapsed + "</td>");
+                    var status = json[i].Request_Status_Id;
+                    var declined = json[i].Count_Declined;
+                    if (status === 2) {
+                        tr.append("<td>" + "<span class='glyphicon glyphicon-ok' style = 'color: green'></span>" + "</td>");
+                        //(tr).find('td:eq(7)').css("color", "transparent");
+                    }
+                    if (status === 3) {
+                        if (declined === 2) {
+                            tr.append("<td>" + "<span class='glyphicon glyphicon-remove' style = 'color: #000000'></span>" + "</td>");
+                        }
+                        else {
+                            tr.append("<td>" + "<span class='glyphicon glyphicon-remove' style = 'color: #FF0000'></span>" + "</td>");
+                        }
+
+                    }
+                    if (status === 1) {
+                        tr.append("<td>" + "<span class='glyphicon glyphicon-hourglass' style = 'color: #87CEFA'></span>" + "</td>");
+                    }
+                    if (json[i].RequestOpenClose == "Closed" && status === 3 && declined === 1 && json[i].Hours_Modified <= 1 && found === false) {
+                        tr.append("<td>" + "<a href='#' class='btn btn-warning' onclick = 'ViewBedspace(" + json[i].Request_Id + ")'>Respond</a>" + "</td>");
+                        found = true;
+                    }
+                    else {
+                        tr.append("<td>" + "<a href='#' disabled class='btn btn-warning' onclick = 'ViewBedspace(" + json[i].Request_Id + ")'>Respond</a>" + "</td>");
+                    }
+                    $('#SetRequestList').append(tr);
+                    //}
+                    
+                    if (json[i].Hours_Modified >= 1) {
+                        AutoDecline(json[i].Request_Id, status);
+
+                    }
+                }
+                $('#requestList').DataTable({ "order": [[0, "desc"]] });
+
+            });
+
+        function ToJavaScriptDate(value) { //To Parse Date from the Returned Parsed Date
+            var pattern = /Date\(([^)]+)\)/;
+            var results = pattern.exec(value);
+            var dt = new Date(parseFloat(results[1]));
+            return (dt.getMonth() + 1) + "/" + dt.getDate() + "/" + dt.getFullYear();
+        }
+    });
+
+
+    function AutoDecline(RequestId, statusId) {
+        var url = "/BedSpace/UpdateBedSpaceInDatabase";        
+        $.ajax({
+            type: "Post",
+            url: url,
+            data: {
+                Request_Id: RequestId,
+                Outcome_Id: statusId
+            },
+            success: function (result) {
+                //alert("Success!..");
+                //$('.spinner').css('display', 'block');
+                //setTimeout(function () {
+                //    $('.spinner').hide();
+                //}, 10000);
+                //location.reload(true);                  
+            },
+            error: function (xhr, ajaxOptions, error) {
+                alert(xhr.status);
+                alert('Error: ');
+            }
+        })
+    }
+    function enableButtonSend() {
+
+        if (document.getElementById("Outcome_Id").value !== 1 + "") {
+
+            $("#Send").removeAttr("disabled")
+        } else {
+            $("#Send").attr("disabled", "disabled")
+        }
+
+        if (document.getElementById("Outcome_Id").value === 2 + "") {
+
+            $("#reqcomments").removeAttr("disabled")
+        } else {
+            $("#reqcomments").attr("disabled", "disabled")
+        }
+
+
+    }
+
+    function ViewBedspace(RequestId) {
+        var url = "/BedSpace/GetRequestById?RequestId=" + RequestId;
+        //alert(RequestId);
+        $("#myModalLabel").html("Reply to Request");
+        $("#actionModal").modal();
+        $.ajax({
+            type: "GET",
+            url: url,
+            success: function (data) {
+                console.log($('#AvailableFemaleSpace').val());
+                console.log($('#AvailableMaleSpace').val());
+                console.log(data);
+                var obj = JSON.parse(data);
+                $("#id").val(obj.Request_Id);
+                $("#AvailableFemaleSpace").val(obj.AvailableFemaleSpace);
+                $("#AvailableMaleSpace").val(obj.AvailableMaleSpace);
+                $("#officername").val(obj.selectProbationOfficerName);
+                $("#officersurname").val(obj.selectProbationOfficerSurname);
+                $("#officertel").val(obj.selectProbationOfficerTel);
+                $("#officeremail").val(obj.selectProbationOfficerEmail);
+                $("#court").val(obj.courtName);
+                $("#province").val(obj.selectProvince);
+                $("#childname").val(obj.selectClientName);
+                $("#childgender").val(obj.selectClientGender);
+                $("#offencedetails").val(obj.selectOffenceDetails);
+                $("#reqstatus").val(obj.selectRequestStatus);
+                $("#admissiontype").val(obj.selectAdmissionType);
+                $("#facilityname").val(obj.selectFacilityName);
+                $("#facilitytel").val(obj.selectFaciltyTel);
+                $("#facilitymanager").val(obj.selectFacilityManagerEmail);
+                $("#dateclosed").val(obj.Date_Closed);
+                $("#timereplied").val(obj.Time_Replied);
+
+                //$("#Responsibility_Details").val(obj.Responsibility_Details);
+
+            }, error: function () { alert('something bad happened'); }
+
+        })
+    }
+
+    $("#Send").click(function () {
+        if (!$('#form').valid()) {
+            return false;
+        }
+        var url = "/BedSpace/UpdateBedSpaceInDatabase";
+        $.confirm({
+            title: 'Respond To Request',
+            content: 'Are you sure you want to save this?',
+            buttons: {
+                Yes: function () {
+                    $.ajax({
+                        type: "Post",
+                        url: url,
+                        data: {
+                            Request_Id: $("#id").val(),
+                            selectProbationOfficerName: $("#officername").val(),
+                            selectProbationOfficerSurname: $("#officersurname").val(),
+                            selectProbationOfficerTel: $("#officertel").val(),
+                            selectProbationOfficerEmail: $("#officeremail").val(),
+                            courtName: $("#court").val(),
+                            selectProvince: $("#province").val(),
+                            selectClientName: $("#childname").val(),
+                            selectClientGender: $("#childgender").val(),
+                            selectOffenceDetails: $("#offencedetails").val(),
+                            selectRequestStatus: $("#reqstatus").val(),
+                            selectAdmissionType: $("#admissiontype").val(),
+                            selectFacilityName: $("#facilityname").val(),
+                            selectFaciltyTel: $("#facilitytel").val(),
+                            facilitymanager: $("#selectFacilityManagerEmail").val(),
+                            Date_Closed: $("#dateclosed").val(),
+                            Time_Replied: $("#Time_Replied").val(),
+                            Outcome_Id: $("#Outcome_Id").val(),
+                            Request_Comments: $("#reqcomments").val(),
+                            AvailableFemaleSpace: $("#AvailableFemaleSpace").val(),
+                            AvailableMaleSpace: $("#AvailableMaleSpace").val()
+                        },
+                        success: function (result) {
+                            //alert("Success!..");
+                            //$('.spinner').css('display', 'block');
+                            //setTimeout(function () {
+                            //    $('.spinner').hide();
+                            //}, 10000);
+
+                            //location.reload(true);
+                            $('#SetRequestList').empty();
+                            $('#requestList').DataTable().clear().destroy();
+                            $.getJSON('/BedSpace/GetBedSpaceList',
+                                function (json) {
+                                    var tr;
+                                    var req;
+                                    var found = false;
+                                    var hoursLapsed;
+                                    for (var i = 0; i < json.length; i++) {
+                                        tr = $('<tr/>');
+                                        req = "Open";
+                                        //if (json[i].Days_Lapsed < 1 && json[i].Hours_Lapsed < 24) {
+                                        tr.append("<td>" + json[i].Request_Id + "</td>");
+                                        tr.append("<td>" + json[i].selectPropationOfficer + "</td>");
+                                        tr.append("<td>" + json[i].courtName + "</td>");
+                                        tr.append("<td>" + ToJavaScriptDate(json[i].Date_Recieved) + "</td>");
+                                        tr.append("<td>" + json[i].Time_Recieved + "</td>");
+                                        tr.append("<td>" + json[i].RequestOpenClose + "</td>");
+                                        tr.append("<td>" + json[i].Days_Lapsed + "</td>");
+                                        var t = json[i].Request_Status_Id;
+                                        var c = json[i].Count_Declined;
+                                        if (t == 2) {
+                                            tr.append("<td>" + "<span class='glyphicon glyphicon-ok' style = 'color: green'></span>" + "</td>");
+                                            //(tr).find('td:eq(7)').css("color", "transparent");
+                                        }
+                                        if (t == 3) {
+                                            if (c == 2) {
+                                                tr.append("<td>" + "<span class='glyphicon glyphicon-remove' style = 'color: #000000'></span>" + "</td>");
+                                            }
+                                            else {
+                                                tr.append("<td>" + "<span class='glyphicon glyphicon-remove' style = 'color: #FF0000'></span>" + "</td>");
+                                            }
+                                        }
+                                        if (t == 1) {
+                                            tr.append("<td>" + "<span class='glyphicon glyphicon-hourglass' style = 'color: #87CEFA'></span>" + "</td>");
+                                        }
+                                        if (json[i].RequestOpenClose == "Closed" && t == 3 && c !== 2 && found == false) {
+                                            tr.append("<td>" + "<a href='#' class='btn btn-warning' onclick = 'ViewBedspace(" + json[i].Request_Id + ")'>Respond</a>" + "</td>");
+                                            found = true;
+                                        }
+                                        else {
+                                            tr.append("<td>" + "<a href='#' disabled class='btn btn-warning' onclick = 'ViewBedspace(" + json[i].Request_Id + ")'>Respond</a>" + "</td>");
+                                        }
+                                        $('#SetRequestList').append(tr);
+                                        //}
+                                    }
+                                    $('#requestList').DataTable({ "order": [[0, "desc"]] });
+                                });
+
+                            function ToJavaScriptDate(value) { //To Parse Date from the Returned Parsed Date
+                                var pattern = /Date\(([^)]+)\)/;
+                                var results = pattern.exec(value);
+                                var dt = new Date(parseFloat(results[1]));
+                                return (dt.getMonth() + 1) + "/" + dt.getDate() + "/" + dt.getFullYear();
+                            }
+                            $('#actionModal #Outcome_Id').val("1");
+                            $('#actionModal #reqcomments').val("");
+                            $("#actionModal").modal("hide");
+
+                        },
+                        error: function (xhr, ajaxOptions, error) {
+                            alert(xhr.status);
+                            alert('Error: ');
+                        }
+                    })
+                },
+                No: function () {
+                    $("#actionModal").modal("hide");
+
+                }
+
+            },
+
+        })
+    })
+
+    $(function () {
+        jQuery.validator.unobtrusive.parse();
+        jQuery.validator.unobtrusive.parse("#form");
+
+    });
+
+</script>
+

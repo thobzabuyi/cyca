@@ -1,0 +1,64 @@
+﻿@using Common_Objects.Models
+@model Common_Objects.Models.Menu
+
+<ul id="menu" class="nav navbar-nav">
+    @{
+        if (Model != null)
+        {
+            foreach (var item in Model.Menu_Items.OrderBy(m => m.Sort_Order))
+            {
+                // Get top-level menu items
+                if (item.Parent_Menu_Item == null)
+                {
+                    // Does this item have any children?
+                    if (item.Sub_Menu_Items.Any())
+                    {
+                        if (item.Is_Visible)
+                        {
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="False">@item.Menu_Text <span class="caret"></span></a>
+                                <ul class="dropdown-menu">
+                                    @RenderSubMenu(item.Sub_Menu_Items.OrderBy(m => m.Sort_Order).ToList())
+                                </ul>
+                            </li>
+                        }
+                    }
+                    else
+                    {
+                        @RenderMenuItem(item);
+                    }
+                }
+            }
+        }
+    }
+</ul>
+
+@*Helper Method to render children menu items from within foreach loop*@
+@helper RenderSubMenu(List<Menu_Item> SubMenuItems)
+{
+    foreach (var item in SubMenuItems)
+    {
+        @RenderMenuItem(item);
+    }
+}
+
+@helper RenderMenuItem(Menu_Item menuItem)
+{
+    if (menuItem.Is_Visible)
+    {
+        //if (menuItem.ModuleAction != null)
+        //{
+        var moduleBaseURL = menuItem.Module_Action.Module_Controller.Module.Base_URL;
+        var controllerName = menuItem.Module_Action.Module_Controller.Module_Controller_Name;
+        var actionName = menuItem.Module_Action.Module_Action_Name;
+
+        var targetUrl = string.Format("{0}/{1}/{2}", moduleBaseURL, controllerName, actionName);
+
+        <li id="@menuItem.Menu_Text"><a href="@targetUrl">@menuItem.Menu_Text</a></li>
+        @*}
+            else
+            {
+                <li id="@menuItem.MenuText">@Html.ActionLink(@menuItem.MenuText, @menuItem.ControllerName, @menuItem.ActionName)</li>
+            }*@
+    }
+}

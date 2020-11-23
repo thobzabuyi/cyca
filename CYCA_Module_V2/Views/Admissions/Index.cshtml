@@ -1,0 +1,227 @@
+﻿@model Common_Objects.ViewModels.CYCAAdmissionViewModel
+
+<br />
+<head>
+
+    <script src="~/Scripts/jquery-3.3.1.min.js"></script>
+    <style>
+
+        #btnSearch {
+            outline: none !important;
+            border-radius: 8px 8px 0px 0px;
+            box-shadow: none;
+        }
+
+        #tool-bar {
+            transition: width 0.1s;
+            -webkit-transition: width 0.1s;
+        }
+
+        .progress {
+            height: 12px;
+            border-radius: 0px 0px 4px 4px;
+        }
+
+
+        .center-div {
+            width: 300px;
+            height: 300px;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            margin-left: -150px;
+            margin-top: -150px;
+        }
+
+        .spinner {
+            position: fixed;
+            z-index: 999;
+            height: 100%;
+            width: 100%;
+            top: 0;
+            left: 0;
+            background-color: Black;
+            filter: alpha(opacity=60);
+            opacity: 0.6;
+            -moz-opacity: 0.8;
+        }
+
+        .loader {
+            margin: auto;
+            border: 16px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 16px solid #15a0ec;
+            border-bottom: 16px solid #15a0ec;
+            width: 120px;
+            height: 120px;
+            -webkit-animation: spin 2s linear infinite;
+            animation: spin 2s linear infinite;
+        }
+
+        .inner-div {
+            background-color: white;
+            border-radius: 15px;
+            margin: auto;
+            padding: 2%;
+            width: 150px;
+        }
+
+        @@-webkit-keyframes spin {
+            0% {
+                -webkit-transform: rotate(0deg);
+            }
+
+            100% {
+                -webkit-transform: rotate(360deg);
+            }
+        }
+
+        @@keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+
+</head>
+
+@using (Html.BeginForm("PersonDetails", "CYCAAdmission"))
+{
+    @Html.AntiForgeryToken()
+<div class="panel panel-primary">
+    @Html.HiddenFor(model => model.Person_Id, new { @id = "Person_Id" })
+    @Html.HiddenFor(m => m.Intake_Assessment_Id, new { @id = "Intake_Assessment_Id" })
+
+    @*<div class="panel-heading" style="text-align: center">
+        Child Details : <span style="color:white;font-weight: bolder; font-size:large; text-shadow: 2px 2px grey; ">Child Ref (@ViewBag.ModuleRef)</span>
+    </div>*@
+    <div class="panel-body">
+     <p>Report to be displayed here...</p>
+    </div>
+    <div class="form-group">
+        @*<input type="submit" id="ButtonSave" value="Save" class="btn btn-success" />*@
+        @Html.ActionLink("Cancel", "CYCASearch", "Home", null, new { @class = "btn btn-info" })
+        <a href="#" class="btn btn-info" id="SavePCMLetter">print Letter</a> <br /><br />
+    </div>
+</div>
+}
+
+<div class="spinner" style="display:none" id="spinner">
+    <div class="center-div">
+        <div class="inner-div">
+            <div class="loader"></div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(function () {
+
+        // Initialize items marked as datepickers
+
+
+        //$(".jqueryui-marker-datepicker").datepicker({
+        //    dateFormat: "dd M yy",
+        //    changeYear: true
+        //});
+
+
+    });
+    //$(document).ready(function () {
+    //    $('#Date_of_Birth').datepicker({
+    //        dateFormat: "yy/mm/dd",
+    //        changeMonth: true,
+    //        changeYear: true,
+    //        maxDate: 0,
+    //        yearRange: "-60:+0"
+    //    });
+
+    //});
+
+    //    $(document).ready(function () {
+    //        $('.spinner').css('display', 'block');
+
+
+    //        setTimeout(function () {
+    //            $('.spinner').hide();
+    //        }, 10000);
+
+    //    });
+
+
+
+</script>
+
+<script type="text/javascript">
+    $(function () {
+
+        // Initialize items marked as datepickers
+        $(".jqueryui-marker-datepicker").datepicker({
+            dateFormat: "dd M yy",
+            changeYear: true
+        });
+
+    });
+
+</script>
+
+<script type="text/javascript">
+
+
+    function navigate() {
+        //Grab your values
+        var assmentid = $("#Intake_Assessment_Id").val();
+
+        //Perform your navigation
+        window.open.href = target + '?UserName=' + username + '&Password=' + password;
+    }
+
+
+    //$(function () {
+    //    $('#SavePCMLetter').click(function () {
+
+
+    //        var assmentid = $("#Intake_Assessment_Id").val();
+
+    //        if (assmentid>0) {
+
+
+
+
+
+    //            //ASPX page URL to load report
+    //            var src = '../Reports/AssessmentReportPcm.aspx?';
+    //            //$.url('/Letters');
+    //            //We can add parameters here
+
+
+    //            src = src + "idd=" + assmentid + "&id=" + 0;
+
+    //            alert(src);
+
+    //            //Perform your navigation
+    //            window.open = src + '?idd=' + idd + '&id=' + id;
+
+
+
+
+
+    //        }
+    //    });
+    //    });
+
+    $(document).ready(function () {
+        $('#SavePCMLetter').on('click', function () {
+            var assmentid = $("#Intake_Assessment_Id").val();
+            //window.open('../Reports/AssessmentReportPcm.aspx?' + "idd=" + assmentid, );
+
+            window.open("../../Reports/AssessmentReport.aspx?idd=" + assmentid + "&id=" + 0, '_blank', 'left=100,top=100,width=400,height=300,toolbar=1,resizable=0');
+        });
+    });
+
+</script>
+

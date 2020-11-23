@@ -1,0 +1,168 @@
+﻿@model CYCA_Module_V2.Common_Objects.ClientDischargeHistoryModel
+@using Common_Objects.Models
+<style>
+</style>
+<div class="row" id="DischargeGrid">
+  <div class="col-md-12">
+    <div class="panel panel-default">
+      <div class="panel-heading text-center">
+        <strong style="color:#158cba">Discharge History</strong>
+      </div>
+      <div class="panel-body">
+        <div class="table-responsive">
+          <table class="table table-striped table-bordered table-hover">
+            <thead>
+              <tr>
+                <th>Discharge Date</th>
+                <th>Person Discharging</th>
+                <th>Person Receiving</th>
+                <th>Receiving Organisation</th>
+                <th>Reason</th>
+                <th>Keep Bedspace</th>
+                <th>Attachment(s)</th>
+                <th>&nbsp;</th>
+                <th>&nbsp;</th>
+              </tr>
+            </thead>
+            <tbody>
+              @foreach (CYCA_Module_V2.Common_Objects.CYCADischargeViewModel data in Model.ClientDischargeHistory.OrderByDescending(data => data.DischargeId))
+              {
+                <tr>
+                  <td>@data.DischargeDate</td>
+                  <td>@data.selectedUserHandedOver</td>
+                  <td>@data.UserReceivedName</td>
+                  <td>@data.selectedUserReceivedOrganisation</td>
+                  <td>@data.selectedDischargeReason</td>
+                  <td>@data.ExpectedReturnDate</td>
+
+                  <td>
+
+
+                    @foreach (Common_Objects.Models.CYCA_Admissions_Document f in @data.Files)
+                    {
+                      <i class="fa fa-paperclip" style="color: black"></i> <a class="download-file1" href="@Url.Action("DownloadFile", "Admit", new { id = f.Document_Id,  })" target="_blank">
+                        @f.Document_Name
+                      </a>
+                      <br />
+                    }
+                  </td>
+
+                  <td><a class="dynamicButton enabledisable" onclick="ShowDishcargeEdit(@data.DischargeId,@Model.CLientID)">Edit</a></td>
+                  <td><a class="dynamicButton" onclick="ShowDishcargeView(@data.DischargeId,@Model.CLientID)">View</a></td>
+                </tr>
+              }
+
+            </tbody>
+
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+<div id="EditDischarge"></div>
+
+<script>
+
+ 
+  function DeleteFile() {
+    console.log("delete this file");
+  }
+
+  function base64toBlob(base64Data, contentType) {
+
+     var byteString = atob(base64Data.split(',')[1]);
+     var ab = new ArrayBuffer(byteString.length);
+     var ia = new Uint8Array(ab);
+
+    for (var i = 0; i < byteString.length; i++) {
+        ia[i] = byteString.charCodeAt(i);
+    }
+
+    return new Blob([ab], { type: contentType });
+  }
+  function downloadFile(file, type) {
+    console.log(file);
+   $.ajax({
+            type: 'POST',
+            url: '@Url.Content("~/Admit/DownloadFile")',
+            data: {
+              id: file
+            },
+            success: function (result) {
+              console.log("returned");
+       
+                // ShowDynamicForm();
+            }
+        });
+      }
+    function showEdit(id) {
+      ShowDynamicFormEditOnly(2, "CarePlan", id);
+
+  }
+    function ShowDishcargeView(id, clientId){
+       $.ajax({
+            type: 'POST',
+            url: '@Url.Content("~/Client/EditDischarge")',
+            data: {
+              id: id,
+              clientId: clientId,
+              display: "View"
+            },
+         success: function (result) {
+           console.log("returnedURL");
+           $('#DischargeGrid').hide();
+           $('#EditDischarge').append(result);
+                // ShowDynamicForm();
+            }
+        });
+  }
+  function CloseEdit(view) {
+    $('#EditDischarge').empty();
+   
+       $('#DischargeGrid').show();
+    $('#DischargeGrid').replaceWith(view);
+
+    console.log(view + "In history updated");
+  };
+  function CloseView(view) {
+    $('#DischargeGrid').show();
+    $('#EditDischarge').empty();
+    console.log(view + "In history");
+  };
+  function ShowDishcargeEdit(id, clientId){
+       $.ajax({
+            type: 'POST',
+            url: '@Url.Content("~/Client/EditDischarge")',
+            data: {
+              id: id,
+              clientId: clientId,
+              display: "Update"
+            },
+         success: function (result) {
+           console.log("returnedURL");
+           $('#DischargeGrid').hide();
+           $('#EditDischarge').append(result);
+                // ShowDynamicForm();
+            }
+        });
+  }
+    function showRead(id) {
+        ShowDynamicFormReadOnly(2, "CarePlan", id);
+    }
+    function showNew() {
+        ShowDynamicForm(2, "CarePlan");
+    }
+    $(function () {
+        EnableDisableClass();
+    });
+</script>
+
+@*<script type="text/javascript">
+  function goBack() {
+      window.history.go()
+      }
+  </script>*@
+

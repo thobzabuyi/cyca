@@ -1,0 +1,100 @@
+﻿using Common_Objects;
+using Common_Objects.Models;
+using System.Web.Mvc;
+
+namespace SDIIS.Controllers
+{
+    public class ModuleController : Controller
+    {
+        [CustomAuthorize("Main", "Module", "Index")]
+        public ActionResult Index(string SearchModuleDescription)
+        {
+            var moduleModel = new ModuleModel();
+            var moduleList = moduleModel.GetListOfModules(true, false, SearchModuleDescription);
+
+            return View(moduleList);
+        }
+
+        [CustomAuthorize("Main", "Module", "Create")]
+        public ActionResult Create()
+        {
+            var newModule = new Module() { Is_Active = true };
+
+            return View(newModule);
+        }
+
+        [AcceptVerbs(HttpVerbs.Post)]
+        public ActionResult Create(Module module)
+        {
+            if (ModelState.IsValid)
+            {
+                var moduleModel = new ModuleModel();
+                var createModule = moduleModel.CreateModule(module.Description, module.Base_URL, module.Is_Active);
+
+                if (createModule == null)
+                {
+                    ViewBag.Message = "An Error Occured, Please contact Support";
+                    return View(module);
+                }
+
+                return RedirectToAction("Index", "Module");
+            }
+
+            return View(module);
+        }
+
+        [CustomAuthorize("Main", "Module", "Edit")]
+        public ActionResult Edit(string id)
+        {
+            var moduleModel = new ModuleModel();
+            var moduleToEdit = moduleModel.GetSpecificModule(int.Parse(id));
+
+            return View(moduleToEdit);
+        }
+
+        [AcceptVerbs(HttpVerbs.Post)]
+        public ActionResult Edit(Module module)
+        {
+            if (ModelState.IsValid)
+            {
+                var moduleModel = new ModuleModel();
+
+                var updatedModule = moduleModel.EditModule(module.Module_Id, module.Description, module.Base_URL);
+
+                if (updatedModule == null)
+                {
+                    ViewBag.Message = "An Error Occured, Please contact Support";
+                    return View(module);
+                }
+
+                return RedirectToAction("Index", "Module");
+            }
+
+            return View(module);
+        }
+
+        [CustomAuthorize("Main", "Module", "Delete")]
+        public ActionResult Delete(string id)
+        {
+            var moduleModel = new ModuleModel();
+            var deleteModule = moduleModel.GetSpecificModule(int.Parse(id));
+
+            return View(deleteModule);
+        }
+
+        [AcceptVerbs(HttpVerbs.Post)]
+        public ActionResult Delete(Module module)
+        {
+            var moduleModel = new ModuleModel();
+            var deletedModule = moduleModel.SetModuleIsDeleted(module.Module_Id, true);
+
+            if (deletedModule == null)
+            {
+                ViewBag.Message = "An Error Occured, Contact support";
+                return View(module);
+            }
+
+            return RedirectToAction("Index", "Module");
+        }
+	}
+}

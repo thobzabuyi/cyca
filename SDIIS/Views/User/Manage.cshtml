@@ -1,0 +1,138 @@
+﻿@model Common_Objects.Models.ManageUserViewModel
+
+@{
+    ViewBag.Title = "My Details";
+}
+
+<h3>@ViewBag.Message</h3>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="panel panel-primary">
+        <div class="panel-heading" style="text-align: center">
+            My Profile
+            @Html.HiddenFor(x => x.User.User_Id)
+        </div>
+        <div class="panel-body">
+
+            <div class="row">
+
+                <div class="col-md-6">
+                    <div class="row">
+                        <div class="col-md-6 form-group">
+                            @Html.LabelFor(x => x.User.First_Name, new { @class = "control-label" })
+                        </div>
+                        <div class="col-md-6">
+                            @Html.TextBoxFor(model => model.User.First_Name, new { @class = "form-control" })
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="row">
+                        <div class="col-md-6 form-group">
+                            @Html.LabelFor(x => x.User.Last_Name, new { @class = "control-label" })
+                        </div>
+                        <div class="col-md-6">
+                            @Html.TextBoxFor(model => model.User.Last_Name, new { @class = "form-control" })
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="row">
+
+                <div class="col-md-6">
+                    <div class="row">
+                        <div class="col-md-6 form-group">
+                            @Html.LabelFor(x => x.User.Initials, new { @class = "control-label" })
+                        </div>
+                        <div class="col-md-6">
+                            @Html.TextBoxFor(model => model.User.Initials, new { @class = "form-control" })
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="row">
+                        <div class="col-md-6 form-group">
+                            @Html.LabelFor(x => x.User.Email_Address, new { @class = "control-label" })
+                        </div>
+                        <div class="col-md-6">
+                            @Html.TextBoxFor(model => model.User.Email_Address, new { @class = "form-control" })
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <hr/>
+            <div class="row">
+                
+                <did class="col-md-12">
+                    To change your current password, please fill in the details below. (Or leave blank not to change anything)
+                </did>
+            </div>
+
+            <br/>
+
+            <div class="row">
+
+                <div class="col-md-6">
+                    <div class="row">
+                        <div class="col-md-6 form-group">
+                            @Html.LabelFor(x => x.OldPassword, new { @class = "control-label" })
+                        </div>
+                        <div class="col-md-6">
+                            @Html.PasswordFor(model => model.OldPassword, new { @class = "form-control" })
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="row">
+
+                <div class="col-md-6">
+                    <div class="row">
+                        <div class="col-md-6 form-group">
+                            @Html.LabelFor(x => x.NewPassword, new { @class = "control-label" })
+                        </div>
+                        <div class="col-md-6">
+                            @Html.PasswordFor(model => model.NewPassword, new { @class = "form-control" })
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="row">
+
+                <div class="col-md-6">
+                    <div class="row">
+                        <div class="col-md-6 form-group">
+                            @Html.LabelFor(x => x.ConfirmPassword, new { @class = "control-label" })
+                        </div>
+                        <div class="col-md-6">
+                            @Html.PasswordFor(model => model.ConfirmPassword, new { @class = "form-control" })
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            
+            @ViewBag.UpdateDetailsMessage
+            @ViewBag.UpdatePasswordMessage
+
+        </div>
+
+        @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+
+        <div class="panel-footer">
+
+            <input type="submit" id="ButtonSave" value="Save" class="btn btn-success" />
+            @Html.ActionLink("Cancel", "Index", null, new { @class = "btn btn-danger" })
+
+        </div>
+
+    </div>
+}

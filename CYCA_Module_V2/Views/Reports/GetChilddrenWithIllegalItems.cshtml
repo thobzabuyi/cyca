@@ -1,0 +1,115 @@
+﻿
+@{
+    ViewBag.Title = "GetChilddrenWithIllegalItems";
+}
+
+<h2>GetChilddrenWithIllegalItems</h2>
+
+@using System.Data
+@*<title>Illegal Items</title>
+    <div>
+        <img src="@Url.Action("ChartDisplay","ReportChart")" alt="Alternate Text" />
+    </div>*@
+
+
+<div class="row">
+    @*<div class="text-center">
+        <h4> <strong style="color:#158cba"> Children admitted to CYCA centres</strong></h4>
+        <h6>Quater 4: 01 January 2020 to 31 March 2020</h6>
+    </div>
+    <div class="col-md-12">
+        <div class="col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-heading text-center">
+                    <strong style="color:#158cba"> Summary View</strong>
+                </div>
+                <div class="panel-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered table-hover" id="admissionList">
+                            <thead>
+                                <tr>
+                                    <th>January</th>
+                                    <th>February</th>
+                                    <th>March</th>
+                                </tr>
+
+                            </thead>*@
+
+@*<thead>
+        <tr>
+            <th>Centers</th>
+            <th>Male</th>
+            <th>Female</th>
+        </tr>
+    </thead>*@
+
+@*<tbody id="SetAdmissiontList"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6*@">
+
+
+@*<div>
+        <img src="@Url.Action("ChartDisplay","ReportChart")" alt="Alternate Text" />
+    </div>
+    <br />
+    <div>
+        <img src="@Url.Action("PieChartDisplay","ReportChart")" alt="Alternate Text" />
+    </div>*@
+
+@*</div>
+    </div>*@
+<div class="col-md-12">
+
+    <div class="panel panel-default">
+        <div class="panel-heading text-center">
+            <strong style="color:#158cba"> Detailed View</strong>
+        </div>
+        <div class="panel-body">
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered table-hover" id="admissionList">
+                    <thead>
+                        <tr>
+                            <th>First Name</th>
+                            <th>Last Name</th>
+                            <th>Admission Date</th>
+                            <th>Admission Reason</th>
+                            <th>Facility Name</th>
+                            <th>Facility Address</th>
+                            <th>Region</th>
+                            <th>Province</th>
+                            <th>Child Gender</th>
+                            <th>Age</th>
+                            <th>Items Found</th>
+                        </tr>
+                    </thead>
+                    <tbody id="SetAdmissiontList">
+
+                        @if (Model.Rows != null)
+                        {
+                            foreach (DataRow row in Model.Rows)
+                            {
+                                <tr>
+                                    <td>@row["First_Name"]</td>
+                                    @*<td>@data.ProvinceName</td>
+                                        <td>@data.RegionName</td>
+                                        <td>@data.CenterName</td>
+                                        <td>@data.FullName</td>
+                                        <td>@data.Gender</td>
+                                        <td>@data.Age</td>
+                                        <td>@data.AdmissionDate</td>
+                                        <td>@data.admissionReason</td>*@
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+</div>

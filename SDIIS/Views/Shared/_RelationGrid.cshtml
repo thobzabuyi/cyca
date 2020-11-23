@@ -1,0 +1,29 @@
+﻿@model IEnumerable<Common_Objects.Models.IntakeRelationItem>
+
+<div class="row">
+    <div class="col-md-12">
+        @{
+            var relationsGrid = new WebGrid(source: Model, canSort: false, canPage: false, ajaxUpdateContainerId: "relationsGrid");
+
+            @relationsGrid.GetHtml(
+                tableStyle: "webgrid-table",
+                headerStyle: "webgrid-header",
+                footerStyle: "webgrid-footer",
+                alternatingRowStyle: "webgrid-alternating-row",
+                selectedRowStyle: "webgrid-selected-row",
+                rowStyle: "webgrid-row-style",
+                htmlAttributes: new { id = "educationGrid", width = "100%" },
+                columns: relationsGrid.Columns(
+                    relationsGrid.Column("Relation_Type_Description", "Relation Type"),
+                    relationsGrid.Column("Relation_Person.First_Name", "First Name"),
+                    relationsGrid.Column("Relation_Person.Last_Name", "Last Name"),
+                    relationsGrid.Column(header: "", style: "GridEditButton", format: (item) =>
+                    {
+                        var link = Html.ActionLink("Edit", "Edit", "Relation", new { id = item.Item_Id, personId = item.Person_Id, selectedRelationTypeId = item.Relation_Type_Id }, new { @class = "modal-link btn btn-success GridEditButton" });
+                        return link;
+                    })
+                )
+            )
+        }
+    </div>
+</div>

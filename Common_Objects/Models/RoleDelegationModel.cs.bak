@@ -1,0 +1,241 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace Common_Objects.Models
+{
+    public class RoleDelegationModel
+    {
+        public User_Role_Delegation GetSpecificRoleDeletagion(int temporaryRoleId)
+        {
+            User_Role_Delegation roleDelegation;
+
+            using (var dbContext = new SDIIS_DatabaseEntities())
+            {
+                try
+                {
+                    var roleDelegations = (from r in dbContext.User_Role_Delegations
+                                           where r.User_Role_Delegation_Id.Equals(temporaryRoleId)
+                                           select r).ToList();
+
+                    roleDelegation = PopulateAdditionalItems(roleDelegations, dbContext).FirstOrDefault();
+                }
+                catch (Exception ex)
+                {
+                    return null;
+                }
+            }
+
+            return roleDelegation;
+        }
+
+        public List<User_Role_Delegation> GetListOfRoleDelegations(string SearchDelegatedFrom, string SearchDelegatedTo, string SearchDateFrom, string SearchDateTo)
+        {
+            List<User_Role_Delegation> listOfRoleDelegations;
+
+            using (var dbContext = new SDIIS_DatabaseEntities())
+            {
+
+                try
+                {
+                    var roleDelegationsList = (from r in dbContext.User_Role_Delegations
+                                                   //where r.Is_Active.Equals(true) || r.Is_Active.Equals(!showInactive)
+                                                   //where r.Is_Deleted.Equals(false) || r.Is_Deleted.Equals(showDeleted)
+                                               select r).ToList();
+
+                    if (SearchDelegatedFrom != null || SearchDelegatedTo != null || SearchDateFrom != null || SearchDateTo != null)
+                    {
+                        DateTime searchDateFrom = Convert.ToDateTime(SearchDateFrom);
+                        DateTime searchDateTo = Convert.ToDateTime(SearchDateTo);
+                        roleDelegationsList = (from r in dbContext.User_Role_Delegations
+                                               where r.Delegated_From_User_Name.Contains(SearchDelegatedFrom)
+                                               where r.Delegated_To_User_Name.Contains(SearchDelegatedTo)
+                                               where r.Date_From== searchDateFrom
+                                               where r.Date_To== searchDateTo
+                                               select r).ToList();
+                    }
+
+                    listOfRoleDelegations = PopulateAdditionalItems(roleDelegationsList, dbContext).ToList();
+                }
+                catch (Exception ex)
+                {
+                    return null;
+                }
+            }
+
+            return listOfRoleDelegations;
+        }
+
+
+        public List<User_Role_Delegation> GetListOfRoleDelegations()
+        {
+            List<User_Role_Delegation> listOfRoleDelegations;
+
+            using (var dbContext = new SDIIS_DatabaseEntities())
+            {
+
+                try
+                {
+                    var roleDelegationsList = (from r in dbContext.User_Role_Delegations
+                                               //where r.Is_Active.Equals(true) || r.Is_Active.Equals(!showInactive)
+                                               //where r.Is_Deleted.Equals(false) || r.Is_Deleted.Equals(showDeleted)
+                                               select r).ToList();
+
+                    listOfRoleDelegations = PopulateAdditionalItems(roleDelegationsList, dbContext).ToList();
+                }
+                catch (Exception ex)
+                {
+                    return null;
+                }
+            }
+
+            return listOfRoleDelegations;
+        }
+
+        public User_Role_Delegation CreateRoleDelegation(int delegatedFromUserId, int delegatedToUserId, DateTime fromDate, DateTime toDate)
+        {
+            User_Role_Delegation newRoleDelegation;
+
+            using (var dbContext = new SDIIS_DatabaseEntities())
+            {
+                var userDelegatedFrom = (from u in dbContext.Users
+                                         where u.User_Id.Equals(delegatedFromUserId)
+                                         select u).FirstOrDefault();
+
+                var userDelegatedTo = (from u in dbContext.Users
+                                       where u.User_Id.Equals(delegatedToUserId)
+                                       select u).FirstOrDefault();
+
+                var roleDelegation = new User_Role_Delegation()
+                {
+                    Delegated_From_User = userDelegatedFrom,
+                    Delegated_To_User = userDelegatedTo,
+                    Date_From = fromDate,
+                    Date_To = toDate
+                };
+
+                try
+                {
+                    newRoleDelegation = dbContext.User_Role_Delegations.Add(roleDelegation);
+                    dbContext.SaveChanges();
+                }
+                catch (Exception ex)
+                {
+                    return null;
+                }
+            }
+
+            return newRoleDelegation;
+        }
+
+        public User_Role_Delegation EditRoleDelegation(int roleDelegationId, int delegatedFromUserId, int delegatedToUserId, DateTime fromDate, DateTime toDate)
+        {
+            User_Role_Delegation editRoleDelegation;
+
+            using (var dbContext = new SDIIS_DatabaseEntities())
+            {
+                try
+                {
+                    var userDelegatedFrom = (from u in dbContext.Users
+                                             where u.User_Id.Equals(delegatedFromUserId)
+                                             select u).FirstOrDefault();
+
+                    var userDelegatedTo = (from u in dbContext.Users
+                                           where u.User_Id.Equals(delegatedToUserId)
+                                           select u).FirstOrDefault();
+
+                    editRoleDelegation = (from r in dbContext.User_Role_Delegations
+                                          where r.User_Role_Delegation_Id.Equals(roleDelegationId)
+                                          select r).FirstOrDefault();
+
+                    if (editRoleDelegation == null) return null;
+
+                    editRoleDelegation.Delegated_From_User = userDelegatedFrom;
+                    editRoleDelegation.Delegated_To_User = userDelegatedTo;
+                    editRoleDelegation.Date_From = fromDate;
+                    editRoleDelegation.Date_To = toDate;
+
+                    dbContext.SaveChanges();
+                }
+                catch (Exception)
+                {
+                    return null;
+                }
+            }
+
+            return editRoleDelegation;
+        }
+
+        //public Role SetRoleIsActive(int roleId, bool isActive)
+        //{
+        //    Role editRole;
+
+        //    using (var dbContext = new SDIIS_DatabaseEntities())
+        //    {
+        //        try
+        //        {
+        //            editRole = (from r in dbContext.Roles
+        //                        where r.Role_Id.Equals(roleId)
+        //                        select r).FirstOrDefault();
+
+        //            if (editRole == null) return null;
+
+        //            editRole.Is_Active = isActive;
+
+        //            dbContext.SaveChanges();
+        //        }
+        //        catch (Exception)
+        //        {
+        //            return null;
+        //        }
+        //    }
+
+        //    return editRole;
+        //}
+
+        //public Role SetRoleIsDeleted(int roleId, bool isDeleted)
+        //{
+        //    Role editRole;
+
+        //    using (var dbContext = new SDIIS_DatabaseEntities())
+        //    {
+        //        try
+        //        {
+        //            editRole = (from r in dbContext.Roles
+        //                        where r.Role_Id.Equals(roleId)
+        //                        select r).FirstOrDefault();
+
+        //            if (editRole == null) return null;
+
+        //            editRole.Is_Deleted = isDeleted;
+
+        //            dbContext.SaveChanges();
+        //        }
+        //        catch (Exception)
+        //        {
+        //            return null;
+        //        }
+        //    }
+
+        //    return editRole;
+        //}
+
+        #region Helpers
+
+        private IEnumerable<User_Role_Delegation> PopulateAdditionalItems(IEnumerable<User_Role_Delegation> listOfRoleDelegations, SDIIS_DatabaseEntities dbContext)
+        {
+            var populatedUserRoleDelegations = new List<User_Role_Delegation>();
+
+            populatedUserRoleDelegations = (from a in listOfRoleDelegations
+                                            select a.Set(a1 =>
+                                            {
+                                                a1.Delegated_From_User = a.Delegated_From_User;
+                                                a1.Delegated_To_User = a.Delegated_To_User;
+                                            })).ToList();
+
+            return populatedUserRoleDelegations;
+        }
+
+        #endregion
+    }
+}

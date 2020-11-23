@@ -1,0 +1,238 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+using System.Web;
+using System.Web.Mvc;
+using Microsoft.Office.Interop.Word;
+using Common_Objects.ViewModels;
+
+namespace Common_Objects.Models
+{
+    class RACAPLetterTemplateModel
+    {
+        private SDIIS_DatabaseEntities dbF = new SDIIS_DatabaseEntities();
+        public void ExportToWord(MainPageModelRACAPVM cases, int userId, int Assid)
+        {
+            string FileName =  "";
+
+            if (cases.RACAPCaseViewModel.RACAP_Correspondence_Type_Id == 1)
+            {
+                 FileName =  "General_letter_English";
+            }
+            if (cases.RACAPCaseViewModel.RACAP_Correspondence_Type_Id == 2)
+            {
+                 FileName =  "Reminder_letter_English";
+            }
+            if (cases.RACAPCaseViewModel.RACAP_Correspondence_Type_Id == 3)
+            {
+                 FileName =  "Fault_letter_English";
+            }
+            if (cases.RACAPCaseViewModel.RACAP_Correspondence_Type_Id == 4)
+            {
+                 FileName =  "Acknowledgment_letter_English";
+            }
+            if (cases.RACAPCaseViewModel.RACAP_Correspondence_Type_Id == 5)
+            {
+                 FileName =  "Cover_letter_English";
+            }
+            if (cases.RACAPCaseViewModel.RACAP_Correspondence_Type_Id == 6)
+            {
+                 FileName =  "Home_Affairs_letter_English";
+            }
+            if (cases.RACAPCaseViewModel.RACAP_Correspondence_Type_Id == 7)
+            {
+                 FileName = "Enquiries_letter_English";
+            }
+            if (cases.RACAPCaseViewModel.RACAP_Correspondence_Type_Id == 8)
+            {
+                 FileName =  "Regret_letter_English";
+            }
+
+
+            string savePath = ("D:/SDIIS/RACAP_Module/App_Data/" + Assid + FileName +".doc");
+            string templatePath = ("D:/SDIIS/RACAP_Module/App_Data/" + FileName+".dot");
+            Microsoft.Office.Interop.Word.Application app = new Microsoft.Office.Interop.Word.Application();
+            Microsoft.Office.Interop.Word.Document doc = new Microsoft.Office.Interop.Word.Document();
+            doc = app.Documents.Open(templatePath);
+            doc.Activate();
+
+            int? ChildPersonIDForCHildName = (from c in dbF.RACAP_Prospective_Parent
+                              join d in dbF.RACAP_Matches on c.RACAP_Prospective_Parent_Id equals d.RACAP_Prospective_Parent_Id
+                              join e in dbF.RACAP_Adoptive_Child on d.RACAP_Adoptive_Child_Id equals e.RACAP_Adoptive_Child_Id
+                              join f in dbF.RACAP_Case_Details on e.RACAP_Case_Id equals f.RACAP_Case_Id
+                              join g in dbF.Intake_Assessments on f.Intake_Assessment_Id equals g.Intake_Assessment_Id
+                              join h in dbF.Clients on g.Client_Id equals h.Client_Id
+                              
+                              where c.Intake_Assessment_Id == Assid
+                              select h.Person_Id).FirstOrDefault();
+            int? ParentPersonIdForClientName = (from i in dbF.Intake_Assessments
+                                               join h in dbF.Clients on i.Client_Id equals h.Client_Id
+                                               where i.Intake_Assessment_Id == Assid
+                                               select h.Person_Id).FirstOrDefault();
+
+           
+
+            if (doc.Bookmarks.Exists("ClientName") && ParentPersonIdForClientName!=0 && ParentPersonIdForClientName!=null)
+            {
+                doc.Bookmarks["ClientName"].Range.Text = dbF.Persons.Find(ParentPersonIdForClientName).First_Name + " " + dbF.Persons.Find(ParentPersonIdForClientName).Last_Name;
+            }
+            if (doc.Bookmarks.Exists("CHildName") && ChildPersonIDForCHildName != 0 && ChildPersonIDForCHildName != null)
+            {
+                doc.Bookmarks["CHildName"].Range.Text = dbF.Persons.Find(ChildPersonIDForCHildName).First_Name + " " + dbF.Persons.Find(ChildPersonIDForCHildName).Last_Name;
+            }
+            if (doc.Bookmarks.Exists("CHildID") && ChildPersonIDForCHildName != 0 && ChildPersonIDForCHildName != null)
+            {
+                doc.Bookmarks["CHildID"].Range.Text = dbF.Persons.Find(ChildPersonIDForCHildName).Identification_Number;
+            }
+
+            AddressModel GetAdd = new AddressModel();
+            PersonModel GetPer = new PersonModel();
+
+            var Add = dbF.Persons.Find(ParentPersonIdForClientName).Addresses.FirstOrDefault();
+            int AddressId = Add.Address_Id;
+            if (doc.Bookmarks.Exists("StrAdr") && ParentPersonIdForClientName != 0 && ParentPersonIdForClientName != null)
+            {
+
+                doc.Bookmarks["StrAdr"].Range.Text = GetAdd.GetSpecificAddress(AddressId).Address_Line_1;
+
+            }
+            if (doc.Bookmarks.Exists("TownAdr") && ParentPersonIdForClientName != 0 && ParentPersonIdForClientName != null)
+            {
+                doc.Bookmarks["TownAdr"].Range.Text = dbF.Towns.Find(GetAdd.GetSpecificAddress(AddressId).Town_Id).Description;
+            }
+            if (doc.Bookmarks.Exists("PCodeAdr") && ParentPersonIdForClientName != 0 && ParentPersonIdForClientName != null)
+            {
+                doc.Bookmarks["PCodeAdr"].Range.Text = GetAdd.GetSpecificAddress(AddressId).Postal_Code;
+            }
+            if (doc.Bookmarks.Exists("ContactPerson") && ParentPersonIdForClientName != 0 && ParentPersonIdForClientName != null)
+            {
+                doc.Bookmarks["ContactPerson"].Range.Text = dbF.Persons.Find(ParentPersonIdForClientName).First_Name + " " + dbF.Persons.Find(ParentPersonIdForClientName).Last_Name;
+            }
+            if (doc.Bookmarks.Exists("Date"))
+            {
+                doc.Bookmarks["Date"].Range.Text = Convert.ToString(DateTime.Now.ToLongDateString());
+            }
+            if (doc.Bookmarks.Exists("ClientLetterDate"))
+            {
+                doc.Bookmarks["ClientLetterDate"].Range.Text = Convert.ToString(DateTime.Now.ToLongDateString());
+            }
+            if (doc.Bookmarks.Exists("DateOfReg"))
+            {
+                doc.Bookmarks["DateOfReg"].Range.Text = Convert.ToDateTime((from d in dbF.RACAP_Case_Details
+                                                                          where d.Intake_Assessment_Id == Assid
+                                                                          select d.Date_Registered).FirstOrDefault()).ToString("dd MMMM yyyy");
+            }
+            if (doc.Bookmarks.Exists("ChildDateOfBirth") && ChildPersonIDForCHildName != 0 && ChildPersonIDForCHildName != null)
+            {
+                doc.Bookmarks["ChildDateOfBirth"].Range.Text = Convert.ToString(dbF.Persons.Find(ChildPersonIDForCHildName).Date_Of_Birth);
+            }
+            if (doc.Bookmarks.Exists("BiologicalMother") && ParentPersonIdForClientName != 0 && ParentPersonIdForClientName != null)
+            {
+                doc.Bookmarks["BiologicalMother"].Range.Text = dbF.Persons.Find(ParentPersonIdForClientName).First_Name + " " + dbF.Persons.Find(ParentPersonIdForClientName).Last_Name;
+            }
+            int MotherClientId = (from m in dbF.Client_Biological_Parents
+                                  where m.Person_Id == ParentPersonIdForClientName
+                                  select m.Client_Biological_Parent_Id).FirstOrDefault();
+            if (doc.Bookmarks.Exists("BiologicalMotherCountry") && ParentPersonIdForClientName != 0 && ParentPersonIdForClientName != null)
+            {
+                doc.Bookmarks["BiologicalMotherCountry"].Range.Text = Convert.ToString(dbF.Persons.Find(ParentPersonIdForClientName).Population_Group);
+            }
+            if (doc.Bookmarks.Exists("BiologicalMotherState") && ParentPersonIdForClientName != 0 && ParentPersonIdForClientName != null)
+            {
+                doc.Bookmarks["BiologicalMotherState"].Range.Text = Convert.ToString(dbF.Persons.Find(ParentPersonIdForClientName).Population_Group);
+            }
+            if (doc.Bookmarks.Exists("BiologicalMotherLanguage") && ParentPersonIdForClientName != 0 && ParentPersonIdForClientName != null)
+            {
+                doc.Bookmarks["BiologicalMotherLanguage"].Range.Text = Convert.ToString(dbF.Persons.Find(ParentPersonIdForClientName).Language);
+            }
+            if (doc.Bookmarks.Exists("AdoptionCity"))
+            {
+                doc.Bookmarks["AdoptionCity"].Range.Text = dbF.Towns.Find(GetAdd.GetSpecificAddress(AddressId).Town_Id).Description;
+            }
+            int? RelId = (from r in dbF.RACAP_Prospective_Parent
+                         where r.RACAP_Case_Id == Assid
+                         select r.Religion_Id).FirstOrDefault();
+            if (doc.Bookmarks.Exists("BiologicalMotherChurch"))
+            {
+                if (RelId != null)
+                    doc.Bookmarks["BiologicalMotherChurch"].Range.Text = dbF.Religions.Find(RelId).Description;
+            }
+            if (doc.Bookmarks.Exists("BiologicalFather") && ParentPersonIdForClientName != 0 && ParentPersonIdForClientName != null)
+            {
+                doc.Bookmarks["BiologicalFather"].Range.Text = dbF.Persons.Find(ParentPersonIdForClientName).First_Name + " " + dbF.Persons.Find(ParentPersonIdForClientName).Last_Name;
+            }
+            if (doc.Bookmarks.Exists("ChildBirthPlace"))
+            {
+                doc.Bookmarks["ChildBirthPlace"].Range.Text = dbF.Towns.Find(GetAdd.GetSpecificAddress(AddressId).Town_Id).Description;
+            }
+            if (doc.Bookmarks.Exists("ChildNameAtBirth") && ChildPersonIDForCHildName != 0 && ChildPersonIDForCHildName != null)
+            {
+                doc.Bookmarks["ChildNameAtBirth"].Range.Text = dbF.Persons.Find(ChildPersonIDForCHildName).First_Name + " " + dbF.Persons.Find(ChildPersonIDForCHildName).Last_Name;
+            }
+            if (doc.Bookmarks.Exists("SubmissionDate"))
+            {
+                doc.Bookmarks["SubmissionDate"].Range.Text = Convert.ToDateTime((from d in dbF.RACAP_Case_Details
+                                                                               where d.Intake_Assessment_Id == Assid
+                                                                               select d.Date_Registered).FirstOrDefault()).ToString("dd MMMM yyyy");
+            }
+            if (doc.Bookmarks.Exists("PlaceOfExec"))
+            {
+                doc.Bookmarks["PlaceOfExec"].Range.Text = dbF.Towns.Find(GetAdd.GetSpecificAddress(AddressId).Town_Id).Description;
+            }
+            if (doc.Bookmarks.Exists("Email") && ParentPersonIdForClientName != 0 && ParentPersonIdForClientName != null)
+            {
+                doc.Bookmarks["Email"].Range.Text = dbF.Persons.Find(ParentPersonIdForClientName).Email_Address;
+            }
+            if (doc.Bookmarks.Exists("Enquiries"))
+            {
+                doc.Bookmarks["Enquiries"].Range.Text = "testc";
+            }
+            if (doc.Bookmarks.Exists("RefNumber") && ParentPersonIdForClientName != 0 && ParentPersonIdForClientName != null)
+            {
+                doc.Bookmarks["RefNumber"].Range.Text = (from r in dbF.Clients
+                                                        where r.Person_Id== ParentPersonIdForClientName
+                                                        select r.Reference_Number).FirstOrDefault();
+            }
+            if (doc.Bookmarks.Exists("Telephone") && ParentPersonIdForClientName != 0 && ParentPersonIdForClientName != null)
+            {
+                doc.Bookmarks["Telephone"].Range.Text = dbF.Persons.Find(ParentPersonIdForClientName).Phone_Number;
+            }
+            doc.SaveAs2(savePath);
+            app.Application.Quit();
+
+            int Case_Id = (from s in dbF.RACAP_Case_Details
+                           where s.Intake_Assessment_Id == Assid
+                           select s.RACAP_Case_Id).FirstOrDefault();
+            RACAP_Correspondence RCorr = (from c in dbF.RACAP_Correspondence
+                                          where c.RACAP_Case_Id == Case_Id && c.RACAP_Correspondence_Type_Id==cases.RACAPCaseViewModel.RACAP_Correspondence_Type_Id
+                                          select c).FirstOrDefault();
+            if (RCorr != null)
+            {
+                RCorr.RACAP_Case_Id = Case_Id;
+                RCorr.RACAP_Correspondence_FileName = Assid + FileName;
+                RCorr.RACAP_Correspondence_FilePath = "~/App_Data/";
+                RCorr.RACAP_Correspondence_Type_Id = cases.RACAPCaseViewModel.RACAP_Correspondence_Type_Id;
+                RCorr.RACAP_Correspondence_Comments = cases.RACAPCaseViewModel.RACAP_Correspondence_Comments;
+                dbF.SaveChanges();
+            }
+
+
+        }
+
+        public string GetFileToOpen(int id)
+        {
+            SDIIS_DatabaseEntities dbF = new SDIIS_DatabaseEntities();
+            var data = (from a in dbF.RACAP_Correspondence
+                        join b in dbF.RACAP_Case_Details on a.RACAP_Case_Id equals b.RACAP_Case_Id
+                        where a.RACAP_Case_Id == id
+                        select new { b.Intake_Assessment_Id, a.RACAP_Case_Id}).ToList();
+            string File__ = (from a in data
+                             select a.Intake_Assessment_Id).FirstOrDefault() + "General_letter_English";
+            return File__;
+        }
+
+    }
+}

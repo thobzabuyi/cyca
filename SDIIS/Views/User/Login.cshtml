@@ -1,0 +1,72 @@
+﻿@model  Common_Objects.Models.Login_User
+
+@{
+    ViewBag.Title = "Login";
+}
+
+<h3>Please provide your login details to continue</h3>
+
+@using (Html.BeginForm())
+{
+    <div class="panel panel-primary">
+        <div class="panel-heading" style="text-align: center">
+            Log In
+        </div>
+        <div class="panel-body">
+
+            <div class="row">
+
+                <div class="col-md-6">
+                    <div class="row">
+                        <div class="col-md-6 form-group">
+                            @Html.LabelFor(x => x.Username, new { @class = "control-label" })
+                        </div>
+                        <div class="col-md-6">
+                            @Html.TextBoxFor(model => model.Username, new { @class = "form-control" })
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="row">
+
+                <div class="col-md-6">
+                    <div class="row">
+                        <div class="col-md-6 form-group">
+                            @Html.LabelFor(x => x.Password, new { @class = "control-label" })
+                        </div>
+                        <div class="col-md-6">
+                            @Html.PasswordFor(model => model.Password, new { @class = "form-control" })
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="row">
+
+                <div class="col-md-6">
+                    <div class="row">
+                        <div class="col-md-6 form-group">
+                        </div>
+                        <div class="col-md-6">
+                            @Html.ActionLink("Forgot Password", "ForgotPassword", "User")
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+        @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+
+        <div class="panel-footer">
+
+            <input type="submit" id="ButtonSave" value="Log In" class="btn btn-success" />
+            @Html.ActionLink("Cancel", "Index", "Home", routeValues: null, htmlAttributes: new { id = "cancelLink", @class = "btn btn-danger" })
+
+        </div>
+
+    </div>
+}

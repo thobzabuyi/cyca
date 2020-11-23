@@ -1,0 +1,25 @@
+﻿@model IEnumerable<Common_Objects.ViewModels.IntPersonDisabilitiesVM>
+
+<table class="table">
+    <tr>
+
+
+        <th>
+           Selected Disabilities
+        </th>
+        
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>       
+        <td>
+            @Html.HiddenFor(modelItem => item.Person_Id)
+            @Html.HiddenFor(modelItem => item.DisabilityId)
+            @Html.DisplayFor(modelItem => item.DisabilityDescription)
+            @Html.ActionLink("Delete", "DeleteDisability", new { @Id = item.DisabilityId, @personId = item.Person_Id })
+        </td>
+       
+    </tr>
+}
+
+</table>

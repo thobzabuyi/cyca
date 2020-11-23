@@ -1,0 +1,236 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web.Mvc;
+using Common_Objects;
+using Common_Objects.Models;
+
+namespace SDIIS.Controllers
+{
+    public class MedicalDetailController : Controller
+    {
+        public ActionResult GetMedicalItemsByAjax(string id)
+        {
+            var personModel = new PersonModel();
+            var person = personModel.GetSpecificPerson(int.Parse(id));
+
+            var medicalItems = new List<IntakeMedicalConditionItem>();
+
+            medicalItems.AddRange(from p in person.Allergies.ToList()
+                                  select new IntakeMedicalConditionItem()
+                                  {
+                                      Item_Id = p.Allergy_Id,
+                                      Medical_Condition_Description = p.Description,
+                                      Medical_Condition_Type_Id = (int)MedicalConditionTypeEnum.Allergy,
+                                      Medical_Condition_Type_Description = "Allergy"
+                                  });
+            medicalItems.AddRange(from p in person.Chronic_Illnesses.ToList()
+                                  select new IntakeMedicalConditionItem()
+                                  {
+                                      Item_Id = p.Chronic_Illness_Id,
+                                      Medical_Condition_Description = p.Description,
+                                      Medical_Condition_Type_Id = (int)MedicalConditionTypeEnum.ChronicIllness,
+                                      Medical_Condition_Type_Description = "Chronic Illness"
+                                  });
+
+            medicalItems.AddRange(from p in person.apl_Decease.ToList()
+                                  select new IntakeMedicalConditionItem()
+                                  {
+                                      Item_Id = p.Decease_Id,
+                                      Medical_Condition_Description = p.Description,
+                                      Medical_Condition_Type_Id = (int)MedicalConditionTypeEnum.Decease,
+                                      Medical_Condition_Type_Description = "Disease "
+                                  });
+
+            return PartialView("_MedicalDetailsGrid", medicalItems);
+        }
+
+        [AcceptVerbs(HttpVerbs.Get)]
+        public ActionResult GetMedicalConditions(string conditionTypeId)
+        {
+            if (String.IsNullOrEmpty(conditionTypeId))
+            {
+                throw new ArgumentNullException("moduleId");
+            }
+
+            switch (int.Parse(conditionTypeId))
+            {
+                case (int)MedicalConditionTypeEnum.Allergy:
+                    var allergyModel = new AllergyModel();
+                    var allergyList = allergyModel.GetListOfAllergies();
+
+                    var result = (from c in allergyList
+                                  select new
+                                  {
+                                      id = c.Allergy_Id,
+                                      name = c.Description
+                                  }).ToList();
+
+                    return Json(result, JsonRequestBehavior.AllowGet);
+
+                case (int)MedicalConditionTypeEnum.ChronicIllness:
+                    var chronicIllnessModel = new ChronicIllnessModel();
+                    var chronicIllnessList = chronicIllnessModel.GetListOfChronicIllnesses();
+
+                    var chronicIllnessResult = (from c in chronicIllnessList
+                                                select new
+                                                {
+                                                    id = c.Chronic_Illness_Id,
+                                                    name = c.Description
+                                                }).ToList();
+
+                    return Json(chronicIllnessResult, JsonRequestBehavior.AllowGet);
+
+                case (int)MedicalConditionTypeEnum.Decease:
+                    var deceaseModel = new DeceaseModel();
+                    var deceasesList = deceaseModel.GetListOfDeseases();
+
+                    var deceasesResult = (from c in deceasesList
+                                          select new
+                                                {
+                                                    id = c.Decease_Id,
+                                                    name = c.Description
+                                                }).ToList();
+
+                    return Json(deceasesResult, JsonRequestBehavior.AllowGet);
+            }
+
+            return null;
+        }
+
+        public ActionResult Create(string id)
+        {
+            var medicalItem = new IntakeMedicalConditionItem() { Person_Id = int.Parse(id) };
+
+            return PartialView("_MedicalDetailsCreate", medicalItem);
+        }
+
+        [AcceptVerbs(HttpVerbs.Post)]
+        public ActionResult Create(IntakeMedicalConditionItem medicalConditionItem)
+        {
+            var personModel = new PersonModel();
+            var personItem = new Person();
+            //int InAassId = Convert.ToInt32(Session["IntAssId"]);
+            switch (medicalConditionItem.Medical_Condition_Type_Id)
+            {
+                case (int)MedicalConditionTypeEnum.Allergy:
+                    personItem = personModel.AddAllergy(medicalConditionItem.Person_Id, medicalConditionItem.Medical_Condition_Id);
+
+                    break;
+                case (int)MedicalConditionTypeEnum.ChronicIllness:
+                    personItem = personModel.AddChronicIllness(medicalConditionItem.Person_Id, medicalConditionItem.Medical_Condition_Id);
+                    break;
+
+                case (int)MedicalConditionTypeEnum.Decease:
+                    personItem = personModel.AddDeceases(medicalConditionItem.Person_Id, medicalConditionItem.Medical_Condition_Id);
+                    break;
+            }
+
+            var status = "";
+            var message = "";
+
+            if (personItem == null)
+            {
+                status = "Error";
+                message = "A technical error has occurred! Please try again later";
+            }
+
+            return new JsonResult { Data = new { status, message } };
+            //return RedirectToAction("EditAssessment", "Intake", new { id = InAassId });
+        }
+
+        public ActionResult Edit(string id, string personId, string medicalConditionTypeId)
+        {
+            var intakeMedicalConditionItem = new IntakeMedicalConditionItem();
+
+            switch (int.Parse(medicalConditionTypeId))
+            {
+                case (int)MedicalConditionTypeEnum.Allergy:
+                    var allergyModel = new AllergyModel();
+                    var allergyList = allergyModel.GetListOfAllergies();
+                    intakeMedicalConditionItem.Medical_Conditions = (from a in allergyList
+                                                                    select new LookupDataItem()
+                                                                    {
+                                                                        ItemId = a.Allergy_Id,
+                                                                        Description = a.Description
+                                                                    }).ToList();
+                    break;
+                case (int)MedicalConditionTypeEnum.ChronicIllness:
+                    var chronicIllnessModel = new ChronicIllnessModel();
+                    var chronicIllnessList = chronicIllnessModel.GetListOfChronicIllnesses();
+                    intakeMedicalConditionItem.Medical_Conditions = (from c in chronicIllnessList
+                                                                    select new LookupDataItem()
+                                                                    {
+                                                                        ItemId = c.Chronic_Illness_Id,
+                                                                        Description = c.Description
+                                                                    }).ToList();
+                    break;
+                case (int)MedicalConditionTypeEnum.Decease:
+                    var deceasesModel = new DeceaseModel();
+                    var deceasesList = deceasesModel.GetListOfDeseases();
+                    intakeMedicalConditionItem.Medical_Conditions = (from c in deceasesList
+                                                                     select new LookupDataItem()
+                                                                     {
+                                                                         ItemId = c.Decease_Id,
+                                                                         Description = c.Description
+                                                                     }).ToList();
+                    break;
+            }
+
+            intakeMedicalConditionItem.Person_Id = int.Parse(personId);
+            intakeMedicalConditionItem.Medical_Condition_Type_Id = int.Parse(medicalConditionTypeId);
+            intakeMedicalConditionItem.Medical_Condition_Id = int.Parse(id);
+            intakeMedicalConditionItem.Remove_Item_Type_Id = int.Parse(medicalConditionTypeId);
+            intakeMedicalConditionItem.Remove_Item_Id = int.Parse(id);
+
+            return PartialView("_MedicalDetailsEdit", intakeMedicalConditionItem);
+        }
+
+        [AcceptVerbs(HttpVerbs.Post)]
+        public ActionResult Edit(IntakeMedicalConditionItem medicalConditionItem)
+        {
+            var personModel = new PersonModel();
+            var editPerson = new Person();
+            int InAassId = Convert.ToInt32(Session["IntAssId"]);
+            switch (medicalConditionItem.Remove_Item_Type_Id)
+            {
+                case (int)MedicalConditionTypeEnum.Allergy:
+                    personModel.RemoveAllergy(medicalConditionItem.Person_Id, medicalConditionItem.Remove_Item_Id);
+                    break;
+                case (int)MedicalConditionTypeEnum.ChronicIllness:
+                    personModel.RemoveChronicIllness(medicalConditionItem.Person_Id, medicalConditionItem.Remove_Item_Id);
+                    break;
+
+                case (int)MedicalConditionTypeEnum.Decease:
+                    personModel.RemoveDecease(medicalConditionItem.Person_Id, medicalConditionItem.Remove_Item_Id);
+                    break;
+            }
+
+            switch (medicalConditionItem.Medical_Condition_Type_Id)
+            {
+                case (int)MedicalConditionTypeEnum.Allergy:
+                    editPerson = personModel.AddAllergy(medicalConditionItem.Person_Id, medicalConditionItem.Medical_Condition_Id);
+                    break;
+                case (int)MedicalConditionTypeEnum.ChronicIllness:
+                    editPerson = personModel.AddChronicIllness(medicalConditionItem.Person_Id, medicalConditionItem.Medical_Condition_Id);
+                    break;
+
+                case (int)MedicalConditionTypeEnum.Decease:
+                    editPerson = personModel.AddDeceases(medicalConditionItem.Person_Id, medicalConditionItem.Medical_Condition_Id);
+                    break;
+            }
+
+            var status = "";
+            var message = "";
+
+            if (editPerson == null)
+            {
+                status = "Error";
+                message = "A technical error has occurred! Please try again later";
+            }
+
+            return new JsonResult { Data = new { status, message } };
+            //return RedirectToAction("EditAssessment", "Intake", new { id = InAassId });
+        }
+    }
+}

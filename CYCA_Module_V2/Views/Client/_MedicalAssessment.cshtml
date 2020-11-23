@@ -1,0 +1,105 @@
+﻿@model CYCA_Module_V2.Common_Objects.CYCA_DynamicDataBaseModel
+@using Common_Objects.Models
+<div class="row" id="MedicalAssessmentGrid">
+    <div class="col-md-12">
+        <div class="panel panel-default">
+            <button class="btn btn-primary enabledisable" id="accordion" data-parent="#accordion" href="#actionModal" onclick="showNew()"><i class="fa fa-plus"></i> New Medical Assessment</button>
+            <div class="panel-heading text-center">
+                <strong style="color:#158cba">Medical Assessment</strong>
+            </div>
+            <div class="panel-body">
+                <div class="table-responsive">
+                    <table class="table table-striped table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th>Date Created</th>
+                                <th>Created By</th>
+                                <th>Venue</th>
+                                <th>Attachments</th>
+                                <th>&nbsp;</th>
+                                <th>&nbsp;</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (CYCA_Module_V2.Common_Objects.CYCA_DynamicDataModel data in Model.dynamicDataModels.OrderByDescending(data => data.Id))
+                            {
+                            <tr>
+                                <td>@data.DateCreated</td>
+                                <td>@data.CreatedBy</td>
+                                <td>@data.Venue</td>
+                                <td>
+
+                                    @foreach (Common_Objects.ViewModels.FileModel f in @data.Data)
+                                    {
+                                        <i class="fa fa-paperclip" style="color: black"></i> <input type="button" value="@f.name" placeholder="@f.content" style="color:#158cba;border:none;background:none" name="@f.type" onclick="downloadFile(this.placeholder,this.name)" class="anchorButton" />
+                                        <br />
+                                    }
+
+                                </td>
+                                <td><a class="dynamicButton enabledisable" onclick="showEdit(@data.Id)">Edit</a></td>
+                                <td><a class="dynamicButton" onclick="showRead(@data.Id)">View</a></td>
+                            </tr>
+                            }
+
+                        </tbody>
+
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@*<button type="button" class="btn btn-primary previous pull-left" style="margin-left:15px">*@
+    @*<button class="previous">*@
+    @*&laquo;Profile*@
+    @*<p class="glyphicon glyphicon-fast-backward " style="color:aliceblue">*@@*@Html.ActionLink("" + ((User)Session["CurrentUser"]).User_Id, "Manage", "User", routeValues: new { id = ((User)Session["CurrentUser"]).User_Id }, htmlAttributes: new { title = "Login" })*@@*</p>*@
+@*</button>*@
+
+@*<a href="#">
+    <span class="btn btn-primary pull-right previous" value="Back" style="margin-right:15px" onclick="goBack()">&laquo;back</span>
+</a>*@
+<div class="row" id="MedicalAssessment">
+    @*<button type="reset" onclick="this.form.reset();return false">Reset</button>*@
+</div>
+
+
+
+
+<script>
+  function base64toBlob(base64Data, contentType) {
+
+    var byteString = atob(base64Data.split(',')[1]);
+    var ab = new ArrayBuffer(byteString.length);
+    var ia = new Uint8Array(ab);
+
+    for (var i = 0; i < byteString.length; i++) {
+      ia[i] = byteString.charCodeAt(i);
+    }
+
+    return new Blob([ab], { type: contentType });
+  }
+  function downloadFile(file, type) {
+    var blob = base64toBlob(file, type);
+    window.open(window.URL.createObjectURL(blob));
+  }
+    function showEdit(id) {
+        ShowDynamicFormEditOnly(1, "MedicalAssessment", id);
+    }
+    function showRead(id) {
+        ShowDynamicFormReadOnly(1, "MedicalAssessment", id);
+    }
+    function showNew() {
+        ShowDynamicForm(1, "MedicalAssessment");
+    }
+    $(function () {
+        EnableDisableClass();
+    });
+</script>
+
+@*<script type="text/javascript">
+    function goBack() {
+        window.history.go()
+    }
+</script>*@

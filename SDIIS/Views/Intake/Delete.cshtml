@@ -1,0 +1,123 @@
+﻿@model Common_Objects.Models.Person
+
+@{
+    ViewBag.Title = "Delete Person?";
+}
+
+<h3>@ViewBag.Error</h3>
+
+@using (Html.BeginForm())
+{
+    <div class="panel panel-warning">
+        <div class="panel-heading" style="text-align: center">
+            Are you sure you want to delete this Person?
+            @Html.HiddenFor(x => x.Person_Id)
+        </div>
+        <div class="panel-body">
+
+            <div class="row">
+                <div class="col-md-3">
+                    @Html.LabelFor(x => x.First_Name, new { @class = "control-label" })
+                </div>
+                <div class="col-md-3 form-group">
+                    @Html.DisplayTextFor(model => model.First_Name)
+                </div>
+                <div class="col-md-3">
+                    @Html.LabelFor(x => x.Last_Name, new { @class = "control-label" })
+                </div>
+                <div class="col-md-3 form-group">
+                    @Html.DisplayTextFor(model => model.Last_Name)
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-3">
+                    @Html.LabelFor(x => x.Known_As, new { @class = "control-label" })
+                </div>
+                <div class="col-md-3 form-group">
+                    @Html.DisplayTextFor(model => model.Known_As)
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-3">
+                    @Html.LabelFor(x => x.Identification_Type_List, new { @class = "control-label" })
+                </div>
+                <div class="col-md-3 form-group">
+                    @Html.DisplayTextFor(n => n.Identification_Type_Description)
+                </div>
+                <div class="col-md-3">
+                    @Html.LabelFor(x => x.Identification_Number, new { @id = "LabelIdentificationNumber", @class = "control-label" })
+                </div>
+                <div class="col-md-3 form-group">
+                    @Html.DisplayTextFor(model => model.Identification_Number)
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-3">
+                    @Html.LabelFor(x => x.Date_Of_Birth, new { @id = "LabelDateOfBirth", @class = "control-label" })
+                </div>
+                <div class="col-md-3 form-group">
+                    @Html.DisplayTextFor(x => x.Date_Of_Birth)
+                </div>
+                <div class="col-md-3">
+                    @Html.LabelFor(x => x.Age, new { @class = "control-label" })
+                </div>
+                <div class="col-md-3 form-group">
+                    @Html.DisplayTextFor(model => model.Age)
+                    @if (Model.Is_Estimated_Age)
+                    {
+                        <label>(Estimated)</label>
+                    }
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-3">
+                    @Html.LabelFor(x => x.Gender_List, new { @class = "control-label" })
+                </div>
+                <div class="col-md-3 form-group">
+                    @Html.DisplayTextFor(n => n.Gender_Description)
+                </div>
+                <div class="col-md-3">
+                    @Html.LabelFor(x => x.Nationality_List, new { @class = "control-label" })
+                </div>
+                <div class="col-md-3 form-group">
+                    @Html.DisplayTextFor(n => n.Nationality_Description)
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-3">
+                    @Html.LabelFor(x => x.Marital_Status_List, new { @class = "control-label" })
+                </div>
+                <div class="col-md-3 form-group">
+                    @Html.DisplayTextFor(n => n.Marital_Status_Description)
+                </div>
+                <div class="col-md-3">
+                    @Html.LabelFor(x => x.Population_Group_List, new { @class = "control-label" })
+                </div>
+                <div class="col-md-3 form-group">
+                    @Html.DisplayTextFor(n => n.Population_Group_Description)
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-3">
+                    @Html.LabelFor(x => x.Religion_List, new { @class = "control-label" })
+                </div>
+                <div class="col-md-3 form-group">
+                    @Html.DisplayTextFor(n => n.Religion_Description)
+                </div>
+                <div class="col-md-3">
+                    @Html.LabelFor(x => x.Disability_List, new { @class = "control-label" })
+                </div>
+                <div class="col-md-3 form-group">
+                    @Html.DisplayTextFor(n => n.Disability_Description)
+                </div>
+            </div>
+
+        </div>
+
+        <div class="panel-footer">
+            <input type="submit" id="ButtonSave" value="Yes" class="btn btn-success" />
+            @Html.ActionLink("No", "Index", null, new { @class = "btn btn-danger" })
+        </div>
+
+    </div>
+}

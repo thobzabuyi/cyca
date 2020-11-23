@@ -1,0 +1,169 @@
+﻿@model IEnumerable<Common_Objects.Models.Province>
+    <style>
+        .btn-delete {
+            background-color:rosybrown;
+        }
+        .table{text-align:center}
+       .row{text-align:right;}
+       #BckBtn{
+           color: #555555;
+    text-decoration: none;
+    border:none;
+        line-height: 1.42857143;
+    border-radius: 4px;
+       }
+    </style>
+<h3  style="text-align:center">Provinces</h3>
+
+<!-- The Modal -->
+<div id='myModal1' class='modal'>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div id='myModalContent1'></div>
+        </div>
+
+    </div>
+
+</div>
+
+<div id='myModal' class='modal'>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div id='myModalContent'></div>
+        </div>
+    </div>
+
+</div> 
+
+<table class="table">
+    <tr>
+        <th colspan="4">
+
+        </th>
+        <th align="right">
+            <button type="button" href="javascript:void(0);" class="btn anchorDetail1">
+                Create
+            </button>
+            
+            <button onclick="goBack()" id="BckBtn">Go Back</button>
+        </th>
+    </tr>
+
+    <tr style="text-align:center">
+
+        <th style="text-align:center">
+            Description
+        </th>
+        <th style="text-align:center">
+            Abbreviation
+        </th>
+        
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+
+            @Html.HiddenFor(modelItem => item.Province_Id)
+
+            @Html.HiddenFor(modelItem => item.Country_Id)
+
+        <td> 
+            @Html.DisplayFor(modelItem => item.Description)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Abbreviation)
+        </td>
+        <td>
+            <button type="button" href="javascript:void(0);" class="btn anchorDetail" data-id="@item.Province_Id">Edit</button>
+
+            
+            @if (User.Identity.Name == "12345678")
+            {
+
+                <button type="button" class="btn btn-delete">
+                    @Html.ActionLink("Delete", "DeleteProv", new { id = item.Province_Id }, new { @class = "btn" })
+                </button>
+            }
+        </td>
+    </tr>
+}
+
+</table>
+
+@section scripts
+{
+    <script>
+
+        function goBack() {
+            window.history.back();
+        }
+
+    var TeamDetailPostBackURL = '/PlaceName/EditProv';
+    $(function () {
+        $(".anchorDetail").click(function () {
+          
+            var $buttonClicked = $(this);
+            var id = $buttonClicked.attr('data-id');
+            var options = { "backdrop": "static", keyboard: true };
+            $.ajax({
+                type: "GET",
+                url: TeamDetailPostBackURL,
+                contentType: "application/json; charset=utf-8",
+                data: { "Id": id },
+                datatype: "json",
+                success: function (data) {
+                    
+                    $('#myModalContent').html(data);
+                    $('#myModal').modal(options);
+                    $('#myModal').modal('show');
+
+                },
+                error: function () {
+                    alert("Dynamic content load failed.");
+                }
+            });
+        });
+        //$("#closebtn").on('click',function(){
+        //    $('#myModal').modal('hide');
+
+        $("#closbtn").click(function () {
+            $('#myModal').modal('hide');
+        });
+    });
+
+
+    var TeamDetailPostBackURL1 = '/PlaceName/CreateProv';
+    $(function () {
+        $(".anchorDetail1").click(function () {
+    
+            var $buttonClicked = $(this);
+            var id = $buttonClicked.attr('data-id');
+            var options = { "backdrop": "static", keyboard: true };
+            $.ajax({
+                type: "GET",
+                url: TeamDetailPostBackURL1,
+                contentType: "application/json; charset=utf-8",
+                data: { "Id": id },
+                datatype: "json",
+                success: function (data) {
+               
+                    $('#myModalContent1').html(data);
+                    $('#myModal1').modal(options);
+                    $('#myModal1').modal('show');
+
+                },
+                error: function () {
+                    alert("Dynamic content load failed.");
+                }
+            });
+        });
+        //$("#closebtn").on('click',function(){
+        //    $('#myModal').modal('hide');
+
+        $("#closbtn").click(function () {
+            $('#myModal1').modal('hide');
+        });
+    });
+
+    </script>
+}

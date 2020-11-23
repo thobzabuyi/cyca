@@ -1,0 +1,55 @@
+﻿@using MvcCheckBoxList.Model
+@model Common_Objects.Models.Group
+
+@{
+    ViewBag.Title = "Edit Group";
+}
+
+<h3>@ViewBag.Message</h3>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="panel panel-primary">
+        <div class="panel-heading" style="text-align: center">
+            Edit Group
+            @Html.HiddenFor(x => x.Group_Id)
+        </div>
+        <div class="panel-body">
+
+            <div class="col-md-12" style="padding-left:0px !important; padding-right:0px !important;">
+                <div class="form-group">
+                    @Html.LabelFor(x => x.Description, new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.TextBoxFor(model => model.Description, new { @class = "form-control" })
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-12" style="padding-left:0px !important; padding-right:0px !important;">
+                <div class="form-group">
+                    @Html.LabelFor(x => x.Roles, new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.CheckBoxListFor(x => x.Posted_Roles.Role_IDs,
+                            x => x.Available_Roles,
+                            x => x.Role_Id,
+                            x => x.Description,
+                            x => x.Roles.ToList(), Position.Vertical)
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+
+        <div class="panel-footer">
+
+            <input type="submit" id="ButtonSave" value="Save" class="btn btn-success" />
+            @Html.ActionLink("Cancel", "Index", null, new { @class = "btn btn-danger" })
+
+        </div>
+
+    </div>
+}

@@ -1,0 +1,59 @@
+﻿@model CYCA_Module_V2.Common_Objects.CYCA_DynamicDataBaseModel
+<div class="row" id="InventoryGrid">
+    <div class="col-md-12">
+        <div class="panel panel-default">
+            <button class="btn btn-primary" id="accordion" data-parent="#accordion" href="#actionModal" onclick="showNew()"><i class="fa fa-plus"></i> New personal inventory</button>
+            <div class="panel-heading text-center">
+                <strong style="color:#158cba">Inventories</strong>
+            </div>
+            <div class="panel-body">
+                <div class="table-responsive">
+                    <table class="table table-striped table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th>Date Created</th>
+                                <th>Created By</th>
+                                <th>Venue</th>
+                                <th>&nbsp;</th>
+                                <th>&nbsp;</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (CYCA_Module_V2.Common_Objects.CYCA_DynamicDataModel data in Model.dynamicDataModels)
+                            {
+                            <tr>
+                                <td>@data.DateCreated</td>
+                                <td>@data.CreatedBy</td>
+                                <td>@data.Venue</td>
+                                <td><a class="dynamicButton" onclick="showEdit(@data.Id)">Edit</a></td>
+                                <td><a class="dynamicButton" onclick="showRead(@data.Id)">View</a></td>
+                            </tr>
+                            }
+
+                        </tbody>
+
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<div class="row" id="Inventory">
+
+</div>
+
+
+
+
+<script>
+    function showEdit(id) {
+        ShowDynamicFormEditOnly(3, "Inventory", id);
+    }
+    function showRead(id) {
+        ShowDynamicFormReadOnly(3, "Inventory", id);
+    }
+    function showNew() {
+        ShowDynamicForm(3, "Inventory");
+    }
+</script>

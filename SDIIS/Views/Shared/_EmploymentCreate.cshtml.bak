@@ -1,0 +1,76 @@
+﻿@model Common_Objects.Models.Person_Employment
+
+@{
+    ViewBag.Title = "Create Employment Details";
+}
+
+@using (Html.BeginForm("Save", "Home", FormMethod.Post, new { role = "form", id = "employmentFormCreate" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="panel-body">
+
+        <div class="row">
+
+            @Html.HiddenFor(x => x.Person_Id)
+
+            <div class="col-md-6">
+                <div class="row">
+                    <div class="col-md-6 form-group">
+                        @Html.LabelFor(x => x.Employer_List, new { @class = "control-label" })
+                    </div>
+                    <div class="col-md-6">
+                        @Html.DropDownListFor(n => n.Employer_Id, Model.Employer_List, "- Please select -", new { @id = "Employer_Id", @class = "form-control" })
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="row">
+                    <div class="col-md-6 form-group">
+                        @Html.LabelFor(x => x.Nature_Of_Employment_List, new { @class = "control-label" })
+                    </div>
+                    <div class="col-md-6">
+                        @Html.DropDownListFor(n => n.Nature_Of_Employment_Id, Model.Nature_Of_Employment_List, "- Please select -", new { @id = "Nature_Of_Employment_Id", @class = "form-control" })
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="row">
+
+            <div class="col-md-6">
+                <div class="row">
+                    <div class="col-md-6 form-group">
+                        @Html.LabelFor(x => x.Occupation, new { @class = "control-label" })
+                    </div>
+                    <div class="col-md-6">
+                        @Html.TextBoxFor(model => model.Occupation, new { @class = "form-control" })
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="row">
+                    <div class="col-md-6 form-group">
+                        @Html.LabelFor(x => x.Income_Range_List, new { @class = "control-label" })
+                    </div>
+                    <div class="col-md-6">
+                        @Html.DropDownListFor(n => n.Income_Range_Id, Model.Income_Range_List, "- Please select -", new { @id = "Income_Range_Id", @class = "form-control" })
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+
+    <div class="panel-footer">
+        <input type="submit" id="ButtonSave" value="Save" class="btn btn-success" />
+        <input type="button" id="ButtonEmploymentCancel" value="Cancel" class="btn btn-danger modal-close-btn" />
+    </div>
+}
+

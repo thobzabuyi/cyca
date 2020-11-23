@@ -1,0 +1,97 @@
+﻿.webgrid-table {
+    width: 100%;
+    display: table;
+    background-color: white;
+}
+
+    .webgrid-table th {
+        background-color: #484848;
+        color: #fff;
+        padding-left: 5px;
+        padding-bottom: 4px;
+        padding-top: 5px;
+        text-align: left;
+    }
+
+    .webgrid-table td {
+        border: 1px solid #98BF21;
+        padding: 3px 7px 2px;
+        color: #555;
+        border: 1px solid #eaf1d6 !important;
+    }
+
+.webgrid-header {
+    background-color: #A7C942;
+    color: #FFFFFF;
+    padding-bottom: 4px;
+    padding-top: 5px;
+    text-align: left;
+}
+
+.webgrid-footer {
+}
+
+.webgrid-row-style {
+    padding: 3px 7px 2px;
+    color: #555;
+}
+
+.webgrid-alternating-row {
+    background-color: #EAF2D3;
+    padding: 3px 7px 2px;
+}
+
+.NestedMainGrid {
+    width: 100%;
+    display: table;
+    background-color: white;
+}
+
+    .NestedMainGrid th {
+        background-color: #484848;
+        color: #fff;
+        padding-left: 5px;
+        padding-bottom: 4px;
+        padding-top: 5px;
+        text-align: left;
+    }
+
+    .NestedMainGrid td {
+        border: 1px solid #eaf1d6 !important;
+        padding: 3px 7px 2px;
+        color: #555;
+    }
+
+.NestedSubGrid, .NestedSubGrid tr {
+    border: 1px solid #eaf1d6 !important;
+}
+
+.NestedSubGrid {
+    margin: 0px 0px 0px 10px;
+    padding: 5px;
+    width: 95%;
+    border-collapse: collapse;
+}
+
+    .NestedSubGrid th {
+        font-size: 12px;
+    }
+
+.hoverEff {
+    cursor: pointer;
+    width: 25px;
+}
+
+    .hoverEff:hover {
+        background-color: rgb(248, 242, 242);
+    }
+
+.NestedMainGrid .expand {
+    background: url("../Images/pm.png") no-repeat scroll -2px center rgba(0, 0, 0, 0);
+    display: table-cell;
+}
+
+.NestedMainGrid .collapse {
+    background: url("../Images/pm.png") no-repeat scroll -22px center rgba(0, 0, 0, 0);
+    display: table-cell;
+}

@@ -1,0 +1,492 @@
+﻿@using Common_Objects.Models
+@using GridMvc.Html
+@using MvcCheckBoxList.Model
+@model Common_Objects.Models.IntakeClientViewModel
+
+@{
+    ViewBag.Title = "Create Person";
+}
+
+<h3>@ViewBag.Message</h3>
+
+@using (Ajax.BeginForm("CreateClient", "Intake", new AjaxOptions() { UpdateTargetId = "clientDetails" }, new { @id = "clientDetailsForm" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="panel panel-primary" id="clientDetails">
+
+        <div class="panel-heading" style="text-align: center">
+            Client Details -
+            <div id="headerClientFirstName" style="display:inline">@Html.DisplayTextFor(x => x.Client.Person.First_Name)</div>
+            <div id="headerClientLastName" style="display:inline">@Html.DisplayTextFor(x => x.Client.Person.Last_Name)</div>
+            <div id="headerCPRRefNumber" style="display:inline">(@Html.DisplayTextFor(x => x.Client.Reference_Number))</div>
+        </div>
+
+        @Html.HiddenFor(x => x.Person.Person_Id, new { id = "Person_Id" })
+        @Html.HiddenFor(x => x.Client.Client_Id, new { id = "Client_Id" })
+        @Html.HiddenFor(x => x.PhysicalAddress.Address_Id, new { id = "Physical_Address_Id" })
+        @Html.HiddenFor(x => x.PostalAddress.Address_Id, new { id = "Postal_Address_Id" })
+        @Html.HiddenFor(x => x.IntakeAssessment.Intake_Assessment_Id, new { id = "Intake_Assessment_Id" })
+
+        @ViewBag.Error
+
+        <div class="panel-body">
+
+            <div id="rootwizard">
+                <ul>
+                    <li><a href="#tab1" data-toggle="tab">Personal Details</a></li>
+                    <li><a href="#tab2" data-toggle="tab">Contact Details</a></li>
+                    <li><a href="#tab3" data-toggle="tab">Educational Details</a></li>
+                    <li><a href="#tab4" data-toggle="tab">Employment Details</a></li>
+                    <li><a href="#tab5" data-toggle="tab">Medical Details</a></li>
+                    <li><a href="#tab6" data-toggle="tab">Relations</a></li>
+                    <li><a href="#tab7" data-toggle="tab">Assessment</a></li>
+                </ul>
+                <hr />
+                <div class="tab-content">
+                    <div class="tab-pane" id="tab1">
+                        <div class="row">
+                            <div class="col-md-3">
+                                @Html.LabelFor(x => x.Person.First_Name, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-3 form-group">
+                                @Html.TextBoxFor(model => model.Person.First_Name, new { @class = "form-control", @required = "required" })
+                            </div>
+                            <div class="col-md-3">
+                                @Html.LabelFor(x => x.Person.Last_Name, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-3 form-group">
+                                @Html.TextBoxFor(model => model.Person.Last_Name, new { @class = "form-control", @required = "required" })
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                @Html.LabelFor(x => x.Person.Known_As, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-3 form-group">
+                                @Html.TextBoxFor(model => model.Person.Known_As, new { @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                @Html.LabelFor(x => x.Person.Identification_Type_List, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-3 form-group">
+                                @Html.DropDownListFor(n => n.Person.Identification_Type_Id, Model.Person.Identification_Type_List, new { @id = "DropdownIdentificationType", @class = "form-control" })
+                            </div>
+                            <div class="col-md-3">
+                                @Html.LabelFor(x => x.Person.Identification_Number, new { @id = "LabelIdentificationNumber", @class = "control-label" })
+                            </div>
+                            <div class="col-md-3 form-group">
+                                @Html.TextBoxFor(model => model.Person.Identification_Number, new { @id = "Identification_Number", @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                @Html.LabelFor(x => x.Person.Date_Of_Birth, new { @id = "LabelDateOfBirth", @class = "control-label" })
+                            </div>
+                            <div class="col-md-3 form-group">
+                                <div class="input-group">
+                                    @Html.TextBoxFor(x => x.Person.Date_Of_Birth, new { @id = "Date_of_Birth", @class = "form-control jqueryui-marker-datepicker", @required = "required" })
+                                    <label for="Date_of_Birth" class="input-group-addon btn">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                @Html.LabelFor(x => x.Person.Age, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-1 form-group">
+                                @Html.TextBoxFor(model => model.Person.Age, new { @id = "TextboxAge", @class = "form-control" })
+                            </div>
+                            <div class="col-md-2 form-group">
+                                @Html.CheckBoxFor(x => x.Person.Is_Estimated_Age, new { @id = "IsEstimatedAge" })
+                                @Html.LabelFor(x => x.Person.Is_Estimated_Age, new { @class = "control-label" })
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                @Html.LabelFor(x => x.Person.Gender_List, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-3 form-group">
+                                @Html.DropDownListFor(n => n.Person.Gender_Id, Model.Person.Gender_List, "- Please select -", new { @id = "DropdownGender", @class = "form-control" })
+                            </div>
+                            <div class="col-md-3">
+                                @Html.LabelFor(x => x.Person.Nationality_List, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-3 form-group">
+                                @Html.DropDownListFor(n => n.Person.Nationality_Id, Model.Person.Nationality_List, "- Please select -", new { @id = "DropdownNationality", @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                @Html.LabelFor(x => x.Person.Marital_Status_List, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-3 form-group">
+                                @Html.DropDownListFor(n => n.Person.Marital_Status_Id, Model.Person.Marital_Status_List, "- Please select -", new { @id = "DropdownMaritalStatus", @class = "form-control" })
+                            </div>
+                            <div class="col-md-3">
+                                @Html.LabelFor(x => x.Person.Population_Group_List, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-3 form-group">
+                                @Html.DropDownListFor(n => n.Person.Population_Group_Id, Model.Person.Population_Group_List, "- Please select -", new { @id = "DropdownPopulationGroup", @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                @Html.LabelFor(x => x.Person.Religion_List, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-3 form-group">
+                                @Html.DropDownListFor(n => n.Person.Religion_Id, Model.Person.Religion_List, "- Please select -", new { @id = "DropdownReligion", @class = "form-control" })
+                            </div>
+                            <div class="col-md-3">
+                                @Html.LabelFor(x => x.Person.Disability_List, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-3 form-group">
+                                @Html.DropDownListFor(n => n.Person.Disability_Type_Id, Model.Person.Disability_List, "- Please select -", new { @id = "DropdownDisability", @class = "form-control" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="tab2">
+                        <div class="row">
+                            <div class="col-md-3">
+                                @Html.LabelFor(x => x.Person.Phone_Number, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-3 form-group">
+                                @Html.TextBoxFor(model => model.Person.Phone_Number, new { @class = "form-control" })
+                            </div>
+                            <div class="col-md-3">
+                                @Html.LabelFor(x => x.Person.Mobile_Phone_Number, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-3 form-group">
+                                @Html.TextBoxFor(model => model.Person.Mobile_Phone_Number, new { @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                @Html.LabelFor(x => x.Person.Email_Address, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-3 form-group">
+                                @Html.TextBoxFor(model => model.Person.Email_Address, new { @class = "form-control" })
+                            </div>
+                            <div class="col-md-3">
+                                @Html.LabelFor(x => x.Person.Preferred_Contact_Type_List, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-3 form-group">
+                                @Html.DropDownListFor(n => n.Person.Preferred_Contact_Type_Id, Model.Person.Preferred_Contact_Type_List, "- Please select -", new { @id = "DropdownModule", @class = "form-control" })
+                            </div>
+                        </div>
+                        <hr />
+                        <div class="row">
+                            <div class="col-md-6">
+                                @Html.Label("Physical Address", new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-6 form-group">
+                                @Html.Label("Postal Address Address", new { @class = "control-label" })
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    @Html.LabelFor(x => x.PhysicalAddress.Address_Line_1, new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    @Html.TextBoxFor(model => model.PhysicalAddress.Address_Line_1, new { @class = "form-control" })
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    @Html.LabelFor(x => x.PhysicalAddress.Address_Line_2, new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    @Html.TextBoxFor(model => model.PhysicalAddress.Address_Line_2, new { @class = "form-control" })
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    @Html.LabelFor(x => x.PhysicalAddress.Town_List, new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    @Html.DropDownListFor(n => n.PhysicalAddress.Town_Id, Model.PhysicalAddress.Town_List, "- Please select -", new { @id = "DropdownModule", @class = "form-control" })
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    @Html.LabelFor(x => x.PhysicalAddress.Postal_Code, new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    @Html.TextBoxFor(model => model.PhysicalAddress.Postal_Code, new { @class = "form-control" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    @Html.LabelFor(x => x.PostalAddress.Address_Line_1, new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    @Html.TextBoxFor(model => model.PostalAddress.Address_Line_1, new { @class = "form-control" })
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    @Html.LabelFor(x => x.PostalAddress.Address_Line_2, new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    @Html.TextBoxFor(model => model.PostalAddress.Address_Line_2, new { @class = "form-control" })
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    @Html.LabelFor(x => x.PostalAddress.Town_List, new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    @Html.DropDownListFor(n => n.PostalAddress.Town_Id, Model.PhysicalAddress.Town_List, "- Please select -", new { @id = "DropdownModule", @class = "form-control" })
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    @Html.LabelFor(x => x.PostalAddress.Postal_Code, new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    @Html.TextBoxFor(model => model.PostalAddress.Postal_Code, new { @class = "form-control" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="tab3" class="tab-pane">
+                        @Html.ActionLink("Add Education", "Create", "Education", new { id = Model.Person.Person_Id }, new { @class = "popupEducation btn btn-info pull-right" })
+
+                        <div id="educationItemsGrid"></div>
+                    </div>
+                    <div id="tab4" class="tab-pane">
+                        @Html.ActionLink("Add Employment", "Create", "Employment", new { id = Model.Person.Person_Id }, new { @class = "popupEmployment btn btn-info pull-right" })
+
+                        <div id="employmentItemsGrid"></div>
+                    </div>
+                    <div id="tab5" class="tab-pane">
+                        @Html.ActionLink("Add Medical Details", "Create", "MedicalDetail", new { id = Model.Person.Person_Id }, new { @class = "popupMedicalDetail btn btn-info pull-right" })
+
+                        <div id="medicalDetailsGrid"></div>
+                    </div>
+                    <div id="tab6" class="tab-pane">
+                        <div class="row">
+                            <div class="col-md-3">
+                                @Html.LabelFor(x => x.Relation_Type_List, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-3">
+                                @Html.DropDownListFor(n => n.Relation_Type_Id, Model.Relation_Type_List, "- Please select -", new { @id = "Relation_Type_Id", @class = "form-control" })
+                            </div>
+                            <div class="col-md-6">
+                                @Html.ActionLink("Filter", "Create", "Relation", new { id = Model.Person.Person_Id }, new { @class = "popupRelation btn btn-info" })
+                                @Html.ActionLink("Add Relation", "Create", "Relation", new { id = Model.Person.Person_Id, selectedRelationTypeId = -1 }, new { @class = "popupRelation btn btn-info" })
+                            </div>
+                        </div>
+
+                        <div id="relationsGrid"></div>
+                    </div>
+                    <div id="tab7" class="tab-pane">
+                        <div class="row">
+                            <div class="col-md-3 form-group">
+                                @Html.LabelFor(x => x.IntakeAssessment.Assessment_Date, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-3">
+                                <div class="input-group">
+                                    @Html.TextBoxFor(x => x.IntakeAssessment.Assessment_Date, new { @id = "Assessment_Date", @class = "form-control jqueryui-marker-datepicker" })
+                                    <label for="Assessment_Date" class="input-group-addon btn">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3 form-group">
+                                @Html.LabelFor(x => x.IntakeAssessment.Assessed_By_List, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-3">
+                                @Html.DropDownListFor(n => n.IntakeAssessment.Assessed_By_Id, Model.IntakeAssessment.Assessed_By_List, "- Please select -", new { @id = "DropdownModule", @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3 form-group">
+                                @Html.LabelFor(x => x.IntakeAssessment.Problem_Category_List, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-3">
+                                @Html.DropDownListFor(n => n.IntakeAssessment.Problem_Category_Id, Model.IntakeAssessment.Problem_Category_List, "- Please select -", new { @id = "DropdownProblemCategory", @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3 form-group">
+                                @Html.LabelFor(x => x.IntakeAssessment.Problem_Sub_Category_List, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-3">
+                                @Html.DropDownListFor(n => n.IntakeAssessment.Problem_Sub_Category_Id, Model.IntakeAssessment.Problem_Sub_Category_List, "- Please select -", new { @id = "DropdownProblemSubCategory", @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3 form-group">
+                                @Html.LabelFor(x => x.IntakeAssessment.Presenting_Problem, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-9">
+                                @Html.TextBoxFor(x => x.IntakeAssessment.Presenting_Problem, new { @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3 form-group">
+                                @Html.LabelFor(x => x.IntakeAssessment.Preliminary_Assessment, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-9">
+                                @Html.TextBoxFor(x => x.IntakeAssessment.Preliminary_Assessment, new { @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3 form-group">
+                                @Html.LabelFor(x => x.IntakeAssessment.Is_Priority_Intervention, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-9">
+                                @Html.CheckBoxFor(model => model.IntakeAssessment.Is_Priority_Intervention)
+                                <label for="Is_Priority_Intervention">Yes</label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3 form-group">
+                                @Html.LabelFor(x => x.IntakeAssessment.Is_Referred_For_Assessment, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-9">
+                                @Html.CheckBoxFor(model => model.IntakeAssessment.Is_Referred_For_Assessment)
+                                <label for="Is_Referred_For_Assessment">Yes</label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3 form-group">
+                                @Html.LabelFor(x => x.IntakeAssessment.Is_Referred_To_Other_Service_Provider, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-9">
+                                @Html.CheckBoxFor(model => model.IntakeAssessment.Is_Referred_To_Other_Service_Provider)
+                                <label for="Is_Referred_To_Other_Service_Provider">Yes</label>
+                            </div>
+                        </div>
+                        <hr />
+                        <div class="row">
+                            <div class="col-md-3 form-group">
+                                @Html.LabelFor(x => x.IntakeAssessment.Supervisor_Comments, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-9">
+                                @Html.TextBoxFor(x => x.IntakeAssessment.Supervisor_Comments, new { @class = "form-control" })
+                            </div>
+                        </div>
+                        <hr />
+                        <div class="row">
+                            <div class="col-md-3 form-group">
+                                @Html.LabelFor(x => x.IntakeAssessment.Referred_From_Organization_List, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-3">
+                                @Html.DropDownListFor(n => n.IntakeAssessment.Referred_From_Organization_Id, Model.IntakeAssessment.Referred_From_Organization_List, "- Please select -", new { @id = "DropdownModule", @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3 form-group">
+                                @Html.LabelFor(x => x.IntakeAssessment.Referred_To_Organization_List, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-3">
+                                @Html.DropDownListFor(n => n.IntakeAssessment.Referred_To_Organization_Id, Model.IntakeAssessment.Referred_To_Organization_List, "- Please select -", new { @id = "DropdownModule", @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3 form-group">
+                                @Html.LabelFor(x => x.IntakeAssessment.Referral_Focus_Areas, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-9">
+                                @Html.CheckBoxListFor(x => x.IntakeAssessment.Posted_Referral_Focus_Areas.Referral_Focus_Area_IDs,
+                                    x => x.IntakeAssessment.Available_Referral_Focus_Areas,
+                                    x => x.Referral_Focus_Area_Id,
+                                    x => x.Description,
+                                    x => x.IntakeAssessment.Referral_Focus_Areas.ToList(),
+                                    new { @class = "styled_checkbox" },
+                                    new HtmlListInfo(HtmlTag.vertical_columns, 2, new { @class = "styled_list" }),
+                                    null, null)
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3 form-group">
+                                @Html.LabelFor(x => x.IntakeAssessment.Case_Background, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-9">
+                                @Html.TextBoxFor(x => x.IntakeAssessment.Case_Background, new { @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3 form-group">
+                                @Html.LabelFor(x => x.IntakeAssessment.Social_Worker_Comments, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-9">
+                                @Html.TextBoxFor(x => x.IntakeAssessment.Social_Worker_Comments, new { @class = "form-control" })
+                            </div>
+                        </div>
+                        <hr />
+                        <div class="row">
+                            <div class="col-md-3 form-group">
+                                @Html.LabelFor(x => x.IntakeAssessment.Case_Manager_Supervisor_List, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-3">
+                                @Html.DropDownListFor(n => n.IntakeAssessment.Case_Manager_Supervisor_Id, Model.IntakeAssessment.Case_Manager_Supervisor_List, "- Please select -", new { @id = "DropdownModule", @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3 form-group">
+                                @Html.LabelFor(x => x.IntakeAssessment.Case_Manager_List, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-3">
+                                @Html.DropDownListFor(n => n.IntakeAssessment.Case_Manager_Id, Model.IntakeAssessment.Case_Manager_List, "- Please select -", new { @id = "DropdownModule", @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3 form-group">
+                                @Html.LabelFor(x => x.IntakeAssessment.Case_Allocation_Comments, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-9">
+                                @Html.TextBoxFor(x => x.IntakeAssessment.Case_Allocation_Comments, new { @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3 form-group">
+                                @Html.LabelFor(x => x.IntakeAssessment.Date_Allocated, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-3">
+                                @Html.TextBoxFor(x => x.IntakeAssessment.Date_Allocated, new { @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3 form-group">
+                                @Html.LabelFor(x => x.IntakeAssessment.Date_Due, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-3">
+                                @Html.TextBoxFor(x => x.IntakeAssessment.Date_Due, new { @class = "form-control" })
+                            </div>
+                        </div>
+                    </div>
+                    <ul class="pager wizard">
+                        <li class="previous first" style="display:none;"><a href="#">First</a></li>
+                        <li class="previous"><a href="#">Previous</a></li>
+                        <li class="next last" style="display:none;"><a href="#">Last</a></li>
+                        <li class="next"><a href="#">Next</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+
+        <div class="panel-footer">
+            <input type="submit" id="ButtonSave" value="Save" class="btn btn-success" />
+            @Html.ActionLink("Cancel", "Index", null, new { @class = "btn btn-danger" })
+        </div>
+
+    </div>
+}
+
+@section scripts {
+    <script src="~/Scripts/IDValidation/IDValidationMethods.js"></script>
+    <script src="~/Scripts/Intake/methods.js"></script>
+}
+

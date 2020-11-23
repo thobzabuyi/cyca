@@ -1,0 +1,53 @@
+﻿@model Common_Objects.Models.User
+
+@{
+    ViewBag.Title = "Delete User?";
+}
+
+<h3>@ViewBag.Error</h3>
+
+@using (Html.BeginForm())
+{
+    <div class="panel panel-warning">
+        <div class="panel-heading" style="text-align: center">
+            Are you sure you want to delete this User?
+            @Html.HiddenFor(x => x.User_Id)
+        </div>
+        <div class="panel-body">
+            
+            <div class="col-md-12" style="padding-left:0px !important; padding-right:0px !important;">
+                <div class="form-group">
+                    @Html.LabelFor(x => x.User_Name, new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.DisplayTextFor(x => x.User_Name)
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-12" style="padding-left:0px !important; padding-right:0px !important;">
+                <div class="form-group">
+                    @Html.LabelFor(x => x.First_Name, new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.DisplayTextFor(x => x.First_Name)
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-12" style="padding-left:0px !important; padding-right:0px !important;">
+                <div class="form-group">
+                    @Html.LabelFor(x => x.Last_Name, new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.DisplayTextFor(x => x.Last_Name)
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="panel-footer">
+            <input type="submit" id="ButtonSave" value="Yes" class="btn btn-success" />
+            @Html.ActionLink("No", "Index", null, new { @class = "btn btn-danger" })
+        </div>
+
+    </div>
+}

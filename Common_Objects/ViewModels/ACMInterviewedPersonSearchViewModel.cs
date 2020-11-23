@@ -1,0 +1,19 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Common_Objects.Models;
+
+namespace Common_Objects.ViewModels
+{
+    public class ACMInterviewedPersonSearchViewModel
+    {
+        public string Search_First_Name { get; set; }
+        public string Search_Last_Name { get; set; }
+        public string Search_Date_Of_Birth { get; set; }
+        public string Search_ID_Number { get; set; }
+        public List<Person> Person_List { get; set; }
+        public int Selected_Person_Id { get; set; }
+    }
+}

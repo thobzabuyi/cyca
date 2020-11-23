@@ -1,0 +1,190 @@
+﻿using Common_Objects;
+using Common_Objects.Models;
+using System;
+using System.Collections.Generic;
+using System.Data.Entity.Validation;
+using System.Web.Mvc;
+
+namespace SDIIS.Controllers
+{
+    public class EmployeeController : Controller
+    {
+        [Authorize(Roles = "SysAdmin")]
+        public ActionResult Index(string SearchPersalNumber, string SearchEmail, string SearchFirstName, string SearchLastName)
+        {
+            var employeeModel = new EmployeeModel();
+            var employeeList = employeeModel.GetListOfEmployees(true, false, SearchPersalNumber, SearchEmail, SearchFirstName, SearchLastName);
+
+            return View(employeeList);
+        }
+
+        [CustomAuthorize("Main", "Employee", "Create")]
+        public ActionResult Create()
+        {
+            var newEmployee = new Employee() { User = new User(), Is_Active = true, Is_Deleted = false, Date_Created = DateTime.Now, Created_By = "" };
+
+            return View(newEmployee);
+        }
+
+        [AcceptVerbs(HttpVerbs.Post)]
+        public ActionResult Create(Employee employee)
+        {
+            var dateCreated = DateTime.Now;
+            const string createdBy = "jhendrikse";
+            const bool isActive = true;
+            const bool isDeleted = false;
+
+            if (ModelState.IsValid)
+            {
+                var userModel = new UserModel();
+                var employeemodel = new EmployeeModel();
+                bool checkIfEmployeeExists = employeemodel.CheckIfEmployeeExists(employee.User.Email_Address, employee.User.First_Name, employee.User.Last_Name);
+
+                if (checkIfEmployeeExists == false)
+                {
+                    // TODO: fix created-by field
+                    var createEmployee = employeemodel.CreateEmployee(employee.User.First_Name, employee.User.Last_Name, employee.User.Initials, employee.User.Email_Address,
+                        employee.Persal_Number, employee.Head_Of_Department_Id, employee.Supervisor_Id, employee.Phone_Number, employee.Mobile_Phone_Number, employee.Gender_Id,
+                        employee.Race_Id, employee.ID_Number, employee.Job_Position_Id, employee.Paypoint_Id, employee.Service_Office_Id, employee.Salary_Level_Id,
+                        employee.Is_Shift_Worker, employee.Is_Casual_Worker, isActive, isDeleted, dateCreated, createdBy, employee.Is_SocialWorker, employee.PracticeNumber);
+
+
+                    if (createEmployee == null)
+                    {
+                        ViewBag.Message = "An Error Occurred, Please contact support";
+                        return View(employee);
+                    }
+
+                    // Link selected roles
+                    var roleIds = new List<int>();
+                    if (employee.User.Posted_Roles != null)
+                    {
+                        foreach (var roleId in employee.User.Posted_Roles.Role_IDs)
+                        {
+                            var roleIdValue = int.Parse(roleId);
+                            roleIds.Add(roleIdValue);
+                        }
+                    }
+
+                    userModel.AddUserToRole(createEmployee.User.User_Id, roleIds);
+
+                    // Link Selected Groups
+                    var groupIds = new List<int>();
+                    if (employee.User.Posted_Groups != null)
+                    {
+                        foreach (var groupId in employee.User.Posted_Groups.Group_IDs)
+                        {
+                            var groupIdValue = int.Parse(groupId);
+                            groupIds.Add(groupIdValue);
+                        }
+                    }
+
+                    userModel.AddUserToGroup(createEmployee.User.User_Id, groupIds);
+                }
+                else
+                {
+                    TempData["EnteredUser"] = "The entered employee named: " + employee.User.First_Name + " " + employee.User.Last_Name + " with persal #:" + employee.Persal_Number; 
+                    return RedirectToAction("DoesExist");
+
+                }
+                return RedirectToAction("Index", "Employee");
+            }
+
+            return View(employee);
+        }
+
+        public ActionResult DoesExist()
+        {
+            return View();
+        }
+
+        [CustomAuthorize("Main", "Employee", "Edit")]
+        public ActionResult Edit(string id)
+        {
+            var employeeModel = new EmployeeModel();
+            var employeeToEdit = employeeModel.GetSpecificEmployee(int.Parse(id));
+           
+            return View(employeeToEdit);
+        }
+
+        [AcceptVerbs(HttpVerbs.Post)]
+        public ActionResult Edit(Employee employee)
+        {
+            var dateLastModified = DateTime.Now;
+            const string modifiedBy = "jhendrikse";
+            const bool isActive = true;
+            const bool isDeleted = false;
+
+            if (ModelState.IsValid)
+            {
+                var userModel = new UserModel();
+                var employeeModel = new EmployeeModel();
+                var updatedEmployee = employeeModel.EditEmployee(employee.Employee_Id, employee.User.First_Name, employee.User.Last_Name, 
+                    employee.User.Initials, employee.User.Email_Address, employee.Persal_Number, employee.Head_Of_Department_Id, 
+                    employee.Supervisor_Id, employee.Phone_Number, employee.Mobile_Phone_Number, employee.Gender_Id, employee.Race_Id, 
+                    employee.ID_Number, employee.Job_Position_Id, employee.Paypoint_Id, employee.Service_Office_Id, employee.Salary_Level_Id, 
+                    employee.Is_Shift_Worker, employee.Is_Casual_Worker, isActive, isDeleted, dateLastModified, modifiedBy, employee.Is_SocialWorker, employee.PracticeNumber );
+
+                if (updatedEmployee == null)
+                {
+                    ViewBag.Message = "An Error Occured, Please contact Support";
+                    return View(employee);
+                }
+
+                // Link Selected Roles
+                var roleIds = new List<int>();
+                if (employee.User.Posted_Roles != null)
+                {
+                    foreach (var roleId in employee.User.Posted_Roles.Role_IDs)
+                    {
+                        var roleIdValue = int.Parse(roleId);
+                        roleIds.Add(roleIdValue);
+                    }
+                }
+
+                userModel.AddUserToRole(updatedEmployee.User.User_Id, roleIds);
+
+                // Link Selected Groups
+                var groupIds = new List<int>();
+                if (employee.User.Posted_Groups != null)
+                {
+                    foreach (var groupId in employee.User.Posted_Groups.Group_IDs)
+                    {
+                        var groupIdValue = int.Parse(groupId);
+                        groupIds.Add(groupIdValue);
+                    }
+                }
+
+                userModel.AddUserToGroup(updatedEmployee.User.User_Id, groupIds);
+
+                return RedirectToAction("Index", "Employee");
+            }
+
+            return View(employee);
+        }
+
+        [CustomAuthorize("Main", "Employee", "Delete")]
+        public ActionResult Delete(string id)
+        {
+            var employeeModel = new EmployeeModel();
+            var deleteEmployee = employeeModel.GetSpecificEmployee(int.Parse(id));
+
+            return View(deleteEmployee);
+        }
+
+        [AcceptVerbs(HttpVerbs.Post)]
+        public ActionResult Delete(Employee employee)
+        {
+            var employeeModel = new EmployeeModel();
+            var deletedEmployee = employeeModel.SetEmployeeIsDeleted(employee.Employee_Id, true);
+
+            if (deletedEmployee == null)
+            {
+                ViewBag.Message = "An Error Occured, Contact support";
+                return View(employee);
+            }
+
+            return RedirectToAction("Index", "Employee");
+        }
+	}
+}

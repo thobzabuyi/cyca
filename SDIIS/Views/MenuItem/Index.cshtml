@@ -1,0 +1,83 @@
+﻿@model IEnumerable<Common_Objects.Models.Menu_Item>
+@using GridMvc.Html
+
+@{
+    ViewBag.Title = "Menu Items Page";
+}
+
+<h3>@ViewBag.Message</h3>
+@using (Html.BeginForm("Index", "MenuItem", FormMethod.Get))
+{
+<div class="panel-body" overflow:hidden">
+    <div class="panel panel-primary form-horizontal" style=" width:100% !important">
+
+        <div class="panel-heading" style="text-align: center; vertical-align: middle !important;">
+            <div class="row">
+                <div class="col-md-11 vcenter">
+                    @Html.Label("Search Menu Items")
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-3">
+            @Html.Label("Item Text:")
+        </div>
+        <div class="col-md-3" form-group">
+            <input type="text" name="SearchItemText" class="form-control" />
+
+        </div>
+        <div class="col-md-3">
+            @Html.Label("For Menu:")
+        </div>
+        <div class="col-md-3">
+            <input type="text" name="SearchForMenu" class="form-control" />
+
+        </div>
+    </div>
+    <br />
+    <div class="row">
+        <div class="col-md-3">
+            @Html.Label("Parent Item:")
+        </div>
+        <div class="col-md-3 form-group">
+            <input type="text" name="SearchParentItem" class="form-control" />
+
+        </div>
+        <div class="form-group" align="right">
+            <input type="submit" id="ButtonSave" value="Search" class="btn btn-success" />
+        </div>
+    </div>
+
+</div>
+
+<div class="panel panel-primary form-horizontal" style=" width:100% !important">
+    <div class="panel-heading" style="text-align: center; vertical-align: middle !important;">
+        <div class="row">
+            <div class="col-md-11">
+                @Html.Label("Menu Items")
+            </div>
+            <div class="col-md-1">
+                @Html.ActionLink("Create", "Create", null, new { @class = "btn btn-info pull-right" })
+            </div>
+        </div>
+    </div>
+    <div class="panel-body" style="height: 400px; overflow:hidden">
+        <div class="row">
+            <div class="row">
+                <div class="col-md-12">
+                    @Html.Grid(Model).Columns(columns =>
+               {
+               columns.Add(x => x.Menu_Text).Titled("Item Text").Sortable(true);
+               columns.Add(x => x.Menu.Description).Titled("For Menu").Sortable(true);
+               columns.Add(x => x.Parent_Menu_Item.Menu_Text).Titled("Parent Item").Sortable(true);
+               columns.Add(x => x.Is_Active).Titled("Is Active?").Sortable(true);
+               columns.Add().Encoded(false).Sanitized(false).SetWidth(30).RenderValueAs(d => @<b> @Html.ActionLink("Edit", "Edit", new { id = d.Menu_Item_Id }, new { @class = "btn btn-success" }) </b>);
+         columns.Add().Encoded(false).Sanitized(false).SetWidth(30).RenderValueAs(d => @<b> @Html.ActionLink("Delete", "Delete", new { id = d.Menu_Item_Id }, new { @class = "btn btn-danger" }) </b>);
+         }).WithPaging(5)
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+}

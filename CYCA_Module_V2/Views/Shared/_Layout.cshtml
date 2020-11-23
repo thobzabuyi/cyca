@@ -1,0 +1,176 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>@ViewBag.Title - SDICMS</title>
+  @Styles.Render("~/Content/css")
+  <link rel="stylesheet" href="~/Content/survey.css" />
+  <link rel="stylesheet" href="~/Content/modern.css" />
+  <link rel="stylesheet" href="~/Content/jquery-confirm.min.css" />
+  <link rel="stylesheet" href="~/Content/fontawesome/all.min.css" />
+  @RenderSection("styles", required: false)
+  @*@Styles.Render("~/Content/surveycss")
+    @Scripts.Render("~/bundles/modernizr")*@
+
+  <style>
+    .modal-content {
+      max-width: 90% !important;
+      margin: 30px auto !important;
+    }
+  </style>
+
+  @Scripts.Render("~/bundles/jquery")
+  @Scripts.Render("~/bundles/bootstrap")
+  @Scripts.Render("~/bundles/surveyjs")
+  <script src="~/Scripts/jquery.validate.js"></script>
+  <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+  <script src="~/Scripts/survey.widgets.js"></script>
+  <script src="~/Scripts/jquery.blockUI.js"></script>
+  <script src="~/Scripts/jquery-confirm.min.js"></script>
+
+  @RenderSection("scripts", required: false)
+
+
+
+</head>
+<body>
+
+  @*<p class="site-title">
+        <a href="@Url.Action("Index", "Home")">
+            <img src="~/Images/SocialDevelopmentLogo.jpg" alt="Department of Social Development" />
+        </a>
+    </p>*@
+  <nav class="navbar navbar-inverse ">
+  </nav>
+  <div class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+      </div>
+      <div class="navbar-collapse collapse">
+        <div id="navMenuContainer"></div>
+
+        @Html.Partial("_LoginPartial")
+        <div class="navbar-right">
+          <ul class="nav navbar-nav">
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Biometric Status <span class="caret"></span></a>
+              <ul class="dropdown-menu">
+                <li><a id="ClientStatus">Client Disconnected</a></li>
+                <li><a id="ServerStatus">Server Disconnected</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="container-fluid body-content">
+    @RenderBody()
+    <hr />
+
+  </div>
+
+  <div id="modal-container" class="modal fade" tabindex="-1" role="dialog" style="position:fixed;bottom:0">
+    <div class="modal-content">
+      <footer>
+        <p>&copy; @DateTime.Now.Year - SDICMS Portal</p>
+      </footer>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+
+        var menuLoaded = false;
+        const signalrConst = {
+            IsConnected: false
+        }
+        let validator = {
+            set: function (target, key, value) {
+                console.log(`The property ${key} has been updated with ${value}`);
+                if (value) {
+                    $('.signalRObject').removeAttr('disabled');
+                } else {
+                    $('.signalRObject').attr('disabled', 'disabled');
+                }
+                target[key] = value;
+                return true;
+            },
+            get(target, property) {
+                return target[property];
+            }
+        };
+        let signalHub = new Proxy(signalrConst, validator);
+        $(document).ready(function () {
+            if ($('#navMenuContainer')[0].innerHTML.trim() == "") {
+                $.ajax({
+                    url: "@Url.Content("~/Home/MenuLayout")",
+                    type: "GET",
+                    success: function (response, status, xhr) {
+                        var navContainer = $('#navMenuContainer');
+                        navContainer.html(response);
+                        menuLoaded = true;
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        var navContainer = $('#navMenuContainer');
+                        navContainer.html(response);
+                    }
+                });
+            }
+            $(document).ajaxStart(function () {
+               $.blockUI({
+                        css: {
+                            border: 'none',
+                            padding: '15px',
+                            backgroundColor: '#000',
+                            '-webkit-border-radius': '10px',
+                            '-moz-border-radius': '10px',
+                            opacity: .5,
+                            color: '#fff'
+                        }
+                    });
+            });
+
+            $(document).ajaxStop(function () {
+                $.unblockUI();
+            });
+
+            $(document).ajaxComplete(function myErrorHandler(event, xhr, ajaxOptions, thrownError) {
+               // alert("Ajax request completed with response code " + xhr.status);
+            });
+
+        });
+  </script>
+  @RenderSection("scriptslower", required: false)
+  <script src="~/Scripts/jquery.signalR-2.2.1.min.js"></script>
+  <script src="~/Scripts/signalr/signalr.js"></script>
+  <script src="http://127.0.0.1:9090/signalr/hubs"></script>
+  <script src="~/Scripts/signalr/connection.js"></script>
+
+</body>
+
+</html>
+
+<script type="text/javascript">
+    // create a function for getting the root path
+    $.url = function (url) {
+        var hostString = window.location.protocol + "//" + window.location.host;
+
+        var path = '@Request.ApplicationPath';
+        if (path != '/') path = path + '/';
+
+        if (url.startsWith('/')) {
+            url = url.substring(1);
+        }
+
+        var fullPath = hostString + path + url;
+
+        return fullPath;
+    }
+
+</script>

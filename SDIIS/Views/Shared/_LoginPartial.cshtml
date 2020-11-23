@@ -1,0 +1,36 @@
+﻿@using Common_Objects.Models
+@if (Request.IsAuthenticated)
+{
+    using (Html.BeginForm("LogOff", "User", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
+    {
+        @Html.AntiForgeryToken()
+
+        <ul class="nav navbar-nav navbar-right">
+            <li>
+                @if ((Session["CurrentUser"] == null) && (Request.Cookies[FormsAuthentication.FormsCookieName] != null))
+                {
+                    var authUser = FormsAuthentication.Decrypt(Request.Cookies[FormsAuthentication.FormsCookieName].Value).Name;
+
+                    var userModel = new UserModel();
+                    var currentUser = userModel.GetSpecificUser(authUser);
+
+                    Session.Remove("CurrentUser");
+                    Session.Remove("MenuLayout");
+                    Session.Add("CurrentUser", currentUser);
+                }
+
+                @if (Session["CurrentUser"] != null)
+                {
+                    @Html.ActionLink("Hello, " + ((User)Session["CurrentUser"]).First_Name, "Manage", "User", routeValues: new { id = ((User)Session["CurrentUser"]).User_Id }, htmlAttributes: new { title = "Manage" })
+                }
+            </li>
+            <li><a href="javascript:document.getElementById('logoutForm').submit()">Log off</a></li>
+        </ul>
+    }
+}
+else
+{
+    <ul class="nav navbar-nav navbar-right">
+        <li>@Html.ActionLink("Log in", "Login", "User", routeValues: null, htmlAttributes: new { id = "loginLink" })</li>
+    </ul>
+}

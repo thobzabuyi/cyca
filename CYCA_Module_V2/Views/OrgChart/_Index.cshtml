@@ -1,0 +1,138 @@
+﻿<div id="chart-container"></div>
+<div class="row">
+    @*<div class="col-md-12">
+        <span>1. = Center Manager</span>
+    </div>*@
+    <div class="col-md-12">
+        <span>1. = Team Leaders</span>
+    </div>
+    <div class="col-md-12">
+        <span>2. = Care Workers</span>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div id="edit-panel" class="view-state">
+            <button type="button" id="btn-save" class="btn btn-primary">Save</button>
+        </div>
+        <div id="edit-panel2" class="view-state">
+            <span id="msg"></span>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    //OrgChart Functions
+    var baseUrl = "";
+    //var baseUrl = "https://localhost:44338/";
+    function buildUrl(url){
+      var qs = "";
+      if (qs.length > 0){
+        qs = qs.substring(0, qs.length-1); //chop off last "&"
+        url = url + "?" + qs;
+      }
+      return url;
+    }
+    function saveChart(oc) {
+        var hierarchy = oc.getHierarchy();
+        var tree = JSON.stringify(hierarchy, null, 2);
+        $.ajax({
+            type: 'POST',
+            url: baseUrl + '/OrgChart/SaveStructure',
+            data: tree,
+            contentType: 'application/json; charset=utf-8',
+           
+            success: function () {
+                clearFilterResultAndInit(oc);
+            },
+            error: function () {
+                console.log('failure');
+            }
+        });
+    }
+    function clearFilterResultAndInit(oc) {
+        var url = baseUrl + "/OrgChart/GetOrgStructure/";
+        $.ajax({
+            type: 'GET',
+            url: buildUrl(url),
+            contentType: 'application/json; charset=utf-8',
+            
+            success: function (data) {
+                oc.init({
+                    'data': data,
+                    'visibleLevel': 4,
+                });
+                
+            },
+            error: function () {
+                console.log('failure');
+            }
+        });
+    }
+    $(function () {
+        var self = this;
+        var url = baseUrl + "/OrgChart/GetOrgStructure/";
+        var oc = $('#chart-container').orgchart({
+            'data': buildUrl(url),
+            'nodeContent': 'Facility',
+            'nodeTitle': 'Name',
+            'nodeId': 'Id',
+            'draggable': true,
+            'visibleLevel': 3,
+            'zoom': true,
+            'dropCriteria': function ($draggedNode, $dragZone, $dropZone) {
+                var t = $draggedNode.find('.title').text();
+                if ($dropZone.find('.title').text().indexOf('0.') > -1) {
+                    return true;
+                } else if ($dropZone.find('.title').text().indexOf('1.') > -1) {
+                    return true;
+                } else {
+                    console.log('3');
+                    return false;
+                }
+                //if ($draggedNode.find('.content').text().indexOf('manager') > -1 && $dropZone.find('.content').text().indexOf('engineer') > -1) {
+                 //   return false;
+                //}
+                return true;
+            }
+            //'createNode': function ($node, data) {
+            //    var secondMenuIcon = $('<i>', {
+            //        'class': 'oci oci-info-circle second-menu-icon',
+            //        click: function () {
+            //            $(this).siblings('.second-menu').toggle();
+            //        }
+            //    });
+            //    var secondMenu = '<div class="second-menu">' + data.nodeContent + '</div>';
+            //    $node.append(secondMenuIcon).append(secondMenu);
+            //}
+        });
+        oc.$chart.on('nodedrop.orgchart', function (event, extraParams) {
+            var t = extraParams.draggedNode.children('.title').text()
+  
+            if (extraParams.dropZone.children('.title').text().indexOf('0.') > -1) {
+
+                
+                if (extraParams.draggedNode.children('.title').text().indexOf('2.') > -1) {
+                    extraParams.draggedNode.children('.title').text(t.replace('2.', '1.'));
+                }
+                return true;
+            } else if (extraParams.dropZone.children('.title').text().indexOf('1.') > -1) {
+                var tt = t.replace('1.', '2.');
+                //tt = 'help';
+                if (extraParams.draggedNode.children('.title').text().indexOf('1.') > -1) {
+                    console.log(tt);
+                    extraParams.draggedNode.children('.title').text(tt);
+                }
+                
+                return true;
+            }
+        });
+
+        $('#btn-save').on('click', function () {
+            saveChart(oc);
+        });
+    });
+</script>
+
+

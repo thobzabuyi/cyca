@@ -1,0 +1,150 @@
+﻿@model Common_Objects.Models.Menu_Item
+
+@{
+    ViewBag.Title = "Edit Menu Item";
+}
+
+<h3>@ViewBag.Message</h3>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="panel panel-primary">
+        <div class="panel-heading" style="text-align: center">
+            Edit Menu Item
+            @Html.HiddenFor(x => x.Menu_Item_Id)
+        </div>
+        <div class="panel-body">
+
+            <div class="col-md-12" style="padding-left:0px !important; padding-right:0px !important;">
+                <div class="form-group">
+                    @Html.LabelFor(x => x.Menu_Text, new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.TextBoxFor(model => model.Menu_Text, new { @class = "form-control" })
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-12" style="padding-left:0px !important; padding-right:0px !important;">
+                <div class="form-group">
+                    @Html.LabelFor(x => x.Menu_Tooltip, new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.TextBoxFor(model => model.Menu_Tooltip, new { @class = "form-control" })
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-12" style="padding-left:0px !important; padding-right:0px !important;">
+                <div class="form-group">
+                    @Html.LabelFor(x => x.Module_List, new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.DropDownListFor(n => n.Module_Id, Model.Module_List, "(Not Applicable)", new { @id = "DropdownModule", @class = "form-control" })
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-12" style="padding-left:0px !important; padding-right:0px !important;">
+                <div class="form-group">
+                    @Html.LabelFor(x => x.Module_Controller_List, new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.DropDownListFor(n => n.Module_Controller_Id, Model.Module_Controller_List, "(Not Applicable)", new { @id = "DropdownController", @class = "form-control" })
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-12" style="padding-left:0px !important; padding-right:0px !important;">
+                <div class="form-group">
+                    @Html.LabelFor(x => x.Module_Action_List, new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.DropDownListFor(n => n.Module_Action_Id, Model.Module_Action_List, "(Not Applicable)", new { @id = "DropdownAction", @class = "form-control" })
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-12" style="padding-left:0px !important; padding-right:0px !important;">
+                <div class="form-group">
+                    @Html.LabelFor(x => x.Container_Menu_List, new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.DropDownListFor(n => n.Menu_Id, Model.Container_Menu_List, "- Please select -", new { @class = "form-control" })
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-12" style="padding-left:0px !important; padding-right:0px !important;">
+                <div class="form-group">
+                    @Html.LabelFor(x => x.Parent_Menu_Item_List, new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.DropDownListFor(n => n.Parent_Menu_Item_Id, Model.Parent_Menu_Item_List, "(Not Applicable)", new { @class = "form-control" })
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-12" style="padding-left:0px !important; padding-right:0px !important;">
+                <div class="form-group">
+                    @Html.LabelFor(x => x.Is_Active, new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.CheckBoxFor(model => model.Is_Active)
+                        <label for="IsActive">Yes</label>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+
+        <div class="panel-footer">
+
+            <input type="submit" id="ButtonSave" value="Save" class="btn btn-success" />
+            @Html.ActionLink("Cancel", "Index", null, new { @class = "btn btn-danger" })
+
+        </div>
+
+    </div>
+}
+
+@section scripts {
+    <script type="text/javascript">
+        $(function () {
+            $("#DropdownModule").change(function () {
+                var selectedItem = $(this).val();
+                $.ajax({
+                    url: "@Url.Content("~/MenuItem/GetControllersForModule/moduleId")",
+                    data: { "moduleId": selectedItem },
+                    type: "GET",
+                    success: function (response, status, xhr) {
+                        var dropdownControllers = $('#DropdownController');
+                        dropdownControllers.html('');
+                        $.each(response, function (id, option) {
+                            dropdownControllers.append($('<option></option>').val(option.id).html(option.name));
+                        });
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        alert('Error populating controllers dropdown');
+                    }
+                });
+            });
+
+
+            $("#DropdownController").change(function () {
+                var selectedItem = $(this).val();
+                $.ajax({
+                    url: "@Url.Content("~/MenuItem/GetActionsForController/controllerId")",
+                    data: { "controllerId": selectedItem },
+                    type: "GET",
+                    success: function (response, status, xhr) {
+                        var dropdownActions = $('#DropdownAction');
+                        dropdownActions.html('');
+                        $.each(response, function (id, option) {
+                            dropdownActions.append($('<option></option>').val(option.id).html(option.name));
+                        });
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        alert('Error populating actions dropdown');
+                    }
+                });
+            });
+        });
+    </script>
+}

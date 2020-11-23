@@ -1,0 +1,114 @@
+﻿@model CYCA_Module_V2.Common_Objects.CYCA_ClientBiometricViewModel
+<div class="row">
+    <div class="col-md-3 form-group">
+        @Html.LabelFor(x => x.HasBiometric, new { @class = "control-label" })
+    </div>
+    <div class="col-md-9">
+        @if (Model.HasBiometric)
+        {
+            <label>Yes</label>
+        }
+        else
+        {
+            <label>No</label>
+        }
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-3 form-group">
+        @Html.LabelFor(x => x.IsVerified, new { @class = "control-label" })
+    </div>
+    <div class="col-md-9">
+        @if (Model.IsVerified)
+        {
+            <label>Yes</label>
+        }
+        else
+        {
+            <label>No</label>
+        }
+    </div>
+</div>
+<div class="panel-footer">
+
+    @if (!Model.HasBiometric)
+    {
+        <input type="button" id="btnEnrollBiometric" onclick="CallFingerPrintDevice('Enroll')" value="Enroll" class="btn btn-success signalRObject" />
+    }
+    else
+    {
+        <input type="button" id="btnDisEnroll" onclick="DisEnroll()" value="Disenroll" class="btn btn-success signalRObject" />
+        if (!Model.IsVerified)
+        {
+            <input type="button" id="btnVerify" onclick="" value="Verify" class="btn btn-success signalRObject" />
+        }
+    }
+</div>
+<script>
+    $(function () {
+        CurrentAFISGuid = '@Model.UniqueIdentifier';
+        if (signalHub.IsConnected) {
+            $('.signalRObject').removeAttr('disabled');
+        } else {
+            $('.signalRObject').attr('disabled', 'disabled');
+        }
+    });
+    function DisEnroll() {
+        request.requestType = "DisEnroll";
+        request.UuId = CurrentAFISGuid;
+        $.ajax({
+            type: 'POST',
+            url: '/Afis/AfisEntry',
+            data: {
+                vm: request
+            },
+            success: function (data) {
+                var errorCode = parseInt(data.ErrorCode);
+                if (errorCode > 0) {
+                    CreateError(data.ErrorCode, data.Error, data.ErrorLink);
+                } else {
+                    AjaxShowTabs(currentPersonId, currentTab, currentFormType, currentTarget);
+                }
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                alert(xhr.status);
+                alert(thrownError);
+            }
+        });
+    }
+    function CallFingerPrintDevice(type) {
+        $('#btnEnrollBiometric').prop('disabled', true);
+       // BlockUI();
+        //Call Server Methods
+        request.requestType = type;
+        FingerPrintServerProxy.invoke('fPCaptureRq', request).done(function () {
+            //console.log('Invocation of fPCaptureRq succeeded');
+        }).fail(function (error) {
+            $.unblockUI();
+            //console.log('Invocation of fPCaptureRq failed. Error: ' + error);
+        });
+    }
+    function DisEnrollFingerPrints() {
+        //BlockUI();
+        BuildDisEnrollObject();
+        AfisServerProxy.invoke('DisenrollRequest', fingerprintRecord).done(function () {
+            console.log('Invocation of IdentifyRequest succeeded');
+        }).fail(function (error) {
+            $.unblockUI();
+            console.log('Invocation of IdentifyRequest failed. Error: ' + error);
+        });
+    }
+    function BlockUI() {
+        $.blockUI({
+            css: {
+                border: 'none',
+                padding: '15px',
+                backgroundColor: '#000',
+                '-webkit-border-radius': '10px',
+                '-moz-border-radius': '10px',
+                opacity: .5,
+                color: '#fff'
+            }
+        });
+    }
+</script>

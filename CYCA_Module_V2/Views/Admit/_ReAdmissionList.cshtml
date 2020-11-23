@@ -1,0 +1,386 @@
+﻿@using Common_Objects.ViewModels;
+@model  CYCAAdmissionPartialViewModel
+
+<div class="row" id="ReAdmissionList">
+    <div class="col-md-12">
+        <div class="panel panel-default">
+            <div class="panel-heading text-center">
+                <strong style="color:#158cba"> Re-Admission Details</strong>
+            </div>
+            <div class="panel-body">
+                <div class="table-responsive">
+                    <table class="table table-striped table-bordered table-hover" id="admissionList">
+                        <thead>
+                            <tr>
+                                <th>Facility</th>
+                                <th>Admission Type</th>
+                                <th>Admission Date</th>
+                                <th>Gang Membership</th>
+                                @*<th>Status</th>*@
+                                <th>Attachments</th>
+                                @*<th>&nbsp;</th>*@
+
+                            </tr>
+                        </thead>
+                        <tbody id="SetAdmissiontList">
+                            @foreach (Common_Objects.ViewModels.CYCAAdmissionViewModel re in ((List<CYCAAdmissionViewModel>)ViewBag.ListP2).OrderByDescending(re => re.Re_Admission_Id))
+                            {
+                                <tr>
+                                    <td>@re.FacilityName</td>
+                                    <td>@re.selectedAdmissionType</td>
+                                    <td>@re.AdmissionDate</td>
+                                    <td>@re.SelectedGangMemberType</td>
+                                    @*@if (re.Is_Active)
+                                    {
+                                        <td>Current Admission</td>
+                                    }
+                                    else
+                                    {
+                                        <td>Discharged</td>
+                                    }*@
+
+                                    <td>
+                                        @for (int i = 0; i < re.files.Count; i++)
+                                        {
+                                            <div class="input-group">
+                                                <i class="fa fa-1x fa-paperclip text-navy"></i>
+                                                <a class="download-file1" href="@Url.Action("DownloadFile", "Admit", new { id = re.files[i].Document_Id })" target="_blank">
+                                                    @re.files[i].Document_Name
+                                                </a>
+                                            </div>
+                                        }
+                                    </td>
+                                    @*@if (re.Is_Active)
+                                    {
+                                        <td>&nbsp;</td>
+                                    }
+                                    else if (re.ActiveAdmission || re.ActiveReAdmission)
+                                    {
+                                        <td><a>Re-Admit</a></td>
+                                    }
+                                    else
+                                    {
+                                        <p id="admitId" hidden>@re.Re_Admission_Id</p>
+                                        <td><a href="#" onclick="showNewReAdmit(@re.Re_Admission_Id)">Re-Admit</a></td>
+                                    }*@
+                                    @*<td>
+                                            @Html.ActionLink("Edit", "Edit", new { id = m.Admission_Id }) |
+                                            @Html.ActionLink("Details", "Details", new { id = m.Admission_Id })
+                                        </td>*@
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row" id="AddReAdmit">
+    <div class="col-md-12 col-sm-12">
+        <div class="panel panel-default">
+            <div class="panel-heading text-center">
+                <strong style="color:#158cba">Re-Admission</strong>
+            </div>
+            <div class="panel-body">
+                <form id="myForm">
+                    <div class="row">
+                        <div class="col-md-4">
+                            @Html.HiddenFor(m => m.ReAdmission_Id)
+                            @Html.HiddenFor(m => m.PersonId, new { @id = "PersonId" })
+                            @Html.HiddenFor(m => m.Admission_Id, new { @id = "Admission_Id" })
+                            @*@Html.LabelFor(x => x.selectedAdmissionType)*@
+                            ReAdmission Reason:
+                        </div>
+                        <div class="col-md-8 form-group" style="">
+                            @Html.DropDownListFor(m => m.Admission_Type_Id, ViewBag.AdmissionTypeList as SelectList, "--Select--", new { @id = "Admission_Type_Id", @class = "form-control", required = "required" })
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            @Html.LabelFor(x => x.selectedVenue)
+                        </div>
+                        <div class="col-md-8 form-group">
+                            @Html.DropDownListFor(m => m.VenueId, ViewBag.VenueList as SelectList, "--Select--", new { @id = "VenueId", @class = "form-control", required = "required" })
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            @Html.LabelFor(x => x.CaseEndDate)
+                        </div>
+                        <div class="col-md-8 form-group" id="datetimepicker">
+                            <div class="input-group">
+                                @Html.TextBoxFor(m => m.CaseEndDate, new { @id = "caseenddate", @class = "form-control ", required = "required" })
+                                <label for="caseenddate" class="input-group-addon btn">
+                                    <span class="glyphicon glyphicon-calendar"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            @Html.HiddenFor(m => m.Admission_Id, new { @id = "Admission_Id" })
+                            @*@Html.LabelFor(x => x.SelectedGangMemberType)*@
+                            Gang Membership Type:
+                        </div>
+                        <div class="col-md-8 form-group" style="">
+                            @Html.DropDownListFor(m => m.Gang_Member_Type_Id, ViewBag.GangMembershipTypeList as SelectList, "--Select--", new { @id = "Gang_Membership_Type_Id", @class = "form-control", required = "required" })
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            @Html.LabelFor(x => x.CommentsAndObservation)
+                        </div>
+                        <div class="col-md-8 form-group">
+                            @Html.TextAreaFor(m => m.CommentsAndObservation, new { @id = "comments", @class = "form-control" })
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4">
+
+                            @Html.LabelFor(x => x.selectedDocType)
+                        </div>
+                        <div class="col-md-8 form-group">
+                            @Html.DropDownListFor(m => m.Document_Type_Id, ViewBag.DocumentTypeList as SelectList, "--Select--", new { @id = "Document_Type_Id", @class = "form-control", onchange = "ShowHideDiv(), chkatchtbl()" })
+                        </div>
+                        <div id="dvOther" style="display: none">
+                            <div class="col-md-4">
+                                Explain Document Type:
+                            </div>
+                            <div class="col-md-8 form-group">
+                                @Html.TextBoxFor(m => m.Additional_Info, new { @class = "form-control", required = "required" })
+                                @*<input class="form-control" type="text" id="Exp" required />*@
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            @Html.LabelFor(x => x.Document_Name)
+                        </div>
+                        <div class="col-md-8 form-group" style="">
+                            <input id="fileInput" type="file" multiple required disabled>
+                        </div>
+                        <br />            <br />
+                        <div class="col-md-3 pull-left">
+                            <table class="table" id="FilesList" style="visibility:hidden">
+                                <tr>
+                                    <th>
+                                        Attachment(s)
+                                    </th>
+                                    <th>
+                                        Action
+                                    </th>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    @if (!Model.HasBiometric)
+                    {
+                        <div class="row btnEnroll">
+                            <div class="col-md-12"><h3>Biometrics</h3></div>
+                        </div>
+                        <div class="row btnEnroll">
+                            <div class="col-md-12">
+                                <input type="button" id="btnEnroll" onclick="EnrollFingerPrints()" value="Enroll" class="btn btn-success signalRObject" />
+                            </div>
+                        </div>
+                    }
+                    <div class="row pull-right">
+                        <div class="col-md-12">
+                            <a class="btn btn-primary" id="Send">Re-Admit Child</a>
+                            <a class="btn btn-default" id="Cancel">Cancel</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@*@Html.Partial("~/Views/Admit/_BodySearchList.cshtml")*@
+
+<script>
+    $(function () {
+        // Initialize items marked as datepickers
+        $("#caseenddate").datetimepicker({
+            dateFormat: "dd M yy",
+            changeMonth: true,
+            changeYear: true,
+            minDate: new Date(),
+            //yearRange: "-60:+0",
+            controlType: 'select',
+            timeFormat: 'hh:mm TT',
+            onClose: function () {
+                $(this).valid();
+            }
+        });
+        $("#myForm").validate();
+        //Check if signalR is working
+        console.log(signalHub.IsConnected);
+        if (signalHub.IsConnected) {
+            $('.signalRObject').removeAttr('disabled');
+        } else {
+            $('.signalRObject').attr('disabled', 'disabled');
+        };
+    });
+    var formdata = new FormData(); //FormData object
+    $(document).ready(function () {
+        $("#fileInput").on("change", function () {
+            var fileInput = document.getElementById('fileInput');
+            //Iterating through each files selected in fileInput
+            for (i = 0; i < fileInput.files.length; i++) {
+
+                var sfilename = fileInput.files[i].name;
+                let srandomid = Math.random().toString(36).substring(7);
+
+                formdata.append(sfilename, fileInput.files[i]);
+                var markup = "<tr id='" + srandomid + "'><td>" + sfilename + "</td><td><a href='#' onclick='DeleteFile(\"" + srandomid + "\",\"" + sfilename +
+                    "\")'><span class='red'>Remove file</span></a></td></tr>"; // Binding the file name
+                $("#FilesList tbody").append(markup);
+            }
+            chkatchtbl();
+            $('#fileInput').val('');
+        });
+
+    })
+    $(function () {
+        // Initialize items marked as datepickers
+        $("#caseenddate").datetimepicker({
+            dateFormat: "dd M yy",
+            changeMonth: true,
+            changeYear: true,
+            minDate: new Date(),
+            //yearRange: "-60:+0",
+            controlType: 'select',
+            timeFormat: 'hh:mm TT',
+            onClose: function () {
+                $(this).valid();
+            }
+        });
+        $("#myForm").validate();
+        //Check if signalR is working
+        console.log(signalHub.IsConnected);
+        if (signalHub.IsConnected) {
+            $('.signalRObject').removeAttr('disabled');
+        } else {
+            $('.signalRObject').attr('disabled', 'disabled');
+        };
+    });
+    function ShowHideDiv() {
+
+        var Document_Type_Id = document.getElementById("Document_Type_Id");
+        var dvOther = document.getElementById("dvOther");
+        dvOther.style.display = Document_Type_Id.value == "4" ? "block" : "none";
+    }
+
+    function DeleteFile(Fileid, FileName) {
+        formdata.delete(FileName)
+        $("#" + Fileid).remove();
+        chkatchtbl();
+    }
+    function chkatchtbl() {
+        //if ($('#FilesList tr').length > 1) {
+        //    $("#FilesList").css("visibility", "visible");
+        //} else {
+        //    $("#FilesList").css("visibility", "hidden");
+        //}
+        if (document.getElementById("Document_Type_Id").value >= 1) {
+            $("#fileInput").removeAttr("disabled")
+            if ($('#FilesList tr').length > 1) {
+                $("#fileInput").removeAttr("required")
+                $("#FilesList").css("visibility", "visible");
+            } else {
+                $("#fileInput").attr("required", "required")
+            }
+        } else {
+            $("#fileInput").attr("disabled", "disabled")
+            $("#fileInput").removeAttr("required")
+            $("#FilesList").css("visibility", "hidden");
+            if ($('#FilesList tr').length > 1) {
+                $("#FilesList").css("visibility", "visible");
+                $("#Document_Type_Id").attr("required", "required")
+            }
+        }
+    }
+        $("#Send").click(function () {
+            var $valid = $("#myForm").valid();
+            if (!$valid) {
+                return;
+            }
+            var childid = @ViewBag.ChildId;
+
+            formdata.append('uploadername', $('#txtuploader').val());
+
+            formdata.append("Admission_Id", $("#admitId").text());
+            formdata.append("Person_Id", childid);
+            formdata.append("Admission_Type_Id", $("#Admission_Type_Id").val());
+            formdata.append("CaseStartDate", $("#casestartdate").val());
+            formdata.append("CaseStartTime", $("#casestarttime").val());
+            formdata.append("VenueId", $("#VenueId").val());
+            formdata.append("CaseEndDate", $("#caseenddate").val());
+            formdata.append("CommentsAndObservation", $("#comments").val());
+           formdata.append("Gang_Member_Type_Id", $("#Gang_Membership_Type_Id").val());
+            formdata.append("Document_Type_Id", $("#Document_Type_Id").val());
+
+            $.confirm({
+                title: 'ReAdmit child',
+                content: 'Are you sure you want to re-admit the child?',
+                buttons: {
+                    Yes: function () {
+                          $.ajax({
+               url: '@Url.Action("AddReAdmission", "Admit")',
+                type: "POST",
+                contentType: false, // Not to set any content header
+                processData: false, // Not to process data
+                data: formdata,
+                async: false,
+                success: function (result) {
+                    //location.reload(true);
+                    if (result) {                       
+                     $.confirm({
+                        title: 'Bodily Search',
+                        content: 'Would you like to do a body search?',
+                        buttons: {
+                            Yes: function () {
+                                NewBodySearch(result);
+                            },
+                            No: function () {
+                                //ConfirmUploadDocuments(result);
+                                location.reload(true);
+
+                            }
+                        }
+                    });                  
+                    }
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            });
+
+                    },
+                    No: function () {
+
+                    }
+                }
+            })
+
+    });
+
+    function NewBodySearch(childid) {
+        //alert(childid)
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Content("~/Admit/BodySearchList")',
+                data: {
+                    Id: childid
+                      
+                },
+             
+                success: function (result) {
+                    $('#mainDiv').html(result);
+                }
+            });
+        }
+</script>
